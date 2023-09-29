@@ -48,10 +48,6 @@
           "networkmanager"
           "wheel"
         ];
-      packages = with pkgs;
-        [
-          firefox
-        ];
     };
 
   users.groups.gaurav.gid = 1001;
@@ -60,10 +56,86 @@
   # $ nix search wget
   environment.systemPackages = with pkgs;
     [
+      alacritty
+      arandr
+      autojump
+      baobab
+      barrier
+      bindfs
+      bless
+      chromium
+      clang
+      clang-tools
+      du-dust
+      easyeffects
+      evolution
+      fd
+      firefox
+      fzf
+      galculator
+      gcc
+      gdb
+      gh
+      gimp
       git
+      gnome.eog
+      gnome.gnome-calculator
+      gnome.gnome-disk-utility
+      gnome.gnome-keyring
+      gnome.gnome-system-monitor
+      gnome.gnome-terminal
+      gnome.seahorse
+      gnucash
+      gparted
+      helvum
+      htop
+      inkscape
+      inotify-tools
+      inxi
+      iperf
+      jq
+      kicad
+      libreoffice
+      lldb
+      meld
+      mpv
+      netcat-openbsd
+      nvme-cli
+      obs-studio
+      parallel
+      pass
+      pavucontrol
+      pdfarranger
+      pdftk
+      pipewire
+      qpdf
+      qpwgraph
+      ripgrep
+      rustc
+      rustfmt
+      screen
+      screenkey
+      shutter
+      silver-searcher
+      smartmontools
+      socat
+      sqlite
+      sqlitebrowser
+      thunderbird
       tree
+      unixODBCDrivers.sqlite
+      valgrind
       vim
+      vlc
+      websocat
       wget
+      xclip
+      xorg.xkill
+      yq
+      yubikey-manager
+      yubikey-manager-qt
+      yubikey-personalization
+      yubikey-personalization-gui
     ];
 
   # nano is horror
