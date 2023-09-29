@@ -51,7 +51,6 @@
       packages = with pkgs;
         [
           firefox
-          tree
         ];
     };
 
@@ -62,6 +61,7 @@
   environment.systemPackages = with pkgs;
     [
       git
+      tree
       vim
       wget
     ];
