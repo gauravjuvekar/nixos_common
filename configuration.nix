@@ -52,6 +52,17 @@
 
   users.groups.gaurav.gid = 1001;
 
+  # enable GPG
+  programs.gnupg.agent =
+    {
+      enable = true;
+      enableSSHSupport = true;
+      pinentryFlavor = "curses";
+    };
+
+  # enable keyring
+  services.gnome.gnome-keyring.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs;
