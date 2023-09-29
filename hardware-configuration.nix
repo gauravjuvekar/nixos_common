@@ -67,6 +67,12 @@
         };
     };
 
+  fileSystems."/home/.snapshots" =
+    { device = "/dev/disk/by-uuid/33f01d32-5aed-4ebf-8a59-f92c9d20a9df";
+      fsType = "btrfs";
+      options = [ "subvol=@snapshots" ];
+    };
+
   environment.etc."crypttab".text = ''
     arch_crypt UUID=0664ad23-f2e6-498f-8f6c-58efcc64bfef /root/home.key
   '';

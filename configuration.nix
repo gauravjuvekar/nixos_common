@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./snapper.nix
     ];
 
   nix.extraOptions = ''
@@ -129,6 +130,8 @@
       shutter
       silver-searcher
       smartmontools
+      snapper
+      snapper-gui
       socat
       sqlite
       sqlitebrowser
