@@ -10,6 +10,10 @@
       ./hardware-configuration.nix
     ];
 
+  nix.extraOptions = ''
+    extra-experimental-features = nix-command
+  '';
+
   networking.hostName = "gaurav-nixlt";
   networking.networkmanager.enable = true; 
 
