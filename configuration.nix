@@ -43,7 +43,11 @@
       isNormalUser = true;
       home = "/home/gaurav";
       uid = 1001;
-      extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+      extraGroups =
+        [
+          "networkmanager"
+          "wheel"
+        ];
       packages = with pkgs;
         [
           firefox
