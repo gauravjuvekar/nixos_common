@@ -66,6 +66,13 @@
       wget
     ];
 
+  # nano is horror
+  programs.neovim =
+    {
+      defaultEditor = true;
+      enable = true;
+    };
+
   environment.etc =
     {
       "lvm/lvm.conf" = lib.mkForce 
