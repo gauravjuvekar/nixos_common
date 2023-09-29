@@ -135,6 +135,7 @@
       socat
       sqlite
       sqlitebrowser
+      syncthing
       thunderbird
       tree
       unixODBCDrivers.sqlite
