@@ -68,6 +68,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs;
     [
+      age
       alacritty
       arandr
       autojump
@@ -83,11 +84,13 @@
       evolution
       fd
       firefox
+      flameshot
       fzf
       galculator
       gcc
       gdb
       gh
+      ghostscript
       gimp
       git
       gnome.eog
@@ -101,6 +104,7 @@
       gparted
       helvum
       htop
+      imagemagick
       inkscape
       inotify-tools
       inxi
