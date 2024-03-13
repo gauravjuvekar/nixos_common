@@ -15,6 +15,8 @@
     extra-experimental-features = nix-command
   '';
 
+  nixpkgs.config.allowUnfree = true;
+
   networking.hostName = "gaurav-nixlt";
   networking.networkmanager.enable = true; 
 
@@ -76,12 +78,14 @@
       barrier
       bindfs
       bless
+      blueberry
       chromium
       clang
       clang-tools
+      dig
+      drill
       du-dust
       easyeffects
-      evolution
       fd
       firefox
       flameshot
@@ -105,17 +109,18 @@
       helvum
       htop
       imagemagick
+      inetutils
       inkscape
       inotify-tools
       inxi
       iperf
       jq
-      kicad
       libreoffice
       lldb
       meld
       mpv
       netcat-openbsd
+      nix-output-monitor
       nvme-cli
       obs-studio
       parallel
@@ -148,6 +153,7 @@
       vlc
       websocat
       wget
+      wireshark
       xclip
       xorg.xkill
       yq
