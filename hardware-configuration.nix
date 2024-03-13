@@ -25,7 +25,7 @@
   boot.initrd.kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" ];
   boot.initrd.systemd.enable = true;
   boot.initrd.services.lvm.enable = true;
-  boot.initrd.services.swraid.enable = true;
+  boot.swraid.enable = true;
   boot.initrd.systemd.contents =
     {
       "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
@@ -63,7 +63,7 @@
           enable = true;
           blkDev = "/dev/disk/by-uuid/0664ad23-f2e6-498f-8f6c-58efcc64bfef";
           label  = "arch_crypt";
-          keyFile = "/mnt-root/root/home.key";
+          keyFile = "/sysroot/root/home.key";
         };
     };
 

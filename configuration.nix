@@ -60,7 +60,7 @@
     {
       enable = true;
       enableSSHSupport = true;
-      pinentryFlavor = "curses";
+      pinentryPackage = pkgs.pinentry-curses;
     };
 
   # enable keyring
