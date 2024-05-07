@@ -1,5 +1,5 @@
 {
-  description = "flake for gaurav-nixlt";
+  description = "Common flakes for all my systems";
 
   inputs =
     {
@@ -17,7 +17,7 @@
               system = "x86_64-linux";
               modules =
                 [
-                  ./configuration.nix
+                  ./hosts/gaurav-nixlt/configuration.nix
                 ];
             };
         };
