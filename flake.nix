@@ -20,6 +20,13 @@
                   ./hosts/gaurav-nixlt/configuration.nix
                 ];
             };
+          gaurav-dt = nixpkgs.lib.nixosSystem {
+              system = "x86_64-linux";
+              modules =
+                [
+                  ./hosts/gaurav-dt/configuration.nix
+                ];
+            };
           live = nixpkgs.lib.nixosSystem {
               system = "x86_64-linux";
               modules =
