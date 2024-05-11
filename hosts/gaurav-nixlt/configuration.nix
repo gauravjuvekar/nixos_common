@@ -29,6 +29,9 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.open = true;
+
   # Enable the Cinnamon Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.cinnamon.enable = true;

@@ -13,6 +13,7 @@
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.useOSProber = false;
   boot.loader.grub.enableCryptodisk = true;
+  boot.loader.grub.copyKernels = true;
   boot.loader.grub.extraGrubInstallArgs = [
 #    "--verbose"
     "--modules=nativedisk part_gpt diskfilter lvm mdraid1x"
@@ -33,7 +34,7 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "nvme" ];
   boot.initrd.supportedFilesystems = [ "btrfs" "ext4" "vfat" ];
-  boot.initrd.kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" ];
+  boot.initrd.kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" "nvidia" ];
   boot.initrd.systemd.enable = true;
   boot.initrd.services.lvm.enable = true;
   boot.swraid.enable = true;
@@ -42,7 +43,7 @@
       "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
     };
   boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/e8c01229-6f85-482c-a89c-5a15f7b9892b";

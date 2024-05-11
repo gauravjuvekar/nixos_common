@@ -27,11 +27,24 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia =
+  {
+    open = true;
+    modesetting.enable = true;
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
+  hardware.opengl.enable = true;
 
   # Enable the Cinnamon Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.cinnamon.enable = true;
 
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [pkgs.xdg-desktop-portal];
+  programs.hyprland.enable = true;
 
   # Enable sound.
   sound.enable = true;
