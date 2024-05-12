@@ -8,12 +8,7 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.efiSupport = true;
   boot.loader.grub.useOSProber = false;
-  boot.loader.grub.enableCryptodisk = true;
-  boot.loader.grub.copyKernels = true;
   boot.loader.grub.extraGrubInstallArgs = [
 #    "--verbose"
     "--modules=nativedisk part_gpt diskfilter lvm mdraid1x"
@@ -29,13 +24,10 @@
     }
     '';
 
-  boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "nvme" ];
-  boot.initrd.supportedFilesystems = [ "btrfs" "ext4" "vfat" ];
-  boot.initrd.kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" "nvidia" ];
-  boot.swraid.enable = true;
+  boot.initrd.kernelModules = [ "nvidia" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
 

@@ -1,10 +1,32 @@
 { config, pkgs, lib, ... }:
 {
-  boot.initrd.systemd.contents =
+  boot.loader =
     {
-      "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
+      efi.canTouchEfiVariables = true;
+      grub =
+        {
+          enable = true;
+          copyKernels = true;
+          device = "nodev";
+          efiSupport = true;
+          enableCryptodisk = true;
+        };
     };
 
-  boot.initrd.systemd.enable = true;
-  boot.initrd.services.lvm.enable = true;
+  boot.initrd =
+    {
+      kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" ];
+      services.lvm.enable = true;
+      supportedFilesystems = [ "btrfs" "ext4" "vfat" ];
+      systemd =
+        {
+          enable = true;
+          contents =
+            {
+              "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
+            };
+        };
+    };
+
+  boot.swraid.enable = true;
 }

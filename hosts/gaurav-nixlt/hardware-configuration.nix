@@ -8,24 +8,15 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.enableCryptodisk = true;
   boot.loader.grub.extraGrubInstallArgs = [
 #    "--verbose"
     "--modules=nativedisk part_gpt diskfilter lvm mdraid1x"
   ];
 
-  boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "nvme" ];
-  boot.initrd.supportedFilesystems = [ "btrfs" "ext4" "vfat" ];
-  boot.initrd.kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" ];
-  boot.swraid.enable = true;
   boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/e5ab684c-b3f9-43ff-8722-d342bb53d785";
