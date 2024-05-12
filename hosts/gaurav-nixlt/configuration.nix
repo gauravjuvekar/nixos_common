@@ -1,13 +1,9 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running `nixos-help`).
-
 { config, pkgs, lib, ... }:
-
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
+      ../../common/base_packages.nix
       ./snapper.nix
     ];
 
@@ -90,7 +86,6 @@
       drill
       du-dust
       easyeffects
-      fd
       firefox
       flameshot
       fzf
@@ -100,7 +95,6 @@
       gh
       ghostscript
       gimp
-      git
       gnome.eog
       gnome.gnome-calculator
       gnome.gnome-disk-utility
@@ -124,10 +118,8 @@
       meld
       mpv
       netcat-openbsd
-      nix-output-monitor
       nvme-cli
       obs-studio
-      parallel
       pass
       pavucontrol
       pdfarranger
@@ -135,13 +127,10 @@
       pipewire
       qpdf
       qpwgraph
-      ripgrep
       rustc
       rustfmt
-      screen
       screenkey
       shutter
-      silver-searcher
       smartmontools
       snapper
       snapper-gui
@@ -150,13 +139,11 @@
       sqlitebrowser
       syncthing
       thunderbird
-      tree
       unixODBCDrivers.sqlite
       valgrind
       vim
       vlc
       websocat
-      wget
       wireshark
       xclip
       xorg.xkill
@@ -166,13 +153,6 @@
       yubikey-personalization
       yubikey-personalization-gui
     ];
-
-  # nano is horror
-  programs.neovim =
-    {
-      defaultEditor = true;
-      enable = true;
-    };
 
   environment.etc =
     {
@@ -198,4 +178,3 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
 }
-
