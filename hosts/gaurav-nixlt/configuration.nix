@@ -4,6 +4,7 @@
     [
       ./hardware-configuration.nix
       ../../common/base.nix
+      ../../common/graphical.nix
       ../../common/interactive.nix
       ../../common/user_personal.nix
       ./snapper.nix
@@ -15,17 +16,8 @@
 
   time.timeZone = "America/Los_Angeles";
 
-  services.xserver.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.open = false;
-
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.cinnamon.enable = true;
-
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-
-  services.xserver.libinput.enable = true;
 
   programs.gnupg.agent =
     {
@@ -40,7 +32,6 @@
     [
       age
       alacritty
-      arandr
       autojump
       baobab
       barrier
@@ -89,10 +80,8 @@
       nvme-cli
       obs-studio
       pass
-      pavucontrol
       pdfarranger
       pdftk
-      pipewire
       qpdf
       qpwgraph
       rustc
@@ -114,7 +103,6 @@
       websocat
       wireshark
       xclip
-      xorg.xkill
       yq
       yubikey-manager
       yubikey-manager-qt

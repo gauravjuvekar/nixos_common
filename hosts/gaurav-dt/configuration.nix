@@ -4,6 +4,7 @@
     [
       ./hardware-configuration.nix
       ../../common/base.nix
+      ../../common/graphical.nix
       ../../common/interactive.nix
       ../../common/user_personal.nix
     ];
@@ -13,7 +14,6 @@
 
   time.timeZone = "America/Los_Angeles";
 
-  services.xserver.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia =
   {
@@ -23,20 +23,6 @@
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
-  hardware.opengl.enable = true;
-
-  services.xserver.displayManager.gdm.enable = false;
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.cinnamon.enable = true;
-
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = [pkgs.xdg-desktop-portal];
-  programs.hyprland.enable = true;
-
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-
-  services.libinput.enable = true;
 
   programs.gnupg.agent =
     {
@@ -51,7 +37,6 @@
     [
 #      age
       alacritty
-      arandr
 #      autojump
 #      baobab
 #      barrier
@@ -100,10 +85,8 @@
 #      nvme-cli
 #      obs-studio
 #      pass
-#      pavucontrol
 #      pdfarranger
 #      pdftk
-#      pipewire
 #      qpdf
 #      qpwgraph
 #      rustc
@@ -125,7 +108,6 @@
 #      websocat
 #      wireshark
       xclip
-      xorg.xkill
 #      yq
 #      yubikey-manager
 #      yubikey-manager-qt
