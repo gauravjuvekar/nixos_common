@@ -39,7 +39,8 @@
   hardware.opengl.enable = true;
 
   # Enable the Cinnamon Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.enable = false;
+  services.xserver.displayManager.sddm.enable = true;
   services.xserver.desktopManager.cinnamon.enable = true;
 
   xdg.portal.enable = true;
