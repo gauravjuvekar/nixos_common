@@ -5,6 +5,7 @@
       ./hardware-configuration.nix
       ../../common/base.nix
       ../../common/interactive.nix
+      ../../common/user_personal.nix
       ./snapper.nix
     ];
 
@@ -25,20 +26,6 @@
   hardware.pulseaudio.enable = true;
 
   services.xserver.libinput.enable = true;
-
-  users.users.gaurav =
-    {
-      isNormalUser = true;
-      home = "/home/gaurav";
-      uid = 1001;
-      extraGroups =
-        [
-          "networkmanager"
-          "wheel"
-        ];
-    };
-
-  users.groups.gaurav.gid = 1001;
 
   programs.gnupg.agent =
     {
