@@ -3,7 +3,7 @@
   imports =
     [
       ./hardware-configuration.nix
-      ../../common/base_packages.nix
+      ../../common/base.nix
     ];
 
   nix.extraOptions = ''
@@ -163,15 +163,6 @@
 #      yubikey-personalization
 #      yubikey-personalization-gui
     ];
-
-  environment.etc =
-    {
-      "lvm/lvm.conf" = lib.mkForce
-        {
-          source = ./files/lvm.conf;
-          mode = "0600";
-        };
-    };
 
   networking.firewall.enable = false;
 

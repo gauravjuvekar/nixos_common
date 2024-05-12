@@ -1,17 +1,11 @@
 { config, pkgs, ... }:
 {
-  systemd.services."xe-daemon".enable = false;
+  imports =
+    [
+      ../../common/base_etc.nix
+    ];
 
-  environment.etc."lvm/lvm.conf" =
-    {
-      text =
-        ''
-          devices {
-            scan_lvs = 1
-          }
-        '';
-      mode = "0600";
-    };
+  systemd.services."xe-daemon".enable = false;
 
   boot.kernelModules = [ "dm-raid" "dm-integrity" ];
 }

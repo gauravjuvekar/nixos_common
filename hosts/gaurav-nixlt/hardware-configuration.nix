@@ -23,13 +23,7 @@
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "nvme" ];
   boot.initrd.supportedFilesystems = [ "btrfs" "ext4" "vfat" ];
   boot.initrd.kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" ];
-  boot.initrd.systemd.enable = true;
-  boot.initrd.services.lvm.enable = true;
   boot.swraid.enable = true;
-  boot.initrd.systemd.contents =
-    {
-      "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
-    };
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
