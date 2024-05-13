@@ -20,11 +20,11 @@
                   ./hosts/gaurav-nixlt/configuration.nix
                 ];
             };
-          gaurav-dt = nixpkgs.lib.nixosSystem {
+          "dt.sc.gjuvekar.com" = nixpkgs.lib.nixosSystem {
               system = "x86_64-linux";
               modules =
                 [
-                  ./hosts/gaurav-dt/configuration.nix
+                  ./hosts/dt-sc-gjuvekar-com/configuration.nix
                 ];
             };
           live = nixpkgs.lib.nixosSystem {

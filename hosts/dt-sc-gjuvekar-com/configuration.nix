@@ -10,7 +10,8 @@
     ];
 
   nixpkgs.config.allowUnfree = true;
-  networking.hostName = "gaurav-dt";
+  networking.hostName = "dt";
+  networking.domain = "sc.gjuvekar.com";
 
   time.timeZone = "America/Los_Angeles";
 
