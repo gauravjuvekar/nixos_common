@@ -13,7 +13,8 @@
   services.xserver =
     {
       enable = true;
-      displayManager.gdm.enable = true;
+      displayManager.gdm.enable = false;
+      displayManager.sddm.enable = true;
       desktopManager.cinnamon.enable = true;
     };
   xdg.portal =
