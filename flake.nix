@@ -17,14 +17,14 @@
               system = "x86_64-linux";
               modules =
                 [
-                  ./hosts/gaurav-nixlt/configuration.nix
+                  ./hosts/gaurav-nixlt.roam.gjuvekar.com/configuration.nix
                 ];
             };
           "dt.sc.gjuvekar.com" = nixpkgs.lib.nixosSystem {
               system = "x86_64-linux";
               modules =
                 [
-                  ./hosts/dt-sc-gjuvekar-com/configuration.nix
+                  ./hosts/dt.sc.gjuvekar.com/configuration.nix
                 ];
             };
           live = nixpkgs.lib.nixosSystem {
