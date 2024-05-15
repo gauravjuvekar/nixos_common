@@ -16,6 +16,7 @@
       nix-du
       nix-output-monitor
       nix-tree
+      nvd
       parallel
       ripgrep
       tmux
