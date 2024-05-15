@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   services.snapper.configs =
     {
@@ -18,4 +18,10 @@
           TIMELINE_LIMIT_YEARLY = "0";
         };
     };
+
+  environment.systemPackages = with pkgs;
+    [
+      snapper
+      snapper-gui
+    ];
 }
