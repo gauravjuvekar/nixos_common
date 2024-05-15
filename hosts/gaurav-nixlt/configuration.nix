@@ -14,6 +14,7 @@
   nixpkgs.config.allowUnfree = true;
 
   networking.hostName = "gaurav-nixlt";
+  networking.domain = "roam.gjuvekar.com";
 
   time.timeZone = "America/Los_Angeles";
 
