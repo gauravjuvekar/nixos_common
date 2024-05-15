@@ -10,13 +10,15 @@
     ];
   programs.hyprland.enable = true;
   services.libinput.enable = true;
+
+  services.displayManager.sddm.enable = true;
   services.xserver =
     {
       enable = true;
       displayManager.gdm.enable = false;
-      displayManager.sddm.enable = true;
       desktopManager.cinnamon.enable = true;
     };
+
   xdg.portal =
     {
       enable = true;
