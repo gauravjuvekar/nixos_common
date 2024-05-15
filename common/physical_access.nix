@@ -1,0 +1,10 @@
+{ config, pkgs, ... }:
+{
+  environment.systemPackages = with pkgs;
+    [
+      lm_sensors
+      lshw
+      pciutils
+      usbutils
+    ];
+}
