@@ -8,7 +8,8 @@
     ];
 
   nix.extraOptions = ''
-      extra-experimental-features = nix-command
       extra-experimental-features = flakes
+      extra-experimental-features = nix-command
+      extra-experimental-features = repl-flake
     '';
 }
