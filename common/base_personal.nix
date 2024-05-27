@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.fuse.userAllowOther = true;
+}

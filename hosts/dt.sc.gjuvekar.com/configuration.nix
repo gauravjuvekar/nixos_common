@@ -1,9 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 {
   imports =
     [
       ./hardware-configuration.nix
       ../../common/base.nix
+      ../../common/base_personal.nix
       ../../common/graphical.nix
       ../../common/interactive.nix
       ../../common/physical_access.nix
