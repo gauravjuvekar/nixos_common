@@ -5,7 +5,7 @@
     {
       nixpkgs =
         {
-          url = "github:NixOS/nixpkgs/nixos-unstable";
+          url = "github:gauravjuvekar/nixpkgs/fqdn";
         };
     };
 
