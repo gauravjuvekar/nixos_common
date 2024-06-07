@@ -5,7 +5,7 @@
     {
       nixpkgs =
         {
-          url = "github:gauravjuvekar/nixpkgs/fqdn";
+          url = "github:NixOS/nixpkgs/master";
         };
     };
 
