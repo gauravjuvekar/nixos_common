@@ -44,9 +44,10 @@
       fsType = "ext4";
       encrypted =
         {
-          enable = true;
-          blkDev = "/dev/disk/by-uuid/2d47987a-cf3d-4693-bb18-d0c8312d2924";
-          label  = "main_os_crypt";
+          enable  = true;
+          blkDev  = "/dev/disk/by-uuid/2d47987a-cf3d-4693-bb18-d0c8312d2924";
+          label   = "main_boot_crypt";
+          keyFile = "/sysroot/root/boot.key";
         };
     };
 
