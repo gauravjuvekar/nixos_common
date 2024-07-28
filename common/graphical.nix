@@ -1,10 +1,13 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 {
+  imports =
+    [
+      ./sound.nix
+    ];
+
   environment.systemPackages = with pkgs;
     [
       arandr
-      pavucontrol
-      pipewire
       vanilla-dmz # 1 cursor theme requried for gdm
       xorg.xkill
     ];
@@ -24,6 +27,4 @@
       enable = true;
       extraPortals = [ pkgs.xdg-desktop-portal ];
     };
-
-  hardware.pulseaudio.enable = true;
 }
