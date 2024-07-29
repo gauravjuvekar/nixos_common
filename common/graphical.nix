@@ -11,7 +11,10 @@
       vanilla-dmz # 1 cursor theme requried for gdm
       xorg.xkill
     ];
+
   programs.hyprland.enable = true;
+  security.pam.services.hyprlock = {};
+
   services.libinput.enable = true;
 
   services.displayManager.sddm.enable = true;
