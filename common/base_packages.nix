@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   # nano is horror
   programs.neovim =
@@ -13,7 +13,7 @@
       fd
       git
       nix-diff
-      nix-du
+      #nix-du Bug https://github.com/symphorien/nix-du/issues/23
       nix-output-monitor
       nix-tree
       nvd
