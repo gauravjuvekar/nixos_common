@@ -87,7 +87,6 @@
   environment.etc."crypttab".text = ''
       main_os_crypt   UUID=22d33bf1-e4ad-4fb3-bdc7-c1a6e2244206 none
       main_boot_crypt UUID=2d47987a-cf3d-4693-bb18-d0c8312d2924 /root/boot.key
-      main_perf_crypt UUID=37f3cacc-5b3e-4dc4-8839-fb1b29078391 /root/perf.key
     '';
 
   swapDevices =
