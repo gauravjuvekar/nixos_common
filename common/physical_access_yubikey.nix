@@ -11,7 +11,7 @@
       pam =
         {
           services."sudo".u2fAuth = true;
-          u2f =
+          u2f.settings =
             {
               cue = true;
               origin = "pam://${config.networking.fqdn}";
