@@ -11,6 +11,7 @@
           efiSupport = true;
           enableCryptodisk = true;
         };
+      timeout=10;
     };
 
   boot.initrd =
