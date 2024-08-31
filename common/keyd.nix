@@ -13,12 +13,12 @@
                   main =
                     {
                       capslock = "overload(control, esc)";
-                      esc = "overload(nav, capslock)";
+                      esc = "overload(numpad, capslock)";
                       leftalt = "oneshot(alt)";
                       leftcontrol = "oneshot(control)";
                       leftshift = "oneshot(shift)";
                       meta = "oneshot(meta)";
-                      tab = "overload(numpad, tab)";
+                      tab = "overload(nav, tab)";
                     };
                   "nav" =
                     {
