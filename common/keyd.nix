@@ -14,10 +14,10 @@
                     {
                       capslock = "overload(control, esc)";
                       esc = "overload(numpad, capslock)";
-                      leftalt = "oneshot(alt)";
-                      leftcontrol = "oneshot(control)";
-                      leftshift = "oneshot(shift)";
-                      meta = "oneshot(meta)";
+                      # leftalt = "oneshot(alt)";
+                      # leftcontrol = "oneshot(control)";
+                      # leftshift = "oneshot(shift)";
+                      # meta = "oneshot(meta)";
                       tab = "overload(nav, tab)";
                     };
                   "nav" =
