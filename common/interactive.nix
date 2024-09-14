@@ -2,6 +2,7 @@
 {
   imports =
     [
+      ./keyboards_interactive.nix
       ./keyd.nix
     ];
 
