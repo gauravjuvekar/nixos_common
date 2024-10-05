@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 {
   boot.loader =
     {
@@ -28,6 +28,8 @@
             };
         };
     };
+
+  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
   boot.swraid.enable = true;
 }
