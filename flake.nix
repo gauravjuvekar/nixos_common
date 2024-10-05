@@ -5,7 +5,7 @@
     {
       nixpkgs =
         {
-          url = "github:NixOS/nixpkgs/master";
+          url = "github:gauravjuvekar/nixpkgs/revert-lvm2";
         };
     };
 
