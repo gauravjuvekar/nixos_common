@@ -5,7 +5,7 @@
     {
       nixpkgs =
         {
-          url = "github:gauravjuvekar/nixpkgs/revert-lvm2";
+          url = "github:NixOS/nixpkgs/nixos-unstable";
         };
     };
 

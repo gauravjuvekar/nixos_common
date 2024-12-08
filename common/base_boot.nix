@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 {
   boot.loader =
     {
@@ -14,10 +14,24 @@
       timeout=10;
     };
 
-  boot.initrd =
-    {
+  boot.initrd = {
       kernelModules = [ "dm-snapshot" "dm-integrity" "dm-raid" ];
-      services.lvm.enable = true;
+      services =
+        {
+          lvm.enable = true;
+          udev =
+            {
+              rules = config.services.udev.extraRules;
+              packages =
+                [
+                  (pkgs.writeTextFile {
+                    name = "my-lvm-initrd-udev-rules";
+                    destination = "/etc/udev/rules.d/10-local.rules";
+                    text = config.boot.initrd.services.udev.rules;
+                  })
+                ];
+            };
+        };
       supportedFilesystems = [ "btrfs" "ext4" "vfat" ];
       systemd =
         {
