@@ -16,7 +16,6 @@
       #nix-du Bug https://github.com/symphorien/nix-du/issues/23
       nix-output-monitor
       nix-tree
-      nixVersions.latest
       nvd
       parallel
       ripgrep
