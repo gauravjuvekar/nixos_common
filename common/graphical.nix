@@ -12,7 +12,11 @@
       xorg.xkill
     ];
 
-  programs.hyprland.enable = true;
+  programs.hyprland =
+    {
+      enable = true;
+      withUWSM = true;
+    };
   security.pam.services.hyprlock = {};
 
   services.libinput.enable = true;
