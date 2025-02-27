@@ -9,6 +9,7 @@
       ../../common/interactive.nix
       ../../common/physical_access.nix
       ../../common/user_personal.nix
+      ./snapper.nix
     ];
 
   nixpkgs.config.allowUnfree = true;
