@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ ... }:
 {
   users.users.gaurav =
     {
@@ -7,6 +7,7 @@
       uid = 1001;
       extraGroups =
         [
+          "input"
           "networkmanager"
           "wheel"
         ];
