@@ -186,6 +186,6 @@
       crypt = config.disko.devices.disk.phy0.content.partitions.phyBoot.content;
     in
     ''
-      ${crypt.name} ${crypt.device} "/etc/keys/${crypt.name}.key"
+      ${crypt.name} ${crypt.device} /etc/keys/${crypt.name}.key
     '';
 }
