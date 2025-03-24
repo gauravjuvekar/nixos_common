@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   disko.devices =
     {
@@ -38,6 +38,11 @@
                                   "--type luks1"
                                 ];
                               settings.allowDiscards = true;
+                              initrdUnlock = false;
+                              additionalKeyFiles =
+                                [
+                                  "/tmp/cryptBoot.key"
+                                ];
                               content =
                                 {
                                   type = "filesystem";
@@ -175,4 +180,12 @@
             };
         };
     };
+
+  environment.etc."crypttab".text =
+    let
+      crypt = config.disko.devices.disk.phy0.content.partitions.phyBoot.content;
+    in
+    ''
+      ${crypt.name} ${crypt.device} "/etc/keys/${crypt.name}.key"
+    '';
 }
