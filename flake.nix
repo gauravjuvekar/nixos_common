@@ -59,8 +59,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        devShells.nixos-anywhere =
-          import ./nixos-anywhere/shell.nix { inherit pkgs; };
+        devShells.deploy = import ./deploy/shell.nix { inherit pkgs; };
       }
     );
 }

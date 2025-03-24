@@ -1,7 +1,9 @@
 { pkgs }:
 pkgs.mkShell {
-  nativeBuildInputs = with pkgs; [
+  nativeBuildInputs = with pkgs;
+    [
       nixos-anywhere
       nixos-rebuild
+      ragenix
     ];
 }
