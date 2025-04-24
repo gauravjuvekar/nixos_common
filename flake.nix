@@ -3,19 +3,35 @@
 
   inputs =
     {
-      flake-utils =
+      agenix =
         {
-          url = "github:numtide/flake-utils";
+          url = "github:ryantm/agenix";
+          inputs.nixpkgs.follows = "nixpkgs";
+          inputs.systems.follows = "systems";
         };
-      nixpkgs =
+      agenix-rekey =
         {
-          url = "github:NixOS/nixpkgs/nixos-unstable";
+          url = "github:oddlama/agenix-rekey";
+          inputs.nixpkgs.follows = "nixpkgs";
         };
       disko =
         {
           url = "github:nix-community/disko";
           inputs.nixpkgs.follows = "nixpkgs";
         };
+      flake-utils =
+        {
+          url = "github:numtide/flake-utils";
+          inputs.systems.follows = "systems";
+        };
+      nixpkgs =
+        {
+          url = "github:NixOS/nixpkgs/nixos-unstable";
+        };
+      systems =
+      {
+          url = "github:nix-systems/default";
+      };
     };
 
   outputs = { nixpkgs, flake-utils, ... }@inputs:
@@ -56,7 +72,14 @@
     }
     // inputs.flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs
+          {
+            inherit system;
+            overlays =
+              [
+                inputs.agenix-rekey.overlays.default
+              ];
+          };
       in
       {
         devShells.deploy = import ./deploy/shell.nix { inherit pkgs; };
