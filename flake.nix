@@ -34,8 +34,13 @@
       };
     };
 
-  outputs = { nixpkgs, flake-utils, ... }@inputs:
+  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
     {
+      agenix-rekey = inputs.agenix-rekey.configure
+        {
+          userFlake = self;
+          nixosConfigurations = self.nixosConfigurations;
+        };
       nixosConfigurations =
         {
           gaurav-nixlt = nixpkgs.lib.nixosSystem {
@@ -56,6 +61,8 @@
               system = flake-utils.lib.system.x86_64-linux;
               modules =
                 [
+                  inputs.agenix-rekey.nixosModules.default
+                  inputs.agenix.nixosModules.default
                   inputs.disko.nixosModules.default
                   ./hosts/lt2.roam.gjuvekar.com/configuration.nix
                 ];
