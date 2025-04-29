@@ -1,8 +1,9 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   imports =
     [
       ./hardware-configuration.nix
+      ../../common/age.nix
       ../../common/base.nix
       ../../common/base_personal.nix
       ../../common/graphical.nix
@@ -31,6 +32,12 @@
   networking.firewall.enable = false;
 
   system.copySystemConfiguration = false;
+
+  age.secrets =
+    {
+      user-passwd.rekeyFile = ../../keys/secrets/gaurav-passwd.age;
+    };
+  users.users.gaurav.hashedPasswordFile = config.age.secrets.user-passwd.path;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

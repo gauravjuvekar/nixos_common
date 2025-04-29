@@ -47,6 +47,8 @@
               system = flake-utils.lib.system.x86_64-linux;
               modules =
                 [
+                  inputs.agenix.nixosModules.default
+                  inputs.agenix-rekey.nixosModules.default
                   ./hosts/gaurav-nixlt.roam.gjuvekar.com/configuration.nix
                 ];
             };
@@ -54,6 +56,8 @@
               system = flake-utils.lib.system.x86_64-linux;
               modules =
                 [
+                  inputs.agenix.nixosModules.default
+                  inputs.agenix-rekey.nixosModules.default
                   ./hosts/dt.sc.gjuvekar.com/configuration.nix
                 ];
             };
@@ -61,8 +65,8 @@
               system = flake-utils.lib.system.x86_64-linux;
               modules =
                 [
-                  inputs.agenix-rekey.nixosModules.default
                   inputs.agenix.nixosModules.default
+                  inputs.agenix-rekey.nixosModules.default
                   inputs.disko.nixosModules.default
                   ./hosts/lt2.roam.gjuvekar.com/configuration.nix
                 ];
@@ -71,6 +75,8 @@
               system = flake-utils.lib.system.x86_64-linux;
               modules =
                 [
+                  inputs.agenix.nixosModules.default
+                  inputs.agenix-rekey.nixosModules.default
                   (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix")
                   ./hosts/live/configuration.nix
                 ];
