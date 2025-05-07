@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   imports =
     [
@@ -15,13 +15,10 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  networking.hostName = "gaurav-nixlt";
+  networking.hostName = "lt2";
   networking.domain = "roam.gjuvekar.com";
 
   time.timeZone = "America/Los_Angeles";
-
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.open = false;
 
   programs.gnupg.agent =
     {
@@ -35,6 +32,12 @@
   networking.firewall.enable = false;
 
   system.copySystemConfiguration = false;
+
+  age.secrets =
+    {
+      user-passwd.rekeyFile = ../../keys/secrets/gaurav-passwd.age;
+    };
+  users.users.gaurav.hashedPasswordFile = config.age.secrets.user-passwd.path;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

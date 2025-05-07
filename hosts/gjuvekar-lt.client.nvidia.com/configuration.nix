@@ -2,6 +2,7 @@
 {
   imports =
     [
+      ../../common/age.nix
       ../../common/base.nix
       ../../common/graphical.nix
       ../../common/interactive.nix
