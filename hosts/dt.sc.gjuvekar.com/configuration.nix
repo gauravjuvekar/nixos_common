@@ -38,18 +38,6 @@
 
   services.gnome.gnome-keyring.enable = true;
 
-  networking.firewall.enable = false;
-
-  services.openssh =
-    {
-      enable = true;
-      settings =
-        {
-          KbdInteractiveAuthentication = false;
-          PasswordAuthentication = false;
-        };
-    };
-
   system.copySystemConfiguration = false;
 
   # This value determines the NixOS release from which the default
