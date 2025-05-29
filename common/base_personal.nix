@@ -1,5 +1,11 @@
 { pkgs, ... }:
 {
+  imports =
+    [
+      ./networking.nix
+      ./ssh.nix
+    ];
+
   programs.fuse.userAllowOther = true;
 
   services.openssh.extraConfig =

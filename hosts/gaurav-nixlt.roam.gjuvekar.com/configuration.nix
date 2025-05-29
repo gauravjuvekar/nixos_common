@@ -32,8 +32,6 @@
 
   services.gnome.gnome-keyring.enable = true;
 
-  networking.firewall.enable = false;
-
   system.copySystemConfiguration = false;
 
   # This value determines the NixOS release from which the default
