@@ -40,6 +40,8 @@
 
   system.copySystemConfiguration = false;
 
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBmEgqsCVOhdqv9mChSwFjqdMBOS4K4ojkGH6AcH+8Nh root@dt";
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
