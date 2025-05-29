@@ -33,6 +33,7 @@
 
   system.copySystemConfiguration = false;
 
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAax1ZKIUjYddougXLZ2HSU+6s17YLg6N+cFq3DN+kQ0 root@nixos";
   age.secrets =
     {
       user-passwd.rekeyFile = ../../keys/secrets/gaurav-passwd.age;
