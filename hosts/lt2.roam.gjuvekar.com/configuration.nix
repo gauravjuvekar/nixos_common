@@ -32,11 +32,6 @@
   system.copySystemConfiguration = false;
 
   age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAax1ZKIUjYddougXLZ2HSU+6s17YLg6N+cFq3DN+kQ0 root@nixos";
-  age.secrets =
-    {
-      user-passwd.rekeyFile = ../../keys/secrets/gaurav-passwd.age;
-    };
-  users.users.gaurav.hashedPasswordFile = config.age.secrets.user-passwd.path;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
