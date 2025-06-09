@@ -18,7 +18,11 @@
       withUWSM = true;
     };
   programs.niri.enable = true;
-  security.pam.services.hyprlock = {};
+  security.pam.services =
+    {
+      hyprlock = {};
+      swaylock = {};
+    };
 
   services.libinput.enable = true;
 
