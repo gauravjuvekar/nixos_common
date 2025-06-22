@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   imports =
     [
@@ -8,6 +8,7 @@
       ../../common/base_personal.nix
       ../../common/graphical.nix
       ../../common/interactive.nix
+      ../../common/networking_open_wifi.nix
       ../../common/physical_access.nix
       ../../common/user_personal.nix
       ./snapper.nix
