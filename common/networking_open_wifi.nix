@@ -8,14 +8,14 @@
             connection = {
               id = "gaurav1";
               permission = "";
-              type = "wifi";
+              type = "802-11-wireless";
               # interface-name
             };
-            wifi = {
+            "802-11-wireless" = {
               mode = "infrastructure";
               ssid = "gaurav1";
             };
-            wifi-security = {
+            "802-11-wireless-security" = {
               auth-alg = "open";
               key-mgmt = "wpa-psk";
               psk-flags = "1"; # secrets from agent
@@ -32,14 +32,14 @@
             connection = {
               id = "NV_VISITOR";
               permission = "";
-              type = "wifi";
+              type = "802-11-wireless";
               # interface-name
             };
-            wifi = {
+            "802-11-wireless" = {
               mode = "infrastructure";
               ssid = "NV_VISITOR";
             };
-            wifi-security = {
+            "802-11-wireless-security" = {
               auth-alg = "open";
               key-mgmt = "wpa-psk";
               psk-flags = "1"; # secrets from agent
@@ -55,24 +55,21 @@
         };
       secrets.entries =
         let
-          gaurav1 = config.networking.networkmanager.ensureProfiles.profiles.gaurav1;
-          nv_visitor = config.networking.networkmanager.ensureProfiles.profiles.nv_visitor;
+          mkEntry = {profile, file}: {
+            file = file;
+            key = "psk";
+            matchId = profile.connection.id;
+            matchSetting = "802-11-wireless-security";
+            matchType = profile.connection.type;
+          };
         in
         [
-          {
-            file = config.age.secrets.wifi-passwd-gaurav1.path;
-            key = "psk";
-            matchId = gaurav1.connection.id;
-            matchSetting = "wifi-security";
-            matchType = gaurav1.connection.type;
-          }
-          {
-            file = config.age.secrets.wifi-passwd-nv_visitor.path;
-            key = "psk";
-            matchId = nv_visitor.connection.id;
-            matchSetting = "wifi-security";
-            matchType = nv_visitor.connection.type;
-          }
+          (mkEntry {
+            profile = config.networking.networkmanager.ensureProfiles.profiles.gaurav1;
+            file = config.age.secrets.wifi-passwd-gaurav1.path;})
+          (mkEntry {
+            profile = config.networking.networkmanager.ensureProfiles.profiles.nv_visitor;
+            file = config.age.secrets.wifi-passwd-nv_visitor.path;})
         ];
     };
 
