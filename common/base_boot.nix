@@ -35,11 +35,15 @@
       supportedFilesystems = [ "btrfs" "ext4" "vfat" ];
       systemd =
         {
-          enable = true;
-          contents =
-            {
-              "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
-            };
+        enable = true;
+        extraConfig =
+          ''
+            StatusUnitFormat=name
+          '';
+        contents =
+          {
+            "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
+          };
         };
     };
 

@@ -14,7 +14,15 @@
     '';
 
     systemd =
+      let
+        systemd_config_str = ''
+            StatusUnitFormat=combined
+        '';
+      in
       {
+        extraConfig = systemd_config_str;
+        user.extraConfig = systemd_config_str;
+
         slices."nix-daemon".sliceConfig =
           {
             ManagedOOMMemoryPressure = "kill";
