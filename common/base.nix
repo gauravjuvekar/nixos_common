@@ -18,7 +18,7 @@
         slices."nix-daemon".sliceConfig =
           {
             ManagedOOMMemoryPressure = "kill";
-            ManagedOOMMemmoryPressureLimit = "90%";
+            ManagedOOMMemoryPressureLimit = "90%";
           };
 
         services."nix-daemon".serviceConfig =
