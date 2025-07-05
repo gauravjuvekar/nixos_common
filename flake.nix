@@ -71,6 +71,15 @@
                   ./hosts/lt2.roam.gjuvekar.com/configuration.nix
                 ];
             };
+          "gjuvekar-lt.client.nvidia.com" = nixpkgs.lib.nixosSystem {
+              system = flake-utils.lib.system.x86_64-linux;
+              modules =
+                [
+                  inputs.agenix.nixosModules.default
+                  inputs.agenix-rekey.nixosModules.default
+                  ./hosts/gjuvekar-lt.client.nvidia.com/configuration.nix
+                ];
+            };
           live = nixpkgs.lib.nixosSystem {
               system = flake-utils.lib.system.x86_64-linux;
               modules =
