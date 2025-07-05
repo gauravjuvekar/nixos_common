@@ -32,10 +32,13 @@
   services.libinput.enable = true;
 
   services.gnome.gnome-keyring.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.xserver =
+  services.displayManager =
     {
-      enable = true;
-      displayManager.gdm.enable = false;
+      gdm.enable = false;
+      sddm =
+        {
+          enable = true;
+          wayland.enable = true;
+        };
     };
 }
