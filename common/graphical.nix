@@ -3,6 +3,7 @@
   imports =
     [
       ./sound.nix
+      ./cinnamon/cinnamon.nix
     ];
 
   environment.systemPackages = with pkgs;
@@ -36,6 +37,5 @@
     {
       enable = true;
       displayManager.gdm.enable = false;
-      desktopManager.cinnamon.enable = true;
     };
 }
