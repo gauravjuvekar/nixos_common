@@ -22,10 +22,15 @@
     {
       hyprlock = {};
       swaylock = {};
+      sddm =
+        {
+          enableGnomeKeyring = true;
+        };
     };
 
   services.libinput.enable = true;
 
+  services.gnome.gnome-keyring.enable = true;
   services.displayManager.sddm.enable = true;
   services.xserver =
     {
