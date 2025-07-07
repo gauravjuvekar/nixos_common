@@ -34,11 +34,6 @@
   services.gnome.gnome-keyring.enable = true;
   services.displayManager =
     {
-      gdm.enable = false;
-      sddm =
-        {
-          enable = true;
-          wayland.enable = true;
-        };
+      gdm.enable = true;
     };
 }
