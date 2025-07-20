@@ -12,8 +12,9 @@
       curl
       fd
       git
+      nh
       nix-diff
-      #nix-du Bug https://github.com/symphorien/nix-du/issues/23
+      nix-du
       nix-output-monitor
       nix-tree
       nvd
