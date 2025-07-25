@@ -14,7 +14,16 @@
 
   systemd.services."xe-daemon".enable = false;
 
-  boot.kernelModules = [ "dm-raid" "dm-integrity" ];
+  boot.kernelModules =
+    [
+      "btrfs"
+      "dm-integrity"
+      "dm-raid"
+      "dm-snapshot"
+      "exfat"
+      "ext4"
+      "vfat"
+    ];
 
   environment.systemPackages = with pkgs;
     [
