@@ -1,14 +1,14 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, modulesPath, ... }:
 {
   imports =
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.loader.grub.useOSProber = false;
-  boot.loader.grub.extraGrubInstallArgs = [
-#    "--verbose"
-    "--modules=nativedisk part_gpt diskfilter lvm mdraid1x"
-  ];
+  boot.loader.grub.extraGrubInstallArgs =
+    [
+      "--modules=nativedisk part_gpt diskfilter lvm mdraid1x"
+    ];
   boot.loader.grub.extraEntries = ''
     menuentry Windows {
       insmod part_gpt
@@ -34,7 +34,7 @@
       encrypted =
         {
           enable = true;
-          blkDev = "/dev/disk/by-uuid/22d33bf1-e4ad-4fb3-bdc7-c1a6e2244206";
+          blkDev = "/dev/disk/by-uuid/cd0dbc3d-7458-4d11-8a00-f9ea61baaea8";
           label  = "main_os_crypt";
         };
     };
@@ -52,12 +52,11 @@
     };
 
   boot.initrd.luks.devices."main_os_crypt".device =
-    "/dev/disk/by-uuid/22d33bf1-e4ad-4fb3-bdc7-c1a6e2244206";
+    "/dev/disk/by-uuid/cd0dbc3d-7458-4d11-8a00-f9ea61baaea8";
 
   fileSystems."/boot/efi" =
     { device = "/dev/disk/by-uuid/6FA7-FA84";
       fsType = "vfat";
-      #options = [ "fmask=0022" "dmask=0022" ];
     };
 
   fileSystems."/nix" =
@@ -85,7 +84,7 @@
     };
 
   environment.etc."crypttab".text = ''
-      main_os_crypt   UUID=22d33bf1-e4ad-4fb3-bdc7-c1a6e2244206 none
+      main_os_crypt   UUID=cd0dbc3d-7458-4d11-8a00-f9ea61baaea8 none
       main_boot_crypt UUID=2d47987a-cf3d-4693-bb18-d0c8312d2924 /root/boot.key
     '';
 
