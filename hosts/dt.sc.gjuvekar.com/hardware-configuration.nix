@@ -23,7 +23,7 @@
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "nvme" ];
-  boot.initrd.kernelModules = [ "nvidia" ];
+  boot.initrd.kernelModules = [ "nvidia" "dm_crypt" "raid1" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ config.hardware.nvidia.package ];
 
@@ -31,24 +31,11 @@
     { device = "/dev/disk/by-uuid/e8c01229-6f85-482c-a89c-5a15f7b9892b";
       fsType = "btrfs";
       options = [ "subvol=@root" ];
-      encrypted =
-        {
-          enable = true;
-          blkDev = "/dev/disk/by-uuid/cd0dbc3d-7458-4d11-8a00-f9ea61baaea8";
-          label  = "main_os_crypt";
-        };
     };
 
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/2a4b3410-ef8a-4d29-9adf-d9a01e3ac495";
       fsType = "ext4";
-      encrypted =
-        {
-          enable  = true;
-          blkDev  = "/dev/disk/by-uuid/2d47987a-cf3d-4693-bb18-d0c8312d2924";
-          label   = "main_boot_crypt";
-          keyFile = "/sysroot/root/boot.key";
-        };
     };
 
   boot.initrd.luks.devices."main_os_crypt".device =
@@ -84,7 +71,6 @@
     };
 
   environment.etc."crypttab".text = ''
-      main_os_crypt   UUID=cd0dbc3d-7458-4d11-8a00-f9ea61baaea8 none
       main_boot_crypt UUID=2d47987a-cf3d-4693-bb18-d0c8312d2924 /root/boot.key
     '';
 
