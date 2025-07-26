@@ -39,6 +39,7 @@
           emergencyAccess = true;
           extraConfig =
             ''
+              DefaultDeviceTimeoutSec=20
               StatusUnitFormat=name
             '';
           contents =
