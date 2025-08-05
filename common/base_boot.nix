@@ -37,11 +37,11 @@
         {
           enable = true;
           emergencyAccess = true;
-          extraConfig =
-            ''
-              DefaultDeviceTimeoutSec=20
-              StatusUnitFormat=name
-            '';
+          settings.Manager =
+            {
+              DefaultDeviceTimeoutSec = 20;
+              StatusUnitFormat = "name";
+            };
           contents =
             {
               "/etc/lvm/lvm.conf".source = ./files/lvm.conf;
