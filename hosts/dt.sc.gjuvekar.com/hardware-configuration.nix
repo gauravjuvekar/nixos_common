@@ -24,6 +24,10 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "nvme" ];
   boot.initrd.kernelModules = [ "nvidia" "dm_crypt" "raid1" ];
+
+  # Bug https://github.com/NixOS/nixpkgs/issues/428775
+  boot.initrd.systemd.services."lvm-activate-vgRaid1Disks3.service".after = [ "systemd-modules-load.service" ];
+
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ config.hardware.nvidia.package ];
 
