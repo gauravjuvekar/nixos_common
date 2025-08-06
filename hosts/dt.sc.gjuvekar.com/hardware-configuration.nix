@@ -29,6 +29,10 @@
   boot.initrd.systemd.services."lvm-activate-vgRaid1Disks3".after = [ "systemd-modules-load.service" ];
   boot.initrd.systemd.services."lvm-activate-vgRaid1Disks3".requires = [ "systemd-modules-load.service" ];
 
+  boot.initrd.systemd.services."systemd-udev-trigger".after = [ "systemd-modules-load.service" ];
+  boot.initrd.systemd.services."systemd-udev-trigger".requires = [ "systemd-modules-load.service" ];
+
+
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ config.hardware.nvidia.package ];
 
