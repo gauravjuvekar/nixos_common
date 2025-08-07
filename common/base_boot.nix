@@ -37,6 +37,11 @@
         {
           enable = true;
           emergencyAccess = true;
+          services =
+            {
+              # Bug https://github.com/NixOS/nixpkgs/issues/428775
+              "systemd-udevd".after = [ "systemd-modules-load.service" ];
+            };
           settings.Manager =
             {
               DefaultDeviceTimeoutSec = 20;

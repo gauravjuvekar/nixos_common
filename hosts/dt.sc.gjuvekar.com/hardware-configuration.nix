@@ -25,12 +25,6 @@
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "nvme" ];
   boot.initrd.kernelModules = [ "nvidia" "dm_crypt" "raid1" ];
 
-  # Bug https://github.com/NixOS/nixpkgs/issues/428775
-
-  boot.initrd.systemd.services."systemd-udevd".after = [ "systemd-modules-load.service" ];
-  boot.initrd.systemd.services."systemd-udev".requires = [ "systemd-modules-load.service" ];
-
-
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ config.hardware.nvidia.package ];
 
