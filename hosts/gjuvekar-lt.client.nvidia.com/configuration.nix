@@ -4,6 +4,7 @@
     [
       ../../common/age.nix
       ../../common/base.nix
+      ../../common/base_laptop.nix
       ../../common/graphical.nix
       ../../common/interactive.nix
       ../../common/networking_open_wifi.nix
