@@ -2,8 +2,9 @@
 {
   imports =
     [
-      ./sound.nix
       ./cinnamon/cinnamon.nix
+      ./sound.nix
+      ./wireshark.nix
     ];
 
   environment.systemPackages = with pkgs;
