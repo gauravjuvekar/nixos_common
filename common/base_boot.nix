@@ -54,7 +54,7 @@
         };
     };
 
-  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_6_16;
+  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
   boot.swraid.enable = true;
 }
