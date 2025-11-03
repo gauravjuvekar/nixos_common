@@ -1,18 +1,21 @@
-{ config, pkgs, ... }:
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-      ../../common/age.nix
-      ../../common/base.nix
-      ../../common/base_personal.nix
-      ../../common/graphical.nix
-      ../../common/interactive.nix
-      ../../common/networking_open_wifi.nix
-      ../../common/physical_access.nix
-      ../../common/user_personal.nix
-      ./snapper.nix
-    ];
+  config,
+  pkgs,
+  ...
+}:
+{
+  imports = [
+    ./hardware-configuration.nix
+    ../../common/age.nix
+    ../../common/base.nix
+    ../../common/base_personal.nix
+    ../../common/graphical.nix
+    ../../common/interactive.nix
+    ../../common/networking_open_wifi.nix
+    ../../common/physical_access.nix
+    ../../common/user_personal.nix
+    ./snapper.nix
+  ];
 
   nixpkgs.config.allowUnfree = true;
   networking.hostName = "dt";
@@ -21,21 +24,18 @@
   time.timeZone = "America/Los_Angeles";
 
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia =
-  {
+  hardware.nvidia = {
     open = true;
     modesetting.enable = true;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
 
-
-  programs.gnupg.agent =
-    {
-      enable = true;
-      enableSSHSupport = true;
-      pinentryPackage = pkgs.pinentry-curses;
-    };
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+    pinentryPackage = pkgs.pinentry-curses;
+  };
 
   services.gnome.gnome-keyring.enable = true;
 

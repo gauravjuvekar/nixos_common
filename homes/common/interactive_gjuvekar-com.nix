@@ -1,9 +1,8 @@
 { ... }:
 {
-  imports =
-    [
-      ./pass/pass.nix
-      ./syncthing/syncthing.nix
-      ./fsaction/fsaction.nix
-    ];
+  imports = [
+    ./pass/pass.nix
+    ./syncthing/syncthing.nix
+    ./fsaction/fsaction.nix
+  ];
 }

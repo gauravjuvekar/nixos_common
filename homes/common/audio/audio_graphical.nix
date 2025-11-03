@@ -1,9 +1,8 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs;
-    [
-      audacity
-      pwvucontrol
-      qpwgraph
-    ];
+  home.packages = with pkgs; [
+    audacity
+    pwvucontrol
+    qpwgraph
+  ];
 }

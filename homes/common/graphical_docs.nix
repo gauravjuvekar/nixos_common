@@ -1,8 +1,8 @@
-{ pkgs, ... }: {
-  home.packages = with pkgs;
-    [
-      mate.atril
-      pdfarranger
-      sioyek
-    ];
+{ pkgs, ... }:
+{
+  home.packages = with pkgs; [
+    mate.atril
+    pdfarranger
+    sioyek
+  ];
 }

@@ -1,8 +1,7 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs;
-    [
-      # keymap # ZSA proprietary
-      vial
-    ];
+  home.packages = with pkgs; [
+    # keymap # ZSA proprietary
+    vial
+  ];
 }

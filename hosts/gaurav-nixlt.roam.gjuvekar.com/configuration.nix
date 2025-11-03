@@ -1,18 +1,17 @@
 { pkgs, ... }:
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-      ../../common/age.nix
-      ../../common/base.nix
-      ../../common/base_laptop.nix
-      ../../common/base_personal.nix
-      ../../common/graphical.nix
-      ../../common/interactive.nix
-      ../../common/physical_access.nix
-      ../../common/user_personal.nix
-      ./snapper.nix
-    ];
+  imports = [
+    ./hardware-configuration.nix
+    ../../common/age.nix
+    ../../common/base.nix
+    ../../common/base_laptop.nix
+    ../../common/base_personal.nix
+    ../../common/graphical.nix
+    ../../common/interactive.nix
+    ../../common/physical_access.nix
+    ../../common/user_personal.nix
+    ./snapper.nix
+  ];
 
   nixpkgs.config.allowUnfree = true;
 
@@ -24,12 +23,11 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.open = false;
 
-  programs.gnupg.agent =
-    {
-      enable = true;
-      enableSSHSupport = true;
-      pinentryPackage = pkgs.pinentry-curses;
-    };
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+    pinentryPackage = pkgs.pinentry-curses;
+  };
 
   services.gnome.gnome-keyring.enable = true;
 

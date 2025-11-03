@@ -1,9 +1,8 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs;
-    [
-      pipewire
-      pulseaudio
-      wireplumber
-    ];
+  home.packages = with pkgs; [
+    pipewire
+    pulseaudio
+    wireplumber
+  ];
 }

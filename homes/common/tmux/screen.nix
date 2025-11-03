@@ -1,15 +1,12 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs;
-    [
-      screen
-    ];
+  home.packages = with pkgs; [
+    screen
+  ];
 
-  home.file =
-    {
-      ".screenrc".text =
-        ''
-          escape ^Jj
-        '';
-    };
+  home.file = {
+    ".screenrc".text = ''
+      escape ^Jj
+    '';
+  };
 }

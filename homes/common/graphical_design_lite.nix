@@ -1,8 +1,11 @@
-{ config, pkgs, ... }:
 {
-  home.packages = with pkgs;
-    [
-      gimp-with-plugins
-      inkscape
-    ];
+  config,
+  pkgs,
+  ...
+}:
+{
+  home.packages = with pkgs; [
+    gimp-with-plugins
+    inkscape
+  ];
 }

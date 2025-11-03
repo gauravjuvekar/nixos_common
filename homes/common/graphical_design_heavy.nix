@@ -1,17 +1,19 @@
-{ config, pkgs, ... }:
 {
-  imports =
-    [
-      ./graphical_design_lite.nix
-    ];
+  config,
+  pkgs,
+  ...
+}:
+{
+  imports = [
+    ./graphical_design_lite.nix
+  ];
 
-  home.packages = with pkgs;
-    [
-      blender
-      freecad
-      josm
-      kicad
-      openscad
-      qgis
-    ];
+  home.packages = with pkgs; [
+    blender
+    freecad
+    josm
+    kicad
+    openscad
+    qgis
+  ];
 }

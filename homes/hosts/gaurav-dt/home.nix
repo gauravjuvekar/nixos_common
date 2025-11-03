@@ -1,24 +1,23 @@
 { ... }:
 {
-  imports =
-    [
-      ../../common/base.nix
-      ../../common/dev_heavy.nix
-      ../../common/fonts.nix
-      ../../common/graphical.nix
-      ../../common/graphical_apps.nix
-      ../../common/graphical_design_heavy.nix
-      ../../common/graphical_dev.nix
-      ../../common/graphical_docs.nix
-      ../../common/graphical_gjuvekar-com.nix
-      ../../common/graphical_yubikey.nix
-      ../../common/interactive.nix
-      ../../common/interactive_docs.nix
-      ../../common/interactive_gjuvekar-com.nix
-      ../../common/interactive_yubikey.nix
-      ../../common/user_gjuvekar-com.nix
-      ./monitors.nix
-    ];
+  imports = [
+    ../../common/base.nix
+    ../../common/dev_heavy.nix
+    ../../common/fonts.nix
+    ../../common/graphical.nix
+    ../../common/graphical_apps.nix
+    ../../common/graphical_design_heavy.nix
+    ../../common/graphical_dev.nix
+    ../../common/graphical_docs.nix
+    ../../common/graphical_gjuvekar-com.nix
+    ../../common/graphical_yubikey.nix
+    ../../common/interactive.nix
+    ../../common/interactive_docs.nix
+    ../../common/interactive_gjuvekar-com.nix
+    ../../common/interactive_yubikey.nix
+    ../../common/user_gjuvekar-com.nix
+    ./monitors.nix
+  ];
 
   fqdn = "dt.sc.gjuvekar.com";
 

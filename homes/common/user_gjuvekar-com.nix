@@ -5,9 +5,8 @@
   home.username = "gaurav";
   home.homeDirectory = "/home/gaurav";
 
-  programs.firefox.profiles."Personal" =
-    {
-      isDefault = true;
-      settings."network.trr.mode" = 3;
-    };
+  programs.firefox.profiles."Personal" = {
+    isDefault = true;
+    settings."network.trr.mode" = 3;
+  };
 }

@@ -1,7 +1,12 @@
-{ droid-sans-mono-dotted, pkgs, ... }:
+{
+  droid-sans-mono-dotted,
+  pkgs,
+  ...
+}:
 {
   fonts.fontconfig.enable = true;
-  home.packages = with pkgs;
+  home.packages =
+    with pkgs;
     [
       cantarell-fonts
       # corefonts
@@ -14,6 +19,6 @@
       noto-fonts
       open-fonts
       proggyfonts
-    ] ++ builtins.filter lib.attrsets.isDerivation (
-      builtins.attrValues pkgs.nerd-fonts);
+    ]
+    ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 }

@@ -1,8 +1,7 @@
 { ... }:
 {
-  home.file.".parallel/will-cite" =
-    {
-      enable = true;
-      text = "";
-    };
+  home.file.".parallel/will-cite" = {
+    enable = true;
+    text = "";
+  };
 }
