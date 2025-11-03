@@ -1,0 +1,11 @@
+[formatter.nix-alejandra]
+command = "alejandra"
+options = []
+includes = [ "*.nix" ]
+priority = 0
+
+[formatter.nix-nixfmt]
+command = "nixfmt"
+options = []
+includes = [ "*.nix" ]
+priority = 1

@@ -127,6 +127,11 @@
       in
       {
         devShells.deploy = import ./deploy/shell.nix { inherit pkgs; };
+        formatter = pkgs.writeShellApplication {
+          name = "treefmt-repo";
+          runtimeInputs = [ pkgs.alejandra pkgs.nixfmt pkgs.treefmt ];
+          text = "treefmt";
+        };
       }
     )
     // (
