@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+repo_base="$(git rev-parse --show-toplevel)"
+git status --porcelain | rg -e '^\?\? (.*)$' -o -r '$1' | \
+  parallel rm -fr "${repo_base:?}/{}"

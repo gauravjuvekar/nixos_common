@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+src="$1"
+dst="$2"
+
+dst_name="$(basename -- "$dst")"
+dst_ext="${dst_name#*.}"
+dst_fname="${dst_name%%.*}"
+dst_dir="$(dirname "$dst")"
+dst_zero="${dst_dir}/${dst_fname}_0.${dst_ext}"
+
+if [ -e "$dst" ]
+then
+  mv --no-clobber "$dst" "$dst_zero"
+fi
+
+if [ -e "$dst_zero" ]
+then
+  append=0
+  while [ -e "${dst_dir}/${dst_fname}_${append}.${dst_ext}" ]
+  do
+    append=$(( append + 1 ))
+  done
+  dst="${dst_dir}/${dst_fname}_${append}.${dst_ext}"
+fi
+mv --no-clobber "$src" "$dst"
