@@ -1,6 +1,6 @@
 { pkgs }:
-pkgs.mkShell {
-  nativeBuildInputs = with pkgs; [
+pkgs.mkShellNoCC {
+  packages = with pkgs; [
     agenix-rekey
     nixos-anywhere
     nixos-rebuild
