@@ -1,7 +1,7 @@
-{ ... }:
+{ config, ... }:
 {
   programs.wireshark = {
-    enable = true;
+    enable = config.hostinfo.isLocalGraphical;
     dumpcap.enable = true;
     usbmon.enable = true;
   };

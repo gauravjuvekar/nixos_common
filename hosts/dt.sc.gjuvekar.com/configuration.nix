@@ -21,6 +21,9 @@
   networking.hostName = "dt";
   networking.domain = "sc.gjuvekar.com";
 
+  hostinfo.isLaptop = false;
+  hostinfo.isLocalGraphical = true;
+
   time.timeZone = "America/Los_Angeles";
 
   services.xserver.videoDrivers = [ "nvidia" ];

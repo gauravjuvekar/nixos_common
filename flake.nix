@@ -40,6 +40,10 @@
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
+    std = {
+      url = "github:divnix/std";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     systems = {
       url = "github:nix-systems/default";
     };
@@ -48,34 +52,54 @@
   outputs =
     {
       self,
-      nixpkgs,
-      flake-utils,
+      std,
       ...
     }@inputs:
-    {
+    (std.growOn
+      {
+        inherit inputs;
+        cellsFrom = ./src;
+        cellBlocks = [
+          (std.blockTypes.functions "hostinfo")
+        ];
+      }
+      {
+        nixosModules = std.harvest inputs.self [
+          "modules"
+          "hostinfo"
+        ];
+      }
+    )
+    // {
       agenix-rekey = inputs.agenix-rekey.configure {
         userFlake = self;
         nixosConfigurations = self.nixosConfigurations;
       };
       nixosConfigurations = {
-        gaurav-nixlt = nixpkgs.lib.nixosSystem {
-          system = flake-utils.lib.system.x86_64-linux;
+        gaurav-nixlt = inputs.nixpkgs.lib.nixosSystem {
+          system = inputs.flake-utils.lib.system.x86_64-linux;
           modules = [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
             ./hosts/gaurav-nixlt.roam.gjuvekar.com/configuration.nix
           ];
         };
-        "dt.sc.gjuvekar.com" = nixpkgs.lib.nixosSystem {
-          system = flake-utils.lib.system.x86_64-linux;
+        "dt.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
+          system = inputs.flake-utils.lib.system.x86_64-linux;
           modules = [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
             ./hosts/dt.sc.gjuvekar.com/configuration.nix
+          ]
+          ++ [
+            (std.harvest inputs.self [
+              "modules"
+              "hostinfo"
+            ]).x86_64-linux
           ];
         };
-        "lt2.roam.gjuvekar.com" = nixpkgs.lib.nixosSystem {
-          system = flake-utils.lib.system.x86_64-linux;
+        "lt2.roam.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
+          system = inputs.flake-utils.lib.system.x86_64-linux;
           modules = [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
@@ -83,20 +107,20 @@
             ./hosts/lt2.roam.gjuvekar.com/configuration.nix
           ];
         };
-        "gjuvekar-lt.client.nvidia.com" = nixpkgs.lib.nixosSystem {
-          system = flake-utils.lib.system.x86_64-linux;
+        "gjuvekar-lt.client.nvidia.com" = inputs.nixpkgs.lib.nixosSystem {
+          system = inputs.flake-utils.lib.system.x86_64-linux;
           modules = [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
             ./hosts/gjuvekar-lt.client.nvidia.com/configuration.nix
           ];
         };
-        live = nixpkgs.lib.nixosSystem {
-          system = flake-utils.lib.system.x86_64-linux;
+        live = inputs.nixpkgs.lib.nixosSystem {
+          system = inputs.flake-utils.lib.system.x86_64-linux;
           modules = [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
-            (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix")
+            (inputs.nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix")
             ./hosts/live/configuration.nix
           ];
         };
@@ -105,7 +129,7 @@
     // inputs.flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs {
+        pkgs = import inputs.nixpkgs {
           inherit system;
           overlays = [
             inputs.agenix-rekey.overlays.default
