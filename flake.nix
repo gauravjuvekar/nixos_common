@@ -60,14 +60,10 @@
         inherit inputs;
         cellsFrom = ./src;
         cellBlocks = [
-          (std.blockTypes.functions "hostinfo")
+          (std.blockTypes.anything "hostinfo")
         ];
       }
       {
-        nixosModules = std.harvest inputs.self [
-          "modules"
-          "hostinfo"
-        ];
       }
     )
     // {
@@ -89,13 +85,8 @@
           modules = [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
+            ./src/modules/hostinfo/default.nix
             ./hosts/dt.sc.gjuvekar.com/configuration.nix
-          ]
-          ++ [
-            (std.harvest inputs.self [
-              "modules"
-              "hostinfo"
-            ]).x86_64-linux
           ];
         };
         "lt2.roam.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
