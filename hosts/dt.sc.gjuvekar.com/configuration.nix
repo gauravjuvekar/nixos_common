@@ -27,11 +27,12 @@
   time.timeZone = "America/Los_Angeles";
 
   services.xserver.videoDrivers = [ "nvidia" ];
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_17;
   hardware.nvidia = {
     open = true;
     modesetting.enable = true;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    package = config.boot.kernelPackages.nvidiaPackages.production;
   };
 
   programs.gnupg.agent = {
