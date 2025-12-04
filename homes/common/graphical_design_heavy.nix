@@ -12,7 +12,7 @@
     blender
     freecad
     josm
-    kicad
+    # kicad # broken
     openscad
     qgis
   ];
