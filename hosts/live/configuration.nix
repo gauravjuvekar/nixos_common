@@ -29,5 +29,7 @@
 
   environment.systemPackages = with pkgs; [
     cloudflare-warp
+    smplayer
+    vlc
   ];
 }

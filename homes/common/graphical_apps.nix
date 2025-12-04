@@ -13,6 +13,7 @@
     # openshot-qt # qtwebengine-5.15.19 is insecure
     qalculate-gtk
     remmina
+    smplayer
     thunderbird
     vlc
   ];
