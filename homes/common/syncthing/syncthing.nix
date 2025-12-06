@@ -20,6 +20,15 @@
           id = "WG3P7FK-ZXS2LU7-BCF65RY-JIHMNFO-VFXRNQO-FTLZFW7-W4SUVKV-3OGFBAA";
         };
       };
+      folders = {
+        "${config.home.homeDirectory}/Sync" = {
+          id = "default";
+          devices = [
+            "dt.sc.gjuvekar.com"
+            "lt2.roam.gjuvekar.com"
+          ];
+        };
+      };
     };
   };
 }
