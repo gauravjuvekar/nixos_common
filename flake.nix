@@ -40,10 +40,6 @@
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
-    std = {
-      url = "github:divnix/std";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     systems = {
       url = "github:nix-systems/default";
     };
@@ -52,21 +48,9 @@
   outputs =
     {
       self,
-      std,
       ...
     }@inputs:
-    (std.growOn
-      {
-        inherit inputs;
-        cellsFrom = ./src;
-        cellBlocks = [
-          (std.blockTypes.anything "hostinfo")
-        ];
-      }
-      {
-      }
-    )
-    // {
+    {
       agenix-rekey = inputs.agenix-rekey.configure {
         userFlake = self;
         nixosConfigurations = self.nixosConfigurations;
