@@ -13,6 +13,7 @@
     vimdiffAlias = true;
   };
   home.packages = with pkgs; [
+    (lib.hiPrio gcc) # Still need a compiler for treesitter # HOLY SHIT, Clang is broken GH 277564, 153759, 147342
     ltex-ls
     lua-language-server
     nixd
