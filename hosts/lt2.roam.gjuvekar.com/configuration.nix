@@ -16,6 +16,8 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  hostinfo.isLaptop = true;
+
   networking.hostName = "lt2";
   networking.domain = "roam.gjuvekar.com";
 

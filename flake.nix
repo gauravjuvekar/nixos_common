@@ -78,7 +78,7 @@
               };
               home-manager.users."gaurav" = {
                 imports = [
-                  ./homes/hosts/gaurav-nixlt/home.nix
+                  ./homes/hosts/gaurav-dt/home.nix
                 ];
               };
             }
@@ -90,7 +90,22 @@
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
             inputs.disko.nixosModules.default
+            ./src/modules/hostinfo/default.nix
             ./hosts/lt2.roam.gjuvekar.com/configuration.nix
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.extraSpecialArgs = {
+                inputs = inputs;
+                firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
+                droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
+              };
+              home-manager.users."gaurav" = {
+                imports = [
+                  ./homes/hosts/lt2.roam.gjuvekar.com/gaurav/home.nix
+                ];
+              };
+            }
           ];
         };
         "gjuvekar-lt.client.nvidia.com" = inputs.nixpkgs.lib.nixosSystem {
