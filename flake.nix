@@ -71,6 +71,19 @@
             inputs.agenix-rekey.nixosModules.default
             ./src/modules/hostinfo/default.nix
             ./hosts/dt.sc.gjuvekar.com/configuration.nix
+            inputs.home-manager.nixosModules.home-manager {
+              home-manager.useGlobalPkgs = true;
+              home-manager.extraSpecialArgs = {
+                inputs = inputs;
+                firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
+                droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
+              };
+              home-manager.users."gaurav" = {
+                imports = [
+                  ./homes/hosts/gaurav-nixlt/home.nix
+                ];
+              };
+            }
           ];
         };
         "lt2.roam.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
