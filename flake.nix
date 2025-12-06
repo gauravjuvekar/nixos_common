@@ -84,7 +84,7 @@
             }
           ];
         };
-        "lt2.roam.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
+        lt2 = inputs.nixpkgs.lib.nixosSystem {
           system = inputs.flake-utils.lib.system.x86_64-linux;
           modules = [
             inputs.agenix.nixosModules.default
