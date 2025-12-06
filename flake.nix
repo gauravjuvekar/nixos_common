@@ -46,10 +46,7 @@
   };
 
   outputs =
-    {
-      self,
-      ...
-    }@inputs:
+    { self, ... }@inputs:
     {
       agenix-rekey = inputs.agenix-rekey.configure {
         userFlake = self;
@@ -71,7 +68,8 @@
             inputs.agenix-rekey.nixosModules.default
             ./src/modules/hostinfo/default.nix
             ./hosts/dt.sc.gjuvekar.com/configuration.nix
-            inputs.home-manager.nixosModules.home-manager {
+            inputs.home-manager.nixosModules.home-manager
+            {
               home-manager.useGlobalPkgs = true;
               home-manager.extraSpecialArgs = {
                 inputs = inputs;
