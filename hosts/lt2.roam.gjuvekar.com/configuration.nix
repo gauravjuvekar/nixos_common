@@ -21,7 +21,7 @@
   networking.hostName = "lt2";
   networking.domain = "roam.gjuvekar.com";
 
-  time.timeZone = "America/Los_Angeles";
+  time.timeZone = "Asia/Taipei";
 
   programs.gnupg.agent = {
     enable = true;
