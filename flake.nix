@@ -139,6 +139,8 @@
       in
       {
         devShells.deploy = import ./deploy/shell.nix { inherit pkgs; };
+        devShells.yubikey-provision = import ./scripts/yubikey-provision/shell.nix { inherit pkgs; };
+
         formatter = pkgs.writeShellApplication {
           name = "treefmt-repo";
           runtimeInputs = [
