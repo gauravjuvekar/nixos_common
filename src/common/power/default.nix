@@ -7,7 +7,12 @@
   ...
 }:
 let
-  hostinfo = if (moduleContext == "home-manager") then osConfig.hostinfo else config.hostinfo;
+  hostinfo =
+    {
+      home-manager = osConfig.hostinfo;
+      nixos-system = config.hostinfo;
+    }
+    ."${moduleContext}";
 in
 {
   config =
