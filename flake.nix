@@ -122,10 +122,28 @@
           };
           "gjuvekar-lt.client.nvidia.com" = inputs.nixpkgs.lib.nixosSystem {
             system = inputs.flake-utils.lib.system.x86_64-linux;
+            specialArgs = {
+              moduleContext = "nixos-system";
+            };
             modules = [
               inputs.agenix.nixosModules.default
               inputs.agenix-rekey.nixosModules.default
               ./hosts/gjuvekar-lt.client.nvidia.com/configuration.nix
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.extraSpecialArgs = {
+                  moduleContext = "home-manager";
+                  inputs = inputs;
+                  firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
+                  droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
+                };
+                home-manager.users."gjuvekar" = {
+                  imports = commonModuleImports ++ [
+                    ./homes/hosts/gjuvekar-lt.client.nvidia.com/gjuvekar/home.nix
+                  ];
+                };
+              }
+              inputs.home-manager.nixosModules.home-manager
             ];
           };
           live = inputs.nixpkgs.lib.nixosSystem {
