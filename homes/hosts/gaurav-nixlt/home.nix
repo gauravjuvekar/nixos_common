@@ -17,7 +17,6 @@
     ../../common/interactive_docs.nix
     ../../common/interactive_gjuvekar-com.nix
     ../../common/interactive_yubikey.nix
-    ../../common/laptop.nix
     ../../common/user_gjuvekar-com.nix
   ];
 

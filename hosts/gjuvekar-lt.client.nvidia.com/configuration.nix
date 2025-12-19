@@ -3,12 +3,13 @@
   imports = [
     ../../common/age.nix
     ../../common/base.nix
-    ../../common/base_laptop.nix
     ../../common/graphical.nix
     ../../common/interactive.nix
     ../../common/networking_open_wifi.nix
     ../../common/physical_access.nix
   ];
+
+  hostinfo.isLaptop = true;
 
   networking.hostName = "gjuvekar-lt";
   networking.domain = "client.nvidia.com";

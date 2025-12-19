@@ -13,7 +13,6 @@
     ../../common/interactive.nix
     ../../common/interactive_docs.nix
     ../../common/interactive_yubikey.nix
-    ../../common/laptop.nix
   ];
 
   fullname = "Gaurav Juvekar";

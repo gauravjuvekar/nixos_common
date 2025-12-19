@@ -4,7 +4,6 @@
     ./hardware-configuration.nix
     ../../common/age.nix
     ../../common/base.nix
-    ../../common/base_laptop.nix
     ../../common/base_personal.nix
     ../../common/graphical.nix
     ../../common/interactive.nix
@@ -14,6 +13,8 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
+
+  hostinfo.isLaptop = true;
 
   networking.hostName = "gaurav-nixlt";
   networking.domain = "roam.gjuvekar.com";

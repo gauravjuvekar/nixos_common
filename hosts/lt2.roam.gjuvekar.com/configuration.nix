@@ -4,7 +4,6 @@
     ./hardware-configuration.nix
     ../../common/age.nix
     ../../common/base.nix
-    ../../common/base_laptop.nix
     ../../common/base_personal.nix
     ../../common/graphical.nix
     ../../common/interactive.nix
