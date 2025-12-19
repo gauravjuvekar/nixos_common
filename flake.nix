@@ -52,80 +52,92 @@
         userFlake = self;
         nixosConfigurations = self.nixosConfigurations;
       };
-      nixosConfigurations = {
-        gaurav-nixlt = inputs.nixpkgs.lib.nixosSystem {
-          system = inputs.flake-utils.lib.system.x86_64-linux;
-          modules = [
-            inputs.agenix.nixosModules.default
-            inputs.agenix-rekey.nixosModules.default
-            ./hosts/gaurav-nixlt.roam.gjuvekar.com/configuration.nix
-          ];
+      nixosConfigurations =
+        let
+          commonModuleImports = inputs.nixpkgs.lib.fileset.toList (
+            inputs.nixpkgs.lib.fileset.fileFilter (f: f.name == "default.nix") ./src
+          );
+        in
+        {
+          gaurav-nixlt = inputs.nixpkgs.lib.nixosSystem {
+            system = inputs.flake-utils.lib.system.x86_64-linux;
+            modules = [
+              inputs.agenix.nixosModules.default
+              inputs.agenix-rekey.nixosModules.default
+              ./hosts/gaurav-nixlt.roam.gjuvekar.com/configuration.nix
+            ];
+          };
+          "dt.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
+            system = inputs.flake-utils.lib.system.x86_64-linux;
+            specialArgs = {
+              moduleContext = "nixos-system";
+            };
+            modules = commonModuleImports ++ [
+              inputs.agenix.nixosModules.default
+              inputs.agenix-rekey.nixosModules.default
+              ./hosts/dt.sc.gjuvekar.com/configuration.nix
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.extraSpecialArgs = {
+                  moduleContext = "home-manager";
+                  inputs = inputs;
+                  firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
+                  droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
+                };
+                home-manager.users."gaurav" = {
+                  imports = commonModuleImports ++ [
+                    ./homes/hosts/gaurav-dt/home.nix
+                  ];
+                };
+              }
+            ];
+          };
+          lt2 = inputs.nixpkgs.lib.nixosSystem {
+            system = inputs.flake-utils.lib.system.x86_64-linux;
+            specialArgs = {
+              moduleContext = "nixos-system";
+            };
+            modules = commonModuleImports ++ [
+              inputs.agenix.nixosModules.default
+              inputs.agenix-rekey.nixosModules.default
+              inputs.disko.nixosModules.default
+              ./hosts/lt2.roam.gjuvekar.com/configuration.nix
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.extraSpecialArgs = {
+                  moduleContext = "home-manager";
+                  inputs = inputs;
+                  firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
+                  droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
+                };
+                home-manager.users."gaurav" = {
+                  imports = commonModuleImports ++ [
+                    ./homes/hosts/lt2.roam.gjuvekar.com/gaurav/home.nix
+                  ];
+                };
+              }
+            ];
+          };
+          "gjuvekar-lt.client.nvidia.com" = inputs.nixpkgs.lib.nixosSystem {
+            system = inputs.flake-utils.lib.system.x86_64-linux;
+            modules = [
+              inputs.agenix.nixosModules.default
+              inputs.agenix-rekey.nixosModules.default
+              ./hosts/gjuvekar-lt.client.nvidia.com/configuration.nix
+            ];
+          };
+          live = inputs.nixpkgs.lib.nixosSystem {
+            system = inputs.flake-utils.lib.system.x86_64-linux;
+            modules = [
+              inputs.agenix.nixosModules.default
+              inputs.agenix-rekey.nixosModules.default
+              (inputs.nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix")
+              ./hosts/live/configuration.nix
+            ];
+          };
         };
-        "dt.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
-          system = inputs.flake-utils.lib.system.x86_64-linux;
-          modules = [
-            inputs.agenix.nixosModules.default
-            inputs.agenix-rekey.nixosModules.default
-            ./src/modules/hostinfo/default.nix
-            ./hosts/dt.sc.gjuvekar.com/configuration.nix
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.extraSpecialArgs = {
-                inputs = inputs;
-                firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
-                droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
-              };
-              home-manager.users."gaurav" = {
-                imports = [
-                  ./homes/hosts/gaurav-dt/home.nix
-                ];
-              };
-            }
-          ];
-        };
-        lt2 = inputs.nixpkgs.lib.nixosSystem {
-          system = inputs.flake-utils.lib.system.x86_64-linux;
-          modules = [
-            inputs.agenix.nixosModules.default
-            inputs.agenix-rekey.nixosModules.default
-            inputs.disko.nixosModules.default
-            ./src/modules/hostinfo/default.nix
-            ./hosts/lt2.roam.gjuvekar.com/configuration.nix
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.extraSpecialArgs = {
-                inputs = inputs;
-                firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
-                droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
-              };
-              home-manager.users."gaurav" = {
-                imports = [
-                  ./homes/hosts/lt2.roam.gjuvekar.com/gaurav/home.nix
-                ];
-              };
-            }
-          ];
-        };
-        "gjuvekar-lt.client.nvidia.com" = inputs.nixpkgs.lib.nixosSystem {
-          system = inputs.flake-utils.lib.system.x86_64-linux;
-          modules = [
-            inputs.agenix.nixosModules.default
-            inputs.agenix-rekey.nixosModules.default
-            ./hosts/gjuvekar-lt.client.nvidia.com/configuration.nix
-          ];
-        };
-        live = inputs.nixpkgs.lib.nixosSystem {
-          system = inputs.flake-utils.lib.system.x86_64-linux;
-          modules = [
-            inputs.agenix.nixosModules.default
-            inputs.agenix-rekey.nixosModules.default
-            (inputs.nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix")
-            ./hosts/live/configuration.nix
-          ];
-        };
-      };
     }
     // inputs.flake-utils.lib.eachDefaultSystem (
       system:
