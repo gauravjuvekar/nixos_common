@@ -125,7 +125,7 @@
             specialArgs = {
               moduleContext = "nixos-system";
             };
-            modules = [
+            modules = commonModuleImports ++ [
               inputs.agenix.nixosModules.default
               inputs.agenix-rekey.nixosModules.default
               ./hosts/gjuvekar-lt.client.nvidia.com/configuration.nix
