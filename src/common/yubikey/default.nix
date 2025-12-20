@@ -1,0 +1,41 @@
+{
+  config,
+  lib,
+  moduleContext,
+  osConfig ? null,
+  pkgs,
+  ...
+}:
+let
+  hostinfo =
+    {
+      home-manager = osConfig.hostinfo;
+      nixos-system = config.hostinfo;
+    }
+    ."${moduleContext}";
+in
+{
+  config =
+    lib.mkIf hostinfo.isLocalInteractive
+      {
+        "home-manager" = {
+          home.packages = with pkgs; [
+            age-plugin-yubikey
+            libfido2
+            yubikey-manager
+          ];
+        };
+        "nixos-system" = {
+          security.pam = {
+            services."sudo".u2fAuth = true;
+            u2f.settings = {
+              authfile = "/home/%u/.config/pam_sudo/pam_u2f_authorized_keys";
+              cue = true;
+              expand = true;
+              origin = "pam://${config.networking.fqdn}";
+            };
+          };
+        };
+      }
+      ."${moduleContext}";
+}
