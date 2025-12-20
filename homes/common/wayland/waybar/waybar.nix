@@ -1,5 +1,18 @@
-{ pkgs, ... }:
+{
+  config,
+  lib,
+  moduleContext,
+  osConfig ? null,
+  pkgs,
+  ...
+}:
 let
+  hostinfo =
+    {
+      home-manager = osConfig.hostinfo;
+      nixos-system = config.hostinfo;
+    }
+    ."${moduleContext}";
   mkunicode = s: builtins.fromJSON ("\"\\u" + s + "\"");
 in
 {
@@ -283,6 +296,11 @@ in
         ];
         modules-right = [
           "tray"
+        ]
+        ++ lib.optionals hostinfo.isLaptop [
+          "battery"
+        ]
+        ++ [
           "keyboard-state"
           "hyprland/submap"
           "bluetooth"
@@ -309,6 +327,24 @@ in
 
         "niri/window" = {
           separate-outputs = true;
+        };
+
+        battery = {
+          bat = "BAT0";
+          interval = 60;
+          states = {
+            critical = 10;
+            warning = 25;
+          };
+          format = "{capacity}% {icon}";
+          format-icons = [
+            (mkunicode "F244")
+            (mkunicode "F243")
+            (mkunicode "F242")
+            (mkunicode "F241")
+            (mkunicode "F240")
+          ];
+          max-length = 25;
         };
 
         keyboard-state = {
