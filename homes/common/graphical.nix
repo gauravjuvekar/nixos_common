@@ -10,7 +10,6 @@ in
     ./graphical_xdg.nix
     ./keyboards/keyboards_graphical.nix
     ./nemo/nemo.nix
-    ./wayland/hyprland/hyprland.nix
     ./wayland/niri/niri.nix
   ];
 

@@ -286,12 +286,10 @@ in
         position = "top";
         height = 32;
         modules-left = [
-          "hyprland/workspaces"
           "niri/workspaces"
           "wlr/taskbar"
         ];
         modules-center = [
-          "hyprland/window"
           "niri/window"
         ];
         modules-right = [
@@ -302,7 +300,6 @@ in
         ]
         ++ [
           "keyboard-state"
-          "hyprland/submap"
           "bluetooth"
           "wireplumber"
           "clock"
@@ -312,17 +309,6 @@ in
 
         "niri/workspaces" = {
           all-outputs = false;
-        };
-
-        "hyprland/workspaces" = {
-          disable-scroll = true;
-          all-outputs = false;
-          show-special = true;
-          special-visible-only = true;
-        };
-
-        "hyprland/window" = {
-          separate-outputs = true;
         };
 
         "niri/window" = {

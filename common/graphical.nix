@@ -12,10 +12,6 @@
     xorg.xkill
   ];
 
-  programs.hyprland = {
-    enable = true;
-    withUWSM = true;
-  };
   programs.niri.enable = true;
   security.pam.services = {
     hyprlock = { };

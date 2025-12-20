@@ -96,4 +96,120 @@ in
         cmd = "${pkgs.swaynotificationcenter}/bin/swaync";
       };
     };
+
+  programs.hyprlock = {
+    enable = true;
+    settings = {
+      general = {
+        no_fade_in = true;
+        no_fade_out = true;
+      };
+      background = [
+        {
+          path = "";
+          blur_passes = 3;
+          blur_size = 8;
+        }
+      ];
+      input-field = [
+        {
+          monitor = "";
+          fade_on_empty = false;
+          fail_text = "($ATTEMPTS) | $FAIL";
+          placeholder_text = "$PAMPROMPT ";
+          size = "500, 50";
+        }
+      ];
+      label = [
+        {
+          monitor = "";
+          text = "cmd[update:1000] date --rfc-3339 seconds";
+          text_align = "center";
+          font_size = 50;
+          halign = "left";
+          valign = "center";
+          position = "350, 100";
+        }
+        {
+          monitor = "";
+          text = "${config.fullname} (${config.home.username})<br/>${config.fqdn}";
+          text_align = "center";
+          halign = "left";
+          valign = "center";
+          font_size = 50;
+          position = "400, -100";
+        }
+      ];
+    };
+  };
+
+  programs.wlogout = {
+    enable = true;
+    layout = [
+      {
+        "label" = "lock";
+        "action" = "${config.programs.hyprlock.package}/bin/hyprlock";
+        "text" = "Lock (l)";
+        "keybind" = "l";
+      }
+      {
+        "label" = "hibernate";
+        "action" = "systemctl hibernate";
+        "text" = "Hibernate (h)";
+        "keybind" = "h";
+      }
+      {
+        "label" = "logout";
+        "action" =
+          "${config.wayland.windowManager.hyprland.finalPackage}/bin/hyprctl dispatch exit || ${pkgs.niri}/bin/niri msg action quit";
+        "text" = "Logout (e)";
+        "keybind" = "e";
+      }
+      {
+        "label" = "shutdown";
+        "action" = "systemctl poweroff";
+        "text" = "Shutdown (p)";
+        "keybind" = "p";
+      }
+      {
+        "label" = "suspend";
+        "action" = "systemctl suspend";
+        "text" = "Suspend (s)";
+        "keybind" = "s";
+      }
+      {
+        "label" = "reboot";
+        "action" = "systemctl reboot";
+        "text" = "Reboot (r)";
+        "keybind" = "r";
+      }
+    ];
+  };
+
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        after_sleep_cmd = "hyprctl dispatch dpms on || ${pkgs.niri}/bin/niri msg action power-on-monitors";
+        before_sleep_cmd = "loginctl lock-session";
+        lock_cmd = "pidof hyprlock || ${config.programs.hyprlock.package}/bin/hyprlock";
+      };
+      listener = [
+        {
+          timeout = 100;
+          on-timeout = "${pkgs.brightnessctl}/bin/brightnessctl -s set 10";
+          on-resume = "${pkgs.brightnessctl}/bin/brightnessctl -r";
+        }
+        {
+          timeout = 300;
+          on-timeout = "${config.programs.hyprlock.package}/bin/hyprlock";
+        }
+        {
+          timeout = 500;
+          on-timeout = "hyprctl dispatch dpms off || ${pkgs.niri}/bin/niri msg action power-off-monitors";
+          on-resume = "hyprctl dispatch dpms on || ${pkgs.niri}/bin/niri msg action power-on-monitors";
+        }
+      ];
+    };
+  };
 }
