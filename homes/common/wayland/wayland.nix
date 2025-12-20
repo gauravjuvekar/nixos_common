@@ -49,12 +49,12 @@ in
       };
       color-palette = {
         palette = [
+          "#ff00ff"
           "#f0932b"
           "#eb4d4d"
           "#6ab04c"
           "#22a6b3"
           "#0000ff"
-          "#ff00ff"
           "#ffff00"
           "#00ffff"
         ];
