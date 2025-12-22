@@ -5,7 +5,6 @@
 }:
 {
   imports = [
-    ./audio/audio_interactive.nix
     ./gpg/gpg.nix
     ./keyboards/keyboards_interactive.nix
     ./parallel/parallel.nix

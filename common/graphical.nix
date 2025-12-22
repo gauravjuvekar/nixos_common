@@ -2,7 +2,6 @@
 {
   imports = [
     ./cinnamon/cinnamon.nix
-    ./sound.nix
     ./wireshark.nix
   ];
 
