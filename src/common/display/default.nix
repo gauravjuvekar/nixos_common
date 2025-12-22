@@ -1,9 +1,9 @@
 {
   config,
   lib,
-  pkgs,
-  osConfig ? null,
   moduleContext,
+  osConfig ? null,
+  pkgs,
   ...
 }:
 let
@@ -16,13 +16,14 @@ let
 in
 {
   config =
-    if moduleContext == "home-manager" then
-      {
+    {
+      "home-manager" = {
         home.packages = lib.lists.optionals hostinfo.isLocalGraphical [
           pkgs.brightnessctl
           pkgs.ddcutil
         ];
-      }
-    else
-      { };
+      };
+      "nixos-system" = { };
+    }
+    ."${moduleContext}";
 }

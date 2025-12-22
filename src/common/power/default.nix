@@ -1,9 +1,9 @@
 {
   config,
   lib,
-  pkgs,
-  osConfig ? null,
   moduleContext,
+  osConfig ? null,
+  pkgs,
   ...
 }:
 let
@@ -16,26 +16,22 @@ let
 in
 {
   config =
-    if moduleContext == "home-manager" then
+    lib.mkIf hostinfo.isLaptop
       {
-        home.packages = lib.lists.optionals hostinfo.isLaptop [
-          pkgs.gnome-power-manager
-          pkgs.powerstat
-          pkgs.powertop
-        ];
+        "home-manager" = {
+          home.packages = lib.lists.optionals hostinfo.isLaptop [
+            pkgs.gnome-power-manager
+            pkgs.powerstat
+            pkgs.powertop
+          ];
+        };
+        "nixos-system" = {
+          services.logind.settings.Login = {
+            HandleLidSwitch = "ignore";
+            HandleLidSwitchDocked = "ignore";
+            HandleLidSwitchExternalPower = "ignore";
+          };
+        };
       }
-    else if moduleContext == "nixos-system" then
-      {
-        services.logind.settings.Login =
-          if hostinfo.isLaptop then
-            {
-              HandleLidSwitch = "ignore";
-              HandleLidSwitchDocked = "ignore";
-              HandleLidSwitchExternalPower = "ignore";
-            }
-          else
-            { };
-      }
-    else
-      { };
+      ."${moduleContext}";
 }
