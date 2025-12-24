@@ -89,12 +89,12 @@
         "gjuvekar-lt.client.nvidia.com" =
           inputs.nixpkgs.lib.nixosSystem
             self.nixosConfigurationArgs."gjuvekar-lt.client.nvidia.com";
-        gaurav-nixlt = inputs.nixpkgs.lib.nixosSystem {
+        "lt1.roam.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
           system = inputs.flake-utils.lib.system.x86_64-linux;
           modules = [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
-            ./hosts/gaurav-nixlt.roam.gjuvekar.com/configuration.nix
+            ./hosts/lt1.roam.gjuvekar.com/configuration.nix
           ];
         };
         "dt.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
@@ -117,7 +117,7 @@
               };
               home-manager.users."gaurav" = {
                 imports = commonModuleImports ++ [
-                  ./homes/hosts/gaurav-dt/home.nix
+                  ./homes/hosts/dt.sc.gjuvekar.com/gaurav/home.nix
                 ];
               };
             }
@@ -210,16 +210,18 @@
           inherit pkgs;
           inherit extraSpecialArgs;
           modules = [
-            ./homes/hosts/gaurav-dt/home.nix
+            ./homes/hosts/dt.sc.gjuvekar.com/gaurav/home.nix
           ];
         };
-        homeConfigurations."gaurav@gaurav-nixlt" = inputs.home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          inherit extraSpecialArgs;
-          modules = [
-            ./homes/hosts/gaurav-nixlt/home.nix
-          ];
-        };
+        homeConfigurations."gaurav@lt1.roam.gjuvekar.com" =
+          inputs.home-manager.lib.homeManagerConfiguration
+            {
+              inherit pkgs;
+              inherit extraSpecialArgs;
+              modules = [
+                ./homes/hosts/lt1.roam.gjuvekar.com/gaurav/home.nix
+              ];
+            };
       }
     );
 }

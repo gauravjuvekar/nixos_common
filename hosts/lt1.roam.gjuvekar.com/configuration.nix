@@ -21,7 +21,7 @@
     ];
   };
 
-  networking.hostName = "gaurav-nixlt";
+  networking.hostName = "lt1";
   networking.domain = "roam.gjuvekar.com";
 
   time.timeZone = "America/Los_Angeles";
