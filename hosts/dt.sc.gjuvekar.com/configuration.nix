@@ -26,6 +26,9 @@
   usageinfo = {
     cadTools = [
       "2d"
+      "3d"
+      "eda"
+      "gis"
     ];
   };
 
