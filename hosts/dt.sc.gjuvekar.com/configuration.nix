@@ -23,6 +23,11 @@
 
   hostinfo.isLaptop = false;
   hostinfo.isLocalGraphical = true;
+  usageinfo = {
+    cadTools = [
+      "2d"
+    ];
+  };
 
   time.timeZone = "America/Los_Angeles";
 

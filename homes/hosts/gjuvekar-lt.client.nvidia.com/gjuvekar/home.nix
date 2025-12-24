@@ -6,7 +6,6 @@
     ../../../common/fonts.nix
     ../../../common/graphical.nix
     ../../../common/graphical_apps.nix
-    ../../../common/graphical_design_lite.nix
     ../../../common/graphical_dev.nix
     ../../../common/graphical_docs.nix
     ../../../common/graphical_yubikey.nix

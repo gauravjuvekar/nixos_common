@@ -10,6 +10,11 @@
   ];
 
   hostinfo.isLaptop = true;
+  usageinfo = {
+    cadTools = [
+      "2d"
+    ];
+  };
 
   networking.hostName = "gjuvekar-lt";
   networking.domain = "client.nvidia.com";

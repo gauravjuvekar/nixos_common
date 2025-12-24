@@ -16,6 +16,11 @@
   nixpkgs.config.allowUnfree = true;
 
   hostinfo.isLaptop = true;
+  usageinfo = {
+    cadTools = [
+      "2d"
+    ];
+  };
 
   networking.hostName = "lt2";
   networking.domain = "roam.gjuvekar.com";
