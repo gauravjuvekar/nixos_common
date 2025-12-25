@@ -24,6 +24,9 @@
   hostinfo.isLaptop = false;
   hostinfo.isLocalGraphical = true;
   usageinfo = {
+    devLangs = [
+      "python"
+    ];
     cadTools = [
       "2d"
       "3d"

@@ -15,7 +15,6 @@ let
 in
 {
   imports = [
-    ./dev_python.nix
     ./git.nix
     ./neovim/neovim.nix
     ./shell.nix

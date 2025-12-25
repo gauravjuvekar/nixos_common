@@ -48,9 +48,6 @@
     "SL" = "ls";
     "sl" = "ls";
 
-    "p" = "python";
-    "pdb" = "python -m pdb -c continue";
-
     "clip" = "xclip -sel clip";
     "m" = "make";
     "o" = "xdg-open";
