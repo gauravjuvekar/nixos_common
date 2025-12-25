@@ -2,7 +2,7 @@
 {
   imports = [
     ../../../common/base.nix
-    ../../../common/dev_heavy.nix
+    ../../../common/dev_lite.nix
     ../../../common/fonts.nix
     ../../../common/graphical.nix
     ../../../common/graphical_apps.nix

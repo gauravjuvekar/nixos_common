@@ -31,6 +31,7 @@
     ];
     devTools = [
       "containers"
+      "perf"
     ];
     cadTools = [
       "2d"
