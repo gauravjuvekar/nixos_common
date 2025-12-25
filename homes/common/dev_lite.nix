@@ -24,7 +24,6 @@ in
     ansible
     ansible-lint
     bfg-repo-cleaner
-    gdb
     gh
     git
     git-filter-repo

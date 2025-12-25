@@ -18,10 +18,15 @@ in
   config =
     {
       "home-manager" = {
-        home.packages = lib.lists.optionals (usageinfo.devLangs != [ ]) [
-          pkgs.lspmux
-        ];
+        home.packages =
+          lib.lists.optionals (usageinfo.devLangs != [ ]) [
+            pkgs.lspmux
+          ]
+          ++ lib.lists.optionals (builtins.any (x: x == "cxx" || x == "rust") usageinfo.devLangs) [
+            pkgs.gdb
+          ];
       };
+
       "nixos-system" = { };
     }
     ."${moduleContext}";
