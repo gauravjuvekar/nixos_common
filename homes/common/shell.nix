@@ -3,10 +3,6 @@
   programs.bash.enable = true;
 
   home.shellAliases = {
-    "dy" = "ydiff -H change -H whole-line -s -w0 --wrap --";
-    # GFP
-    "db" = "d $(gfp)";
-
     "e" = "nvim";
     "v" = "nvim -R";
     "vi" = "nvim";

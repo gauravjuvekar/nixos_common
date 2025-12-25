@@ -10,11 +10,9 @@
     curl
     fd
     nh
-    nix-diff
     nix-du
     nix-output-monitor
     nix-tree
-    nvd
     parallel
     ripgrep
     tmux
