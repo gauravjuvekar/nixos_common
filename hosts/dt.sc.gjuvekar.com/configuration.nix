@@ -25,6 +25,7 @@
   hostinfo.isLocalGraphical = true;
   usageinfo = {
     devLangs = [
+      "cxx"
       "python"
     ];
     cadTools = [

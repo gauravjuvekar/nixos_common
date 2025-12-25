@@ -18,6 +18,7 @@
   hostinfo.isLaptop = true;
   usageinfo = {
     devLangs = [
+      "cxx"
       "python"
     ];
     cadTools = [
