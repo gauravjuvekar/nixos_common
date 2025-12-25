@@ -32,6 +32,7 @@
     devTools = [
       "binary"
       "containers"
+      "memory"
       "perf"
     ];
     cadTools = [
