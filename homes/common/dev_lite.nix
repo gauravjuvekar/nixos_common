@@ -22,13 +22,10 @@ in
   home.packages = with myPkgs; [
     ansible
     ansible-lint
-    hexedit
-    hexyl
     jsonschema
     patchutils
     repgrep
     socat
-    xxd
     ydiff
   ];
 }
