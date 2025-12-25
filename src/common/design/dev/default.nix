@@ -15,7 +15,9 @@ let
     ."${moduleContext}";
 in
 {
-  imports = lib.fileset.toList (lib.fileset.fileFilter (f: f.name != "default.nix") ./.);
+  imports = lib.fileset.toList (
+    lib.fileset.fileFilter (f: (lib.strings.hasSuffix ".nix" f.name) && (f.name != "default.nix")) ./.
+  );
 
   config =
     {
