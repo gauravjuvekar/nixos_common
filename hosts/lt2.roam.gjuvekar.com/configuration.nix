@@ -20,6 +20,7 @@
     devLangs = [
       "cxx"
       "python"
+      "rust"
     ];
     cadTools = [
       "2d"

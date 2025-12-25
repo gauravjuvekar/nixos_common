@@ -14,6 +14,7 @@
     devLangs = [
       "cxx"
       "python"
+      "rust"
     ];
     devTools = [
       "containers"
