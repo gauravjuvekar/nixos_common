@@ -22,6 +22,9 @@
       "python"
       "rust"
     ];
+    devTools = [
+      "db"
+    ];
     cadTools = [
       "2d"
     ];

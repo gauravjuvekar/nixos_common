@@ -6,6 +6,5 @@
     meld
     neovide
     plantuml
-    sqlitebrowser
   ];
 }

@@ -35,7 +35,6 @@ in
     patchutils
     repgrep
     socat
-    sqlite
     xxd
     ydiff
   ];

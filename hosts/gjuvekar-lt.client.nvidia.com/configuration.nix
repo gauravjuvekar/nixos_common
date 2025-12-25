@@ -19,6 +19,7 @@
     devTools = [
       "binary"
       "containers"
+      "db"
       "memory"
       "perf"
     ];
