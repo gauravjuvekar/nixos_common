@@ -27,6 +27,10 @@ in
           pkgs.llvmPackages.bintools
           pkgs.llvmPackages.libcxxStdenv
         ];
+
+        home.shellAliases = {
+          "m" = "make";
+        };
       };
       "nixos-system" = { };
     }

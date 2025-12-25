@@ -49,7 +49,6 @@
     "sl" = "ls";
 
     "clip" = "xclip -sel clip";
-    "m" = "make";
     "o" = "xdg-open";
   };
 
