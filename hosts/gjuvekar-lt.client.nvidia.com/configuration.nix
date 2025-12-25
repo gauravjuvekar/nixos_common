@@ -15,6 +15,9 @@
       "cxx"
       "python"
     ];
+    devTools = [
+      "containers"
+    ];
     cadTools = [
       "2d"
     ];
