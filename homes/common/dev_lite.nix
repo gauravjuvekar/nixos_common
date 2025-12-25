@@ -15,7 +15,6 @@ let
 in
 {
   imports = [
-    ./git.nix
     ./neovim/neovim.nix
     ./shell.nix
   ];
@@ -23,12 +22,6 @@ in
   home.packages = with myPkgs; [
     ansible
     ansible-lint
-    bfg-repo-cleaner
-    gh
-    git
-    git-filter-repo
-    git-repo
-    glab
     hexedit
     hexyl
     jsonschema

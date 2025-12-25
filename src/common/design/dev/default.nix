@@ -15,16 +15,23 @@ let
     ."${moduleContext}";
 in
 {
+  imports = lib.fileset.toList (lib.fileset.fileFilter (f: f.name != "default.nix") ./.);
+
   config =
     {
       "home-manager" = {
-        home.packages =
-          lib.lists.optionals (usageinfo.devLangs != [ ]) [
-            pkgs.lspmux
-          ]
-          ++ lib.lists.optionals (builtins.any (x: x == "cxx" || x == "rust") usageinfo.devLangs) [
-            pkgs.gdb
-          ];
+        home.packages = [
+          (pkgs.writeShellApplication {
+            name = "mv_versioned";
+            text = builtins.readFile ./myapps/mv_versioned;
+          })
+        ]
+        ++ lib.lists.optionals (usageinfo.devLangs != [ ]) [
+          pkgs.lspmux
+        ]
+        ++ lib.lists.optionals (builtins.any (x: x == "cxx" || x == "rust") usageinfo.devLangs) [
+          pkgs.gdb
+        ];
       };
 
       "nixos-system" = { };

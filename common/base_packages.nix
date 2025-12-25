@@ -9,7 +9,6 @@
   environment.systemPackages = with pkgs; [
     curl
     fd
-    git
     nh
     nix-diff
     nix-du
