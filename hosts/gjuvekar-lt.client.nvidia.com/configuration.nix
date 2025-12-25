@@ -17,6 +17,7 @@
       "rust"
     ];
     devTools = [
+      "binary"
       "containers"
       "perf"
     ];

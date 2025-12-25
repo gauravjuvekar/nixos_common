@@ -23,7 +23,6 @@ in
           pkgs.clang
           pkgs.clang-tools
           pkgs.compiledb
-          pkgs.elfutils
           pkgs.gnumake
           pkgs.llvmPackages.bintools
           pkgs.llvmPackages.libcxxStdenv
