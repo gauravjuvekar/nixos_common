@@ -2,7 +2,6 @@
 {
   imports = [
     ../../common/age.nix
-    ../../common/base_packages.nix
   ];
 
   networking.hostName = "live";

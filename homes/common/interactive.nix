@@ -7,12 +7,8 @@
   imports = [
     ./gpg/gpg.nix
     ./keyboards/keyboards_interactive.nix
-    ./parallel/parallel.nix
-    ./tmux/screen.nix
-    ./tmux/tmux.nix
   ];
   home.packages = with pkgs; [
-    (lib.hiPrio parallel) # Because moreutils overwrites it
     age
     atop
     bat
