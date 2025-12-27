@@ -33,8 +33,6 @@
     psmisc
     rage
     rsync
-    sshfs
-    sshpass
     step-cli
     unzip
     watchexec
