@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   imports = [
-    ./cinnamon/cinnamon.nix
     ./wireshark.nix
   ];
 

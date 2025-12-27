@@ -5,7 +5,6 @@ in
 {
   imports = [
     ./alacritty/alacritty.nix
-    ./cinnamon/cinnamon.nix
     ./graphical_xdg.nix
     ./keyboards/keyboards_graphical.nix
     ./nemo/nemo.nix
