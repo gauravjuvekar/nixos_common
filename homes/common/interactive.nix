@@ -6,7 +6,6 @@
 {
   imports = [
     ./gpg/gpg.nix
-    ./keyboards/keyboards_interactive.nix
   ];
   home.packages = with pkgs; [
     age

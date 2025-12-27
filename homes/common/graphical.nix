@@ -6,7 +6,6 @@ in
   imports = [
     ./alacritty/alacritty.nix
     ./graphical_xdg.nix
-    ./keyboards/keyboards_graphical.nix
     ./nemo/nemo.nix
   ];
 
