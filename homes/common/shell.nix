@@ -3,10 +3,6 @@
   programs.bash.enable = true;
 
   home.shellAliases = {
-    "e" = "nvim";
-    "v" = "nvim -R";
-    "vi" = "nvim";
-
     "f" = "fzf";
     "fn" = "find . -name";
 

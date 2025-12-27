@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   imports = [
-    ./neovim/neovim.nix
     ./shell.nix
   ];
 
