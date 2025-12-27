@@ -6,7 +6,6 @@
 
   environment.systemPackages = with pkgs; [
     arandr
-    vanilla-dmz # 1 cursor theme requried for gdm
     xorg.xkill
   ];
 
@@ -21,7 +20,4 @@
   services.libinput.enable = true;
 
   services.gnome.gnome-keyring.enable = true;
-  services.displayManager = {
-    gdm.enable = true;
-  };
 }
