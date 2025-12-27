@@ -1,12 +1,10 @@
 {
   pkgs,
-  lib,
   ...
 }:
 {
   imports = [
     ../../common/age.nix
-    ../../common/base_etc.nix
     ../../common/base_packages.nix
   ];
 
