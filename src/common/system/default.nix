@@ -30,6 +30,46 @@ in
           "kernel.sysrq" = 1;
         };
 
+        boot = {
+          swraid.enable = true;
+
+          loader = {
+            efi.canTouchEfiVariables = true;
+            grub = {
+              enable = true;
+              copyKernels = true;
+              device = "nodev";
+              efiSupport = true;
+              enableCryptodisk = true;
+            };
+            timeout = 10;
+          };
+
+          initrd = {
+            kernelModules = [
+              "dm-snapshot"
+              "dm-integrity"
+              "dm-raid"
+            ];
+            supportedFilesystems = [
+              "btrfs"
+              "ext4"
+              "vfat"
+            ];
+
+            services.lvm.enable = true;
+
+            systemd = {
+              enable = true;
+              emergencyAccess = true;
+              settings.Manager = {
+                DefaultDeviceTimeoutSec = 20;
+                StatusUnitFormat = "name";
+              };
+            };
+          };
+        };
+
         systemd.settings = sys_and_user_config;
       };
     }

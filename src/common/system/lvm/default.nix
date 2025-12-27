@@ -36,7 +36,6 @@ in
         {
           boot.initrd = {
             services = {
-              lvm.enable = true;
               udev = {
                 rules = udevRules;
                 packages = udevPackages;
