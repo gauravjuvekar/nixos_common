@@ -9,10 +9,6 @@
   environment.systemPackages = with pkgs; [
     curl
     fd
-    nh
-    nix-du
-    nix-output-monitor
-    nix-tree
     parallel
     ripgrep
     tmux
