@@ -8,7 +8,6 @@ in
     ./graphical_xdg.nix
     ./keyboards/keyboards_graphical.nix
     ./nemo/nemo.nix
-    ./wayland/niri/niri.nix
   ];
 
   home.packages = with pkgs; [

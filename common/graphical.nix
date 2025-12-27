@@ -10,7 +10,6 @@
     xorg.xkill
   ];
 
-  programs.niri.enable = true;
   security.pam.services = {
     hyprlock = { };
     swaylock = { };
