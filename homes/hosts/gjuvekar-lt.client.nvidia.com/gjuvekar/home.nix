@@ -12,6 +12,4 @@
     ../../../common/interactive_docs.nix
     ../../../common/interactive_yubikey.nix
   ];
-
-  fullname = "Gaurav Juvekar";
 }

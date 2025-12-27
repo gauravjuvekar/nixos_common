@@ -20,8 +20,13 @@
   networking.hostName = "dt";
   networking.domain = "sc.gjuvekar.com";
 
-  hostinfo.isLaptop = false;
-  hostinfo.isLocalGraphical = true;
+  hostinfo = {
+    isLaptop = false;
+    isLocalGraphical = true;
+    hostname = "dt";
+    domainname = "sc.gjuvekar.com";
+  };
+
   usageinfo = {
     devLangs = [
       "cxx"

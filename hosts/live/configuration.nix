@@ -4,8 +4,10 @@
     ../../common/age.nix
   ];
 
-  networking.hostName = "live";
-  networking.domain = "localdomain";
+  hostinfo = {
+    hostname = "live";
+    domainname = "localdomain";
+  };
 
   nixpkgs.config.allowUnfree = true;
 

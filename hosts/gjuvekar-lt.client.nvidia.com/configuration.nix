@@ -8,7 +8,12 @@
     ../../common/physical_access.nix
   ];
 
-  hostinfo.isLaptop = true;
+  hostinfo = {
+    isLaptop = true;
+    hostname = "gjuvekar-lt";
+    domainname = "client.nvidia.com";
+  };
+
   usageinfo = {
     devLangs = [
       "cxx"
@@ -27,7 +32,5 @@
     ];
   };
 
-  networking.hostName = "gjuvekar-lt";
-  networking.domain = "client.nvidia.com";
   age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEUN3O9Pbm+oBEOeqcnsz/MESESfEkuGa5Nxp1YnpNj3 root@gjuvekar-lt";
 }

@@ -123,7 +123,7 @@ in
               };
             };
             user = {
-              name = config.fullname;
+              name = hostinfo.primaryFullname;
             };
           };
         };

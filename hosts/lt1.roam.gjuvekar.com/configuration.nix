@@ -13,7 +13,12 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  hostinfo.isLaptop = true;
+  hostinfo = {
+    isLaptop = true;
+    hostname = "lt1";
+    domainname = "roam.gjuvekar.com";
+  };
+
   usageinfo = {
     devLangs = [
       "cxx"

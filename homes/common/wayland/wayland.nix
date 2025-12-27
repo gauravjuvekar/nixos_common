@@ -132,7 +132,7 @@ in
         }
         {
           monitor = "";
-          text = "${config.fullname} (${config.home.username})<br/>${config.fqdn}";
+          text = "${config.hostinfo.primaryFullname} (${config.home.username})<br/>${config.hostinfo.fqdn}";
           text_align = "center";
           halign = "left";
           valign = "center";

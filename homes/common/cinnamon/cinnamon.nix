@@ -60,7 +60,8 @@
     "org/cinnamon/desktop" = {
       "media-handling/automount-open" = false;
       "media-handling/autorun-never" = true;
-      "screensaver/default-message" = config.fullname + " (" + config.home.username + ") " + config.fqdn;
+      "screensaver/default-message" =
+        config.hostinfo.primaryFullname + " (" + config.home.username + ") " + config.hostinfo.fqdn;
       "screensaver/lock-enabled" = true;
       "screensaver/time-format" = "%H:%M:%S";
       "screensaver/use-custom-format" = true;
