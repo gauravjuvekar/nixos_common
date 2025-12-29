@@ -124,6 +124,11 @@ in
             };
             user = {
               name = hostinfo.primaryFullname;
+              email =
+                if (lib.strings.hasSuffix ".gjuvekar.com" hostinfo.domainname) then
+                  "gauravjuvekar@gmail.com"
+                else
+                  null;
             };
           };
         };
