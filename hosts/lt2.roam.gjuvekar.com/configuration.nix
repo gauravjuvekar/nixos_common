@@ -18,6 +18,7 @@
     isLaptop = true;
     hostname = "lt2";
     domainname = "roam.gjuvekar.com";
+    primaryUsername = "gaurav";
   };
 
   usageinfo = {

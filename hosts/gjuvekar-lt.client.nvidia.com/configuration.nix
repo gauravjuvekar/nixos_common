@@ -12,6 +12,7 @@
     isLaptop = true;
     hostname = "gjuvekar-lt";
     domainname = "client.nvidia.com";
+    primaryUsername = "gjuvekar";
   };
 
   usageinfo = {

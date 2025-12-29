@@ -25,6 +25,7 @@
     isLocalGraphical = true;
     hostname = "dt";
     domainname = "sc.gjuvekar.com";
+    primaryUsername = "gaurav";
   };
 
   usageinfo = {
