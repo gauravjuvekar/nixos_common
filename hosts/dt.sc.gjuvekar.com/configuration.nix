@@ -9,7 +9,6 @@
     ../../common/age.nix
     ../../common/base_personal.nix
     ../../common/graphical.nix
-    ../../common/interactive.nix
     ../../common/user_personal.nix
     ./snapper.nix
   ];

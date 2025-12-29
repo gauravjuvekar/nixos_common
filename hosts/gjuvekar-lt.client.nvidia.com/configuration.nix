@@ -3,7 +3,6 @@
   imports = [
     ../../common/age.nix
     ../../common/graphical.nix
-    ../../common/interactive.nix
   ];
 
   hostinfo = {

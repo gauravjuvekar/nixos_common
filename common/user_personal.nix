@@ -7,7 +7,6 @@
     uid = 1001;
     extraGroups = [
       "input"
-      "networkmanager"
       "wheel"
     ];
   };
