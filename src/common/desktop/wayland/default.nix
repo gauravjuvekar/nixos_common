@@ -218,6 +218,9 @@ in
           };
 
         "nixos-system" = {
+          security.pam.services = {
+            hyprlock = { };
+          };
         };
       }
       ."${moduleContext}";
