@@ -7,7 +7,6 @@
   imports = [
     ./hardware-configuration.nix
     ../../common/age.nix
-    ../../common/user_personal.nix
     ./snapper.nix
   ];
 
