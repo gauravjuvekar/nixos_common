@@ -6,7 +6,6 @@ in
   imports = [
     ./alacritty/alacritty.nix
     ./graphical_xdg.nix
-    ./nemo/nemo.nix
   ];
 
   home.packages = with pkgs; [

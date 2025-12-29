@@ -19,7 +19,6 @@
       "image/svg+xml" = "xviewer.desktop";
       "image/tiff" = "xviewer.desktop";
       "image/vnd.microsoft.icon" = "xviewer.desktop";
-      "inode/directory" = "nemo.desktop";
       "message/rfc822" = "thunderbird.desktop";
       "text/csv" = "calc.desktop";
       "text/html" = "firefox.desktop";
