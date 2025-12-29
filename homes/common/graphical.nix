@@ -14,7 +14,6 @@ in
     baobab
     blueberry
     dconf-editor
-    (flameshot.overrideAttrs { enableWlrSupport = true; })
     gnome-font-viewer
     gnome-system-monitor
     imhex
