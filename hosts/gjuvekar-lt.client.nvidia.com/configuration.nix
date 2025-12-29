@@ -1,9 +1,5 @@
 { ... }:
 {
-  imports = [
-    ../../common/age.nix
-  ];
-
   hostinfo = {
     isLaptop = true;
     hostname = "gjuvekar-lt";

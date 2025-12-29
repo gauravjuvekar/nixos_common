@@ -1,9 +1,5 @@
 { pkgs, ... }:
 {
-  imports = [
-    ../../common/age.nix
-  ];
-
   hostinfo = {
     hostname = "live";
     domainname = "localdomain";
