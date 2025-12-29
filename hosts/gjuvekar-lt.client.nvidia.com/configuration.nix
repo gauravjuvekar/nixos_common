@@ -4,7 +4,6 @@
     ../../common/age.nix
     ../../common/graphical.nix
     ../../common/interactive.nix
-    ../../common/networking_open_wifi.nix
     ../../common/physical_access.nix
   ];
 
