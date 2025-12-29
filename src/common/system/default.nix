@@ -70,6 +70,8 @@ in
           };
         };
 
+        programs.fuse.userAllowOther = true;
+
         systemd.settings = sys_and_user_config;
       };
     }
