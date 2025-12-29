@@ -6,7 +6,6 @@
     hashedPasswordFile = config.age.secrets.user-passwd.path;
     uid = 1001;
     extraGroups = [
-      "input"
       "wheel"
     ];
   };
