@@ -19,10 +19,11 @@ in
     lib.mkIf hostinfo.isLocalInteractive
       {
         "home-manager" = {
-          home.packages = with pkgs; [
-            age-plugin-yubikey
-            libfido2
-            yubikey-manager
+          home.packages = lib.lists.flatten [
+            (lib.lists.optional hostinfo.isLocalGraphical pkgs.yubioath-flutter)
+            pkgs.age-plugin-yubikey
+            pkgs.libfido2
+            pkgs.yubikey-manager
           ];
         };
         "nixos-system" = {

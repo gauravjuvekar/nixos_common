@@ -71,7 +71,7 @@ in
             };
           };
 
-          xdg.mimeApps.defaultAppilcations = {
+          xdg.mimeApps.defaultApplications = {
             "inode/directory" = "nemo.desktop";
           };
         };
