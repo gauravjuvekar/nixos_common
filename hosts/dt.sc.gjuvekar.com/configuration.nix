@@ -38,6 +38,7 @@
       "containers"
       "db"
       "memory"
+      "network"
       "perf"
     ];
     cadTools = [

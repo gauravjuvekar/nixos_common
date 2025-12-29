@@ -22,6 +22,7 @@
           "containers"
           "db"
           "memory"
+          "network"
           "perf"
         ]
       );

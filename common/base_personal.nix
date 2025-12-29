@@ -1,7 +1,6 @@
 { ... }:
 {
   imports = [
-    ./networking.nix
     ./networking_personal.nix
   ];
 
