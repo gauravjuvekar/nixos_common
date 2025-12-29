@@ -35,6 +35,9 @@ in
               origin = "pam://${config.networking.fqdn}";
             };
           };
+
+          security.polkit.enable = true;
+          services.pcscd.enable = true;
         };
       }
       ."${moduleContext}";
