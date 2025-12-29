@@ -9,8 +9,7 @@
       "input"
       "networkmanager"
       "wheel"
-    ]
-    ++ (if config.programs.wireshark.enable then [ "wireshark" ] else [ ]);
+    ];
   };
   users.groups.gaurav.gid = 1001;
 

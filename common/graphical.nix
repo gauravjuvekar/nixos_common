@@ -1,9 +1,5 @@
 { pkgs, ... }:
 {
-  imports = [
-    ./wireshark.nix
-  ];
-
   environment.systemPackages = with pkgs; [
     arandr
     xorg.xkill
