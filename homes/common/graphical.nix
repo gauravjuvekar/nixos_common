@@ -13,7 +13,6 @@ in
     gnome-font-viewer
     gnome-system-monitor
     screenkey
-    seahorse
     shutter
   ];
 

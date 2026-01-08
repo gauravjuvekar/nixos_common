@@ -1,12 +1,5 @@
+{ pkgs, ... }:
 {
-  pkgs,
-  lib,
-  ...
-}:
-{
-  imports = [
-    ./gpg/gpg.nix
-  ];
   home.packages = with pkgs; [
     age
     atop

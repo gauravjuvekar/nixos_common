@@ -25,6 +25,13 @@ in
             pkgs.libfido2
             pkgs.yubikey-manager
           ];
+
+          programs.gpg = {
+            scdaemonSettings = {
+              disable-ccid = true;
+              reader-port = "Yubico Yubi";
+            };
+          };
         };
         "nixos-system" = {
           security.pam = {
