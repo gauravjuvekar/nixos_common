@@ -4,7 +4,6 @@ let
 in
 {
   imports = [
-    ./alacritty/alacritty.nix
     ./graphical_xdg.nix
   ];
 
