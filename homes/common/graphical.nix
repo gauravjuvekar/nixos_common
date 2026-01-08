@@ -8,19 +8,13 @@ in
   ];
 
   home.packages = with pkgs; [
-    arandr
     baobab
     blueberry
-    dconf-editor
     gnome-font-viewer
     gnome-system-monitor
-    imhex
     screenkey
     seahorse
     shutter
-    wmctrl
-    xclip
-    xorg.xkill
   ];
 
   gtk.theme = gtkTheme;

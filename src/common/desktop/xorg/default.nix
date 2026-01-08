@@ -24,6 +24,8 @@ in
         "nixos-system" = {
           environment.systemPackages = [
             pkgs.arandr
+            pkgs.wmctrl
+            pkgs.xclip
             pkgs.xorg.xkill
           ];
         };

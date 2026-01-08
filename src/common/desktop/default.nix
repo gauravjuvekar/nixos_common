@@ -3,6 +3,7 @@
   lib,
   moduleContext,
   osConfig ? null,
+  pkgs,
   ...
 }:
 let
@@ -18,6 +19,9 @@ in
     lib.mkIf hostinfo.isLocalInteractive
       {
         "home-manager" = {
+          home.packages = [
+            pkgs.dconf-editor
+          ];
         };
 
         "nixos-system" = {
