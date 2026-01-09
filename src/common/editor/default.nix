@@ -49,6 +49,12 @@ in
           vimdiffAlias = true;
         };
 
+        programs.mr.settings = {
+          ".vim" = {
+            checkout = "git clone --recurse-submodules git@github.com:gauravjuvekar:dotvim.git";
+          };
+        };
+
         home.shellAliases = {
           "e" = "nvim";
           "v" = "nvim -R";
