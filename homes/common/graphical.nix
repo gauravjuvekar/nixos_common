@@ -3,10 +3,6 @@ let
   gtkTheme = "Mint-Y-Dark";
 in
 {
-  imports = [
-    ./graphical_xdg.nix
-  ];
-
   home.packages = with pkgs; [
     baobab
     blueberry
