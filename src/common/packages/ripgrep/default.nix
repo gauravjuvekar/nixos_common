@@ -17,7 +17,13 @@ in
 {
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
+        home.packages = [
+          pkgs.repgrep
+        ];
+        home.shellAliases = {
+          "rgc" = "rg --color=always";
+        };
       };
       "nixos-system" = {
         environment.systemPackages = [

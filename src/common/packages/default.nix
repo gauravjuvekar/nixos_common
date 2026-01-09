@@ -45,7 +45,6 @@ in
               pkgs.ansible
               pkgs.ansible-lint
               pkgs.jsonschema
-              pkgs.repgrep
               pkgs.socat
             ]
           );

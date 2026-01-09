@@ -41,6 +41,10 @@ in
               wayland_screenshot
             ];
 
+            home.shellAliases = {
+              "clip" = "wl-copy";
+            };
+
             xdg.configFile."uwsm/env".text = ''
               export NIXOS_OZONE_WL=1
             '';

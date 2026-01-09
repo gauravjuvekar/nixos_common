@@ -21,7 +21,12 @@ in
         "home-manager" = {
           home.packages = [
             pkgs.dconf-editor
+            pkgs.xdg-utils
           ];
+
+          home.shellAliases = {
+            "o" = "xdg-open";
+          };
 
           xdg.mime.enable = true;
           xdg.mimeApps = {
