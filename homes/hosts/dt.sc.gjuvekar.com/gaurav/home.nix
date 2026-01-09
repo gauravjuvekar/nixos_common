@@ -1,8 +1,6 @@
 { ... }:
 {
   imports = [
-    ../../../common/graphical_apps.nix
-    ../../../common/user_gjuvekar-com.nix
     ./monitors.nix
   ];
 

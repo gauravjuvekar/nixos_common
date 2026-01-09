@@ -73,7 +73,6 @@
               home-manager.extraSpecialArgs = {
                 moduleContext = "home-manager";
                 inputs = inputs;
-                firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
               };
               home-manager.users."gjuvekar" = {
                 imports = commonModuleImports ++ [
@@ -113,7 +112,6 @@
               home-manager.extraSpecialArgs = {
                 moduleContext = "home-manager";
                 inputs = inputs;
-                firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
               };
               home-manager.users."gaurav" = {
                 imports = commonModuleImports ++ [
@@ -140,7 +138,6 @@
               home-manager.extraSpecialArgs = {
                 moduleContext = "home-manager";
                 inputs = inputs;
-                firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
               };
               home-manager.users."gaurav" = {
                 imports = commonModuleImports ++ [
@@ -201,7 +198,6 @@
         };
         extraSpecialArgs = {
           inputs = inputs;
-          firefox-addons = inputs.firefox-addons.outputs.packages.${system};
         };
       in
       {
