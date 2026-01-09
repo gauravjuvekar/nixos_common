@@ -2,7 +2,6 @@
 {
   imports = [
     ../../../common/dev_lite.nix
-    ../../../common/fonts.nix
     ../../../common/graphical.nix
     ../../../common/graphical_apps.nix
     ../../../common/graphical_gjuvekar-com.nix

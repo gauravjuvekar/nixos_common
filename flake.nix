@@ -61,6 +61,7 @@
         "gjuvekar-lt.client.nvidia.com" = {
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
+            inputs = inputs;
             moduleContext = "nixos-system";
           };
           modules = commonModuleImports ++ [
@@ -73,7 +74,6 @@
                 moduleContext = "home-manager";
                 inputs = inputs;
                 firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
-                droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
               };
               home-manager.users."gjuvekar" = {
                 imports = commonModuleImports ++ [
@@ -100,6 +100,7 @@
         "dt.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
+            inputs = inputs;
             moduleContext = "nixos-system";
           };
           modules = commonModuleImports ++ [
@@ -113,7 +114,6 @@
                 moduleContext = "home-manager";
                 inputs = inputs;
                 firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
-                droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
               };
               home-manager.users."gaurav" = {
                 imports = commonModuleImports ++ [
@@ -126,6 +126,7 @@
         lt2 = inputs.nixpkgs.lib.nixosSystem {
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
+            inputs = inputs;
             moduleContext = "nixos-system";
           };
           modules = commonModuleImports ++ [
@@ -140,7 +141,6 @@
                 moduleContext = "home-manager";
                 inputs = inputs;
                 firefox-addons = inputs.firefox-addons.outputs.packages.x86_64-linux;
-                droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.x86_64-linux;
               };
               home-manager.users."gaurav" = {
                 imports = commonModuleImports ++ [
@@ -202,7 +202,6 @@
         extraSpecialArgs = {
           inputs = inputs;
           firefox-addons = inputs.firefox-addons.outputs.packages.${system};
-          droid-sans-mono-dotted = inputs.droid-sans-mono-dotted.outputs.packages.${system};
         };
       in
       {

@@ -10,7 +10,6 @@ in
   home.packages = with pkgs; [
     baobab
     blueberry
-    gnome-font-viewer
     gnome-system-monitor
     screenkey
     shutter

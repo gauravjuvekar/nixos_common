@@ -122,11 +122,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1731255976,
-        "narHash": "sha256-u+bp+m+7XrcflA8FxpyLA132zpy0jnbUUM6z38UUeWU=",
+        "lastModified": 1767928719,
+        "narHash": "sha256-MITBR8/mDQc8SC/MxM876XR6TBhgZG3tBy8px+rcAQA=",
         "owner": "gauravjuvekar",
         "repo": "droid-sans-mono-dotted",
-        "rev": "d666ab3306174f5b9f5f313dcb5dd8048e00ca56",
+        "rev": "4a867f624067e98715604c7ea51e01c1dd611419",
         "type": "github"
       },
       "original": {
