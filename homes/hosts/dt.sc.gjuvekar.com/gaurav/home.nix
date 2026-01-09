@@ -3,7 +3,6 @@
   imports = [
     ../../../common/graphical.nix
     ../../../common/graphical_apps.nix
-    ../../../common/graphical_gjuvekar-com.nix
     ../../../common/interactive.nix
     ../../../common/interactive_docs.nix
     ../../../common/user_gjuvekar-com.nix
