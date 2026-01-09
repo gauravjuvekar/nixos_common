@@ -6,7 +6,6 @@
     ../../../common/graphical_gjuvekar-com.nix
     ../../../common/interactive.nix
     ../../../common/interactive_docs.nix
-    ../../../common/interactive_gjuvekar-com.nix
     ../../../common/user_gjuvekar-com.nix
   ];
 

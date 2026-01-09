@@ -1,6 +1,0 @@
-{ ... }:
-{
-  imports = [
-    ./fsaction/fsaction.nix
-  ];
-}
