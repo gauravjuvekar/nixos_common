@@ -54,6 +54,7 @@ in
       "nixos-system" = {
         environment.systemPackages = [
           pkgs.curl
+          pkgs.dig
           pkgs.fd
           pkgs.tree
           pkgs.wget

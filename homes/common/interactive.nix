@@ -2,27 +2,18 @@
 {
   home.packages = with pkgs; [
     age
-    atop
     bat
-    dig
-    dust
-    fclones
     file
-    htop
     inetutils
     inotify-tools
-    iotop
     jq
     jqp
     libsecret
     moreutils
     openssl
-    pigz
-    psmisc
     rage
     rsync
     step-cli
-    unzip
     watchexec
     watchlog
     watchman

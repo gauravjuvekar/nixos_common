@@ -4,9 +4,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    baobab
     blueberry
-    gnome-system-monitor
     screenkey
     shutter
   ];
