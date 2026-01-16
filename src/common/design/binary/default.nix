@@ -20,7 +20,7 @@ in
       "home-manager" = {
         home.packages = lib.lists.optionals (builtins.elem "binary" usageinfo.devTools) [
           pkgs.bintools
-          pkgs.elf-dissector
+          # pkgs.elf-dissector # broken
           pkgs.elf-info
           pkgs.elfutils
         ];
