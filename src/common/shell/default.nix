@@ -20,6 +20,14 @@ in
         "home-manager" = {
           programs.bash.enable = true;
 
+          programs.nushell = {
+            enable = true;
+            settings = {
+              show_banner = false;
+            };
+            shellAliases = lib.mkForce { };
+          };
+
           programs.zoxide = {
             enable = true;
             enableBashIntegration = true;
