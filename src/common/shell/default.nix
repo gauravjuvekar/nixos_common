@@ -3,6 +3,7 @@
   lib,
   moduleContext,
   osConfig ? null,
+  pkgs,
   ...
 }:
 let
@@ -18,7 +19,13 @@ in
     lib.mkIf hostinfo.isLocalInteractive
       {
         "home-manager" = {
-          programs.bash.enable = true;
+          programs.bash = {
+            enable = true;
+            initExtra = ''
+              source "${pkgs.complete-alias}/bin/complete_alias"
+              complete -F _complete_alias "''${!BASH_ALIASES[@]}"
+            '';
+          };
 
           programs.nushell = {
             enable = true;
