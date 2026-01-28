@@ -22,8 +22,12 @@ in
           pkgs.cargo
           pkgs.cargo-audit
           pkgs.cargo-binutils
+          pkgs.cargo-bump
           pkgs.cargo-depgraph
+          pkgs.cargo-edit
+          pkgs.cargo-hack
           pkgs.cargo-lock
+          pkgs.cargo-outdated
           pkgs.cargo-play
           pkgs.cargo-sort
           pkgs.cargo-vet
