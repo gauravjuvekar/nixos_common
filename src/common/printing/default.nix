@@ -26,6 +26,11 @@ in
         services.printing = {
           enable = true;
           cups-pdf.enable = true;
+          drivers = [
+            pkgs.brlaser
+            pkgs.gutenprint
+            pkgs.gutenprintBin
+          ];
         };
       };
     }
