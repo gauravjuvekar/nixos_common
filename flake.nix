@@ -90,7 +90,11 @@
             self.nixosConfigurationArgs."gjuvekar-lt.client.nvidia.com";
         "lt1.roam.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
           system = inputs.flake-utils.lib.system.x86_64-linux;
-          modules = [
+          specialArgs = {
+            inputs = inputs;
+            moduleContext = "nixos-system";
+          };
+          modules = commonModuleImports ++ [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
             ./hosts/lt1.roam.gjuvekar.com/configuration.nix
@@ -149,7 +153,11 @@
         };
         live = inputs.nixpkgs.lib.nixosSystem {
           system = inputs.flake-utils.lib.system.x86_64-linux;
-          modules = [
+          specialArgs = {
+            inputs = inputs;
+            moduleContext = "nixos-system";
+          };
+          modules = commonModuleImports ++ [
             inputs.agenix.nixosModules.default
             inputs.agenix-rekey.nixosModules.default
             (inputs.nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix")
