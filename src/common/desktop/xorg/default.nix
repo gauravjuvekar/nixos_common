@@ -26,7 +26,7 @@ in
             pkgs.arandr
             pkgs.wmctrl
             pkgs.xclip
-            pkgs.xorg.xkill
+            pkgs.xkill
           ];
         };
       }
