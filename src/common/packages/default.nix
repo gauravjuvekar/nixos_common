@@ -26,12 +26,12 @@ in
             lib.lists.optionals hostinfo.isLocalGraphical [
               (lib.lists.optional domain_is_personal pkgs.calibre)
               (lib.lists.optional domain_is_personal pkgs.digikam)
+              pkgs.atril
               pkgs.blueberry
               pkgs.chromium
               pkgs.graphviz
               pkgs.imagemagick
               pkgs.libreoffice
-              pkgs.mate.atril
               pkgs.mpv
               pkgs.obs-studio
               pkgs.pandoc

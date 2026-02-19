@@ -20,8 +20,8 @@ in
       "home-manager" = {
         home.packages = lib.lists.flatten (
           lib.lists.optionals hostinfo.isLocalGraphical [
+            pkgs.engrampa
             pkgs.file-roller
-            pkgs.mate.engrampa
           ]
           ++ lib.lists.optionals hostinfo.isLocalInteractive [
             pkgs.bzip2
