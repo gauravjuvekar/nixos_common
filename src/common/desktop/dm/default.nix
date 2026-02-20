@@ -24,6 +24,7 @@ in
         "nixos-system" = {
           services.displayManager = {
             gdm.enable = true;
+            defaultSession = "niri";
           };
 
           environment.systemPackages = [
