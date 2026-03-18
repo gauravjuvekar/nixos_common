@@ -20,11 +20,14 @@ in
       "home-manager" = {
         programs.tmux = {
           enable = true;
+          baseIndex = 1;
           clock24 = true;
           escapeTime = 10;
           extraConfig = ''
             bind-key -T copy-mode-vi 'v' send -X begin-selection
             bind-key -T copy-mode-vi 'y' send -X copy-selection-and-cancel
+
+            set-option -g renumber-windows on
 
             set-option -g update-environment "${
               lib.strings.concatStringsSep " " [
