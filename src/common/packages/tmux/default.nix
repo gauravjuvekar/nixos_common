@@ -25,6 +25,25 @@ in
           extraConfig = ''
             bind-key -T copy-mode-vi 'v' send -X begin-selection
             bind-key -T copy-mode-vi 'y' send -X copy-selection-and-cancel
+
+            set-option -g update-environment "${
+              lib.strings.concatStringsSep " " [
+                # These defaults come from https://github.com/tmux/tmux/blob/bef4865d91ff8e549a3a4d63563f0ef1a39a1a39/options-table.c#L1026-L1027
+                "DISPLAY"
+                "KRB5CCNAME"
+                "MSYSTEM"
+                "SSH_ASKPASS"
+                "SSH_AUTH_SOCK"
+                "SSH_AGENT_PID"
+                "SSH_CONNECTION"
+                "WINDOWID"
+                "XAUTHORITY"
+
+                # Address https://github.com/alacritty/alacritty/issues/8876
+                "ALACRITTY_WINDOW_ID"
+              ]
+            }"
+
             set -as terminal-features "alacritty:RGB"
           '';
           focusEvents = true;
