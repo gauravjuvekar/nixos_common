@@ -41,8 +41,20 @@ in
 
                 # Address https://github.com/alacritty/alacritty/issues/8876
                 "ALACRITTY_WINDOW_ID"
+
+                # Allow :set status-style from direnv to differentiate between
+                # different workspaces
+                "TMUX_SESSION_STATUS_STYLE"
               ]
             }"
+
+            set-hook -g session-created {
+              if-shell '[ -n "$TMUX_SESSION_STATUS_STYLE" ]' {
+                set-option -s status-style "#{TMUX_SESSION_STATUS_STYLE}"
+              } {
+                set-option -s status-style bg=green,fg=black
+              }
+            }
 
             set -as terminal-features "alacritty:RGB"
           '';
