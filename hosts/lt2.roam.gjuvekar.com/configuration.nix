@@ -39,6 +39,8 @@
     pinentryPackage = pkgs.pinentry-curses;
   };
 
+  programs.captive-browser.interface = "wlp0s20f3";
+
   networking.nameservers = [
     "1.1.1.1#cloudflare-dns.com"
     "8.8.8.8#dns.google"
