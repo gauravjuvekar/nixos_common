@@ -27,7 +27,7 @@ in
               (lib.lists.optional domain_is_personal pkgs.calibre)
               (lib.lists.optional domain_is_personal pkgs.digikam)
               pkgs.atril
-              pkgs.blueberry
+              pkgs.blueman
               pkgs.chromium
               pkgs.graphviz
               pkgs.imagemagick

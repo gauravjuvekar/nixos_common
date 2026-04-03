@@ -21,18 +21,17 @@ in
         home.packages = lib.lists.flatten [
           (lib.lists.optional hostinfo.isLocalGraphical pkgs.neovide)
           (lib.hiPrio pkgs.gcc) # Still need a compiler for treesitter # HOLY SHIT, Clang is broken GH 277564, 153759, 147342
+          pkgs.bash-language-server
           pkgs.ltex-ls
           pkgs.lua-language-server
           pkgs.nixd
-          pkgs.nodePackages.bash-language-server
-          pkgs.nodePackages.nodejs
-          pkgs.nodePackages.vim-language-server
-          pkgs.nodePackages.vscode-json-languageserver
           pkgs.perlnavigator
           pkgs.pyright
           pkgs.stylua
           pkgs.tree-sitter
           pkgs.vale
+          pkgs.vim-language-server
+          pkgs.vscode-json-languageserver
           pkgs.yaml-language-server
         ];
 

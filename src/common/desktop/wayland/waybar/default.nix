@@ -377,8 +377,7 @@ in
                     tooltip-format-enumerate-connected = "{device_address}  {device_alias}";
                     tooltip-format-enumerate-connected-battery =
                       "{device_address} " + (mkunicode "f0e7") + " {device_battery_percentage:3}%  {device_alias}"; # bolt
-                    on-click = "${pkgs.blueberry}/bin/blueberry";
-                    on-click-right = "${pkgs.blueman}/bin/blueman-manager";
+                    on-click = "${pkgs.blueman}/bin/blueman-manager";
                     on-click-middle = pkgs.writeShellScript "bluetooth-toggle" (
                       let
                         bluetoothctl-bin = "${pkgs.bluez}/bin/bluetoothctl";
