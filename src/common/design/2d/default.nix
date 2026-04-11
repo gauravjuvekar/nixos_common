@@ -19,6 +19,7 @@ in
     {
       "home-manager" = {
         home.packages = lib.lists.optionals (builtins.elem "2d" usageinfo.cadTools) [
+          pkgs.darktable
           pkgs.gimp-with-plugins
           pkgs.inkscape
         ];
