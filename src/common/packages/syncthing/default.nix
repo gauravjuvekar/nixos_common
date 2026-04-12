@@ -48,6 +48,43 @@ in
                   "lt2.roam.gjuvekar.com"
                 ];
               };
+            }
+            // lib.optionalAttrs (hostinfo.fqdn == "dt.sc.gjuvekar.com") {
+              "${config.home.homeDirectory}/Sync/Documents/scanned/passport" = {
+                id = "i2s4u-ydukc";
+                type = "sendonly";
+                label = "passport";
+                devices = [
+                  "gaurav-p8"
+                  "gaurav-s5e"
+                ];
+              };
+              "${config.home.homeDirectory}/Sync/Documents" = {
+                id = "icyvf-brmma";
+                type = "sendonly";
+                label = "documents";
+                devices = [
+                  "gaurav-p8"
+                  "gaurav-s5e"
+                ];
+              };
+              "${config.home.homeDirectory}/Sync/Documents/air" = {
+                id = "uvwqx-csjse";
+                label = "air";
+                type = "sendreceive";
+                devices = [
+                  "gaurav-s5e"
+                ];
+              };
+              "${config.home.homeDirectory}/mobile/Music" = {
+                id = "xmfp6-k4wlh";
+                label = "mobile-music";
+                type = "sendonly";
+                devices = [
+                  "gaurav-p8"
+                  "gaurav-s5e"
+                ];
+              };
             };
           };
         };
