@@ -55,7 +55,6 @@ in
                 type = "sendonly";
                 label = "passport";
                 devices = [
-                  "gaurav-p8"
                   "gaurav-s5e"
                 ];
               };
