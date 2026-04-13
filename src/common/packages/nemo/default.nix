@@ -55,6 +55,7 @@ in
                 "mime_type"
                 "octal_permissions"
               ];
+              "list-view/enable-folder-expansion" = true;
               "sidebar-panels/tree/show-only-directories" = false;
             };
             "org/nemo/preferences" = {
