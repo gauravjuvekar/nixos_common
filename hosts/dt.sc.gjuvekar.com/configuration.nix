@@ -46,7 +46,7 @@
   time.timeZone = "America/Los_Angeles";
 
   services.xserver.videoDrivers = [ "nvidia" ];
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   hardware.nvidia = {
     open = true;
     modesetting.enable = true;
