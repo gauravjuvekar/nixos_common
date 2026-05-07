@@ -44,6 +44,10 @@ in
         home.shellAliases = {
           "dy" = "ydiff -H change -H whole-line -s -w0 --wrap --";
         };
+
+        programs.delta = {
+          enable = true;
+        };
       };
       "nixos-system" = { };
     }

@@ -132,6 +132,8 @@ in
             };
           };
         };
+
+        programs.delta.enableGitIntegration = true;
       };
 
       "nixos-system" = {
