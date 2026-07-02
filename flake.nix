@@ -40,6 +40,13 @@
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
+    nixpkgs-patcher = {
+      url = "github:gepbird/nixpkgs-patcher";
+    };
+    nixpkgs-patch-pr-536673 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/536673.diff";
+      flake = false;
+    };
     systems = {
       url = "github:nix-systems/default";
     };
@@ -59,6 +66,7 @@
       };
       nixosConfigurationArgs = {
         "gjuvekar-lt.client.nvidia.com" = {
+          nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
             inputs = inputs;
@@ -86,9 +94,10 @@
       };
       nixosConfigurations = {
         "gjuvekar-lt.client.nvidia.com" =
-          inputs.nixpkgs.lib.nixosSystem
+          inputs.nixpkgs-patcher.lib.nixosSystem
             self.nixosConfigurationArgs."gjuvekar-lt.client.nvidia.com";
-        "lt1.roam.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
+        "lt1.roam.gjuvekar.com" = inputs.nixpkgs-patcher.lib.nixosSystem {
+          nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
             inputs = inputs;
@@ -100,7 +109,8 @@
             ./hosts/lt1.roam.gjuvekar.com/configuration.nix
           ];
         };
-        "dt.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
+        "dt.sc.gjuvekar.com" = inputs.nixpkgs-patcher.lib.nixosSystem {
+          nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
             inputs = inputs;
@@ -125,7 +135,8 @@
             }
           ];
         };
-        lt2 = inputs.nixpkgs.lib.nixosSystem {
+        lt2 = inputs.nixpkgs-patcher.lib.nixosSystem {
+          nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
             inputs = inputs;
@@ -151,7 +162,8 @@
             }
           ];
         };
-        live = inputs.nixpkgs.lib.nixosSystem {
+        live = inputs.nixpkgs-patcher.lib.nixosSystem {
+          nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
             inputs = inputs;

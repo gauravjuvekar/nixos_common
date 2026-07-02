@@ -316,6 +316,33 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-pr-536673": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-bWW+OjXalo1j1IIaly5P6prigTbaw6Cx0MsJ0fdgCaY=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/536673.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/536673.diff"
+      }
+    },
+    "nixpkgs-patcher": {
+      "locked": {
+        "lastModified": 1781789965,
+        "narHash": "sha256-ZRlWPq2Qms6KbesJrj7cUe2GN7s8BZISfp9ZbrCi2x0=",
+        "owner": "gepbird",
+        "repo": "nixpkgs-patcher",
+        "rev": "d2abed2b94b7955e05b4e2e8a9b8ac45597ecf94",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gepbird",
+        "repo": "nixpkgs-patcher",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -350,6 +377,8 @@
         "fsaction": "fsaction",
         "home-manager": "home-manager_2",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-patch-pr-536673": "nixpkgs-patch-pr-536673",
+        "nixpkgs-patcher": "nixpkgs-patcher",
         "systems": "systems"
       }
     },
