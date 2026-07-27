@@ -43,10 +43,6 @@
     nixpkgs-patcher = {
       url = "github:gepbird/nixpkgs-patcher";
     };
-    nixpkgs-patch-pr-536673 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/536673.diff";
-      flake = false;
-    };
     systems = {
       url = "github:nix-systems/default";
     };
