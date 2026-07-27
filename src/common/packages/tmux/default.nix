@@ -77,6 +77,10 @@ in
             escape ^Jj
           '';
         };
+
+        home.shellAliases = {
+          "tm" = "tmux";
+        };
       };
       "nixos-system" = {
         environment.systemPackages = [
