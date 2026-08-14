@@ -50,7 +50,7 @@
 
   services.resolved = {
     enable = true;
-    dnsovertls = "true";
+    settings.Resolve.DNSOverTLS = true;
   };
 
   services.gnome.gnome-keyring.enable = true;
