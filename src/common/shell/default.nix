@@ -59,10 +59,7 @@ in
           programs.atuin = {
             enable = true;
             enableBashIntegration = true;
-            flags = [
-              "--disable-ctrl-r"
-              "--disable-up-arrow"
-            ];
+            flags = [ "--disable-up-arrow" ];
             settings = {
               auto_sync = false;
               update_check = false;
