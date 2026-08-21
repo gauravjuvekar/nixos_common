@@ -48,7 +48,10 @@ in
             enable = true;
             enableBashIntegration = true;
           };
-          programs.fzf.enable = true;
+          programs.fzf = {
+            enable = true;
+            historyWidget.command = "";
+          };
           home.shellAliases = {
             "f" = "fzf";
             "LS" = "ls";
