@@ -1,5 +1,4 @@
-{ ... }:
-{
+{ ... }: {
   hostinfo = {
     isLaptop = true;
     hostname = "gjuvekar-lt";

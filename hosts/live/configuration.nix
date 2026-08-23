@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   hostinfo = {
     hostname = "live";
     domainname = "localdomain";

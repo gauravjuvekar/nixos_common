@@ -1,5 +1,4 @@
-{ ... }:
-{
+{ ... }: {
   xdg.configFile."shikane/config.toml".text = ''
     [[profile]]
     name = "dt_0111"

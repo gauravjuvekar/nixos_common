@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   options.usageinfo = {
     devLangs = lib.mkOption {
       description = "Dev langs supported";
