@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   moduleContext,
   osConfig ? null,
@@ -76,6 +77,12 @@ in
         };
 
       "nixos-system" = {
+        nixpkgs.overlays = [
+          (final: prev: {
+            smplayer = inputs.nixpkgs-bugfix-smplayer.legacyPackages.${prev.stdenv.hostPlatform.system}.smplayer;
+          })
+        ];
+
         environment.systemPackages = [
           pkgs.curl
           pkgs.dig

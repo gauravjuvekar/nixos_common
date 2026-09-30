@@ -268,6 +268,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-bugfix-smplayer": {
+      "locked": {
+        "lastModified": 1790510611,
+        "narHash": "sha256-6LMTpN+BN008IETggEsHM6/vdD8CF8iDjIr2bWfM8IA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6f35b06544a18a76d218f4951c9e3c5647e4ecfe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6f35b06544a18a76d218f4951c9e3c5647e4ecfe",
+        "type": "github"
+      }
+    },
     "nixpkgs-patcher": {
       "locked": {
         "lastModified": 1789143781,
@@ -317,6 +333,7 @@
         "fsaction": "fsaction",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-bugfix-smplayer": "nixpkgs-bugfix-smplayer",
         "nixpkgs-patcher": "nixpkgs-patcher",
         "systems": "systems"
       }
