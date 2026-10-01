@@ -35,6 +35,12 @@ in
         in
         {
           boot.initrd = {
+            availableKernelModules = [
+              "dm_crypt"
+              "raid1"
+              "crc32c"
+            ];
+
             services = {
               udev = {
                 rules = udevRules;
