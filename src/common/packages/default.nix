@@ -79,7 +79,7 @@ in
       "nixos-system" = {
         nixpkgs.overlays = [
           (final: prev: {
-            smplayer = inputs.nixpkgs-bugfix-smplayer.legacyPackages.${prev.stdenv.hostPlatform.system}.smplayer;
+            freecad = inputs.nixpkgs-bugfix-freecad.legacyPackages.${prev.stdenv.hostPlatform.system}.freecad;
           })
         ];
 

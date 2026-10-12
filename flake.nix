@@ -39,8 +39,8 @@
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
-    nixpkgs-bugfix-smplayer = {
-      url = "github:NixOS/nixpkgs/6f35b06544a18a76d218f4951c9e3c5647e4ecfe";
+    nixpkgs-bugfix-freecad = {
+      url = "github:NixOS/nixpkgs/c59305bab2065cfecc4944690d9eedbb56f3a9fa";
     };
     nixpkgs-patcher = {
       url = "github:gepbird/nixpkgs-patcher";
