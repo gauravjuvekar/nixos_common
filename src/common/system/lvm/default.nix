@@ -25,6 +25,9 @@ in
             ENV{LVM_PVSCAN_ON_LVS}="1"
           '';
 
+          # This must run as 10-local.rules, before LVM's 69-dm-lvm.rules.
+          # Otherwise, LVM skips PVs on LVs before pvscan can enqueue the
+          # lvm-activate-* systemd-run job.
           udevPackages = [
             (pkgs.writeTextFile {
               name = "my-lvm-initrd-udev-rules";
