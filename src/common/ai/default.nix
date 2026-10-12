@@ -29,6 +29,7 @@ in
       "home-manager" = {
         home.packages = lib.mkIf (domain_is_personal && hostinfo.isLocalGraphical) [
           pkgs.codex
+          pkgs.t3code
         ];
       };
 
