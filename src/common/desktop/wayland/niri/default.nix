@@ -23,6 +23,9 @@ in
             pkgs.xwayland-satellite
           ];
 
+          # Suppress fuzzel default config warning.
+          xdg.configFile."fuzzel/fuzzel.ini".text = "";
+
           systemd.user.services = {
             xwayland-satellite = {
               Unit = {
