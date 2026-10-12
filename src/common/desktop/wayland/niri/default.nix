@@ -272,34 +272,13 @@ in
                   Mod+Shift+P { power-off-monitors; }
               }
             '';
-
-          xdg.portal = {
-            enable = true;
-            # started in userspace, so need to be in home-manager config and linked to
-            # ~/.nix-profiles/share/xdg-desktop-portal/portals
-            # The hyprland home-manager module already does this for us but we don't
-            # have a niri module yet.
-            extraPortals = with pkgs; [
-              xdg-desktop-portal-gnome
-              xdg-desktop-portal-gtk
-            ];
-            config = {
-              niri = {
-                default = [
-                  "gnome"
-                  "gtk"
-                ];
-                "org.freedesktop.impl.portal.Access" = "gtk";
-                "org.freedesktop.impl.portal.FileChooser" = "gtk";
-                "org.freedesktop.impl.portal.Notification" = "gtk";
-                "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-              };
-            };
-          };
         };
 
         "nixos-system" = {
-          programs.niri.enable = true;
+          programs.niri = {
+            enable = true;
+            useNautilus = false;
+          };
         };
       }
       ."${moduleContext}";
