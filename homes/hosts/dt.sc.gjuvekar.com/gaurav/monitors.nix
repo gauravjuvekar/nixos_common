@@ -1,4 +1,10 @@
-{ ... }: {
+{ lib, ... }: {
+  xdg.configFile."niri/config.kdl".text = lib.mkAfter ''
+    output "GIGA-BYTE TECHNOLOGY CO., LTD. Gigabyte M32U 22231B003449" {
+        variable-refresh-rate on-demand=true
+    }
+  '';
+
   xdg.configFile."shikane/config.toml".text = ''
     [[profile]]
     name = "dt_0111"
@@ -16,7 +22,6 @@
     mode = "3840x2160@144.00Hz"
     position = "3072,0"
     scale = 1.25
-    adaptive_sync = true
 
     [[profile.output]]
     search = ["s=305NTUWD2790"]
@@ -49,7 +54,6 @@
     mode = "3840x2160@144.00Hz"
     position = "4992,0"
     scale = 1.25
-    adaptive_sync = true
 
     [[profile.output]]
     search = ["s=305NTUWD2790"]
