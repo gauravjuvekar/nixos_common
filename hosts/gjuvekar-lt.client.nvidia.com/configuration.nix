@@ -1,5 +1,6 @@
 { ... }: {
   hostinfo = {
+    isRemotelyAccessible = false;
     isLaptop = true;
     hostname = "gjuvekar-lt";
     domainname = "client.nvidia.com";

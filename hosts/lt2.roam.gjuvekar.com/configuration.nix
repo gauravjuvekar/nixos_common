@@ -7,6 +7,7 @@
   nixpkgs.config.allowUnfree = true;
 
   hostinfo = {
+    isRemotelyAccessible = false;
     isLaptop = true;
     hostname = "lt2";
     domainname = "roam.gjuvekar.com";

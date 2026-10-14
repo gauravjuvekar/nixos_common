@@ -18,6 +18,10 @@ in
     {
       "home-manager" = { };
       "nixos-system" = {
+        isRemotelyAccessible = lib.mkOption {
+          type = lib.types.bool;
+          description = "Remotely accessible over cloudflared tunnels";
+        };
         isLaptop = lib.mkOption {
           type = lib.types.bool;
           description = "Is laptop?";

@@ -16,6 +16,7 @@
   hostinfo = {
     isLaptop = false;
     isLocalGraphical = true;
+    isRemotelyAccessible = true;
     hostname = "dt";
     domainname = "sc.gjuvekar.com";
     primaryUsername = "gaurav";

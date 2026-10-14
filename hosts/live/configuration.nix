@@ -1,5 +1,8 @@
 { pkgs, ... }: {
   hostinfo = {
+    isLaptop = false;
+    isLocalGraphical = true;
+    isRemotelyAccessible = false;
     hostname = "live";
     domainname = "localdomain";
   };
