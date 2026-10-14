@@ -91,6 +91,13 @@
         };
       };
       nixosConfigurations = {
+        "rpi.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
+          system = "aarch64-linux";
+          modules = [
+            inputs.disko.nixosModules.default
+            ./hosts/rpi.sc.gjuvekar.com/configuration.nix
+          ];
+        };
         "gjuvekar-lt.client.nvidia.com" =
           inputs.nixpkgs-patcher.lib.nixosSystem
             self.nixosConfigurationArgs."gjuvekar-lt.client.nvidia.com";
