@@ -26,6 +26,10 @@ in
           nssmdns4 = true;
           nssmdns6 = true;
           openFirewall = true;
+          publish = lib.mkIf (hostinfo.domainname == "sc.gjuvekar.com") {
+            enable = true;
+            addresses = true;
+          };
         };
       };
     }
