@@ -23,7 +23,7 @@ in
         let
           domain_is_personal = lib.strings.hasSuffix ".gjuvekar.com" hostinfo.domainname;
         in
-        {
+        lib.mkIf (hostinfo.primaryUsername != null) {
           users.users."${hostinfo.primaryUsername}" = {
             description = hostinfo.primaryFullname;
             isNormalUser = true;

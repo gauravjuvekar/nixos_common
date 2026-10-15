@@ -23,7 +23,7 @@ in
 {
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
         home.packages = lib.lists.flatten (
           lib.lists.optionals (builtins.elem "db" usageinfo.devTools) [
             pkgs.mariadb

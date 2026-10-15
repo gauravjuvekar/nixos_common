@@ -18,8 +18,14 @@ in
     {
       "home-manager" = { };
       "nixos-system" = {
+        isServer = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Is a server; enables remote access by default";
+        };
         isRemotelyAccessible = lib.mkOption {
           type = lib.types.bool;
+          default = cfg.isServer;
           description = "Remotely accessible over cloudflared tunnels";
         };
         isLaptop = lib.mkOption {
@@ -43,8 +49,9 @@ in
         };
 
         primaryUsername = lib.mkOption {
-          type = lib.types.str;
-          description = "Default username for home-manager";
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "Optional primary user; null skips creating a personal user account";
         };
 
         primaryFullname = lib.mkOption {

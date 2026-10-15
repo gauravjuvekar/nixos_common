@@ -29,7 +29,7 @@ in
 {
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf (hostinfo.isLocalInteractive || hostinfo.isLocalGraphical) {
         home.packages =
           lib.lists.optionals hostinfo.isLocalInteractive [
             pkgs.nix-diff

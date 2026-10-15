@@ -17,7 +17,7 @@ in
 {
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
         home.packages = [
           (lib.hiPrio pkgs.parallel) # Because moreutils overwrites it
         ];

@@ -21,7 +21,7 @@ in
       };
     in
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
         systemd.user.settings = sys_and_user_config;
       };
 

@@ -64,9 +64,9 @@ in
 
         "nixos-system" = {
           services.libinput.enable = true;
-          users.users."${hostinfo.primaryUsername}".extraGroups = [
-            "input"
-          ];
+          users.users = lib.mkIf (hostinfo.primaryUsername != null) {
+            "${hostinfo.primaryUsername}".extraGroups = [ "input" ];
+          };
 
           services.gnome.gnome-keyring.enable = true;
         };

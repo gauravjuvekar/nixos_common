@@ -18,7 +18,7 @@ in
   config =
     lib.mkIf hostinfo.isLaptop
       {
-        "home-manager" = {
+        "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
           home.packages = lib.lists.optionals hostinfo.isLaptop [
             pkgs.gnome-power-manager
             pkgs.powerstat

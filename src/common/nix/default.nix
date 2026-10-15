@@ -20,12 +20,13 @@ in
       "home-manager" = {
       };
       "nixos-system" = {
-        environment.systemPackages = lib.lists.optionals hostinfo.isLocalInteractive [
-          pkgs.nh
-          pkgs.nix-du
-          pkgs.nix-output-monitor
-          pkgs.nix-tree
-        ];
+        environment.systemPackages =
+          lib.lists.optional (hostinfo.isServer || hostinfo.isLocalInteractive) pkgs.nh
+          ++ lib.lists.optionals hostinfo.isLocalInteractive [
+            pkgs.nix-du
+            pkgs.nix-output-monitor
+            pkgs.nix-tree
+          ];
 
         nix.extraOptions = ''
           extra-experimental-features = flakes

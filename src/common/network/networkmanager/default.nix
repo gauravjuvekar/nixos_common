@@ -22,9 +22,9 @@ in
           networking.networkmanager.enable = true;
           networking.useDHCP = lib.mkDefault true;
 
-          users.users."${hostinfo.primaryUsername}".extraGroups = [
-            "networkmanager"
-          ];
+          users.users = lib.mkIf (hostinfo.primaryUsername != null) {
+            "${hostinfo.primaryUsername}".extraGroups = [ "networkmanager" ];
+          };
         };
       }
       ."${moduleContext}";

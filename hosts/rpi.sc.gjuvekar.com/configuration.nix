@@ -1,14 +1,20 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   imports = [
     ./hardware-configuration.nix
     ./disk-layout.nix
     ./remote-access.nix
   ];
 
+  hostinfo = {
+    isServer = true;
+    isLaptop = false;
+    hostname = "rpi";
+    domainname = "sc.gjuvekar.com";
+  };
+
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPtEyOzw78nPAFZAE+mqNB4/SyEBV6DSy8+s2Gzuf1++ root@rpi";
+
   networking = {
-    hostName = "rpi";
-    domain = "sc.gjuvekar.com";
     networkmanager.enable = false;
     useNetworkd = true;
     # Configure the wired interface explicitly in remote-access.nix.

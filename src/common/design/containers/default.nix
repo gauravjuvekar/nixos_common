@@ -7,6 +7,12 @@
   ...
 }:
 let
+  hostinfo =
+    {
+      home-manager = osConfig.hostinfo;
+      nixos-system = config.hostinfo;
+    }
+    ."${moduleContext}";
   usageinfo =
     {
       home-manager = osConfig.usageinfo;
@@ -17,7 +23,7 @@ in
 {
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
         home.packages = lib.lists.optionals (builtins.elem "containers" usageinfo.devTools) [
           pkgs.dive
           pkgs.kubectl

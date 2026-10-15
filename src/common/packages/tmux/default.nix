@@ -17,7 +17,7 @@ in
 {
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
         programs.tmux = {
           enable = true;
           baseIndex = 1;

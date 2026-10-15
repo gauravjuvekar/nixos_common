@@ -19,7 +19,7 @@ in
 {
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
         programs.mr.enable = true;
         programs.mr.settings = lib.mkIf domain_is_personal {
           ".config/home-manager" = {

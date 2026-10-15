@@ -24,9 +24,9 @@ in
           usbmon.enable = true;
         };
 
-        users.users."${hostinfo.primaryUsername}".extraGroups = lib.lists.flatten [
-          (lib.lists.optional config.programs.wireshark.enable "wireshark")
-        ];
+        users.users = lib.mkIf (hostinfo.primaryUsername != null && config.programs.wireshark.enable) {
+          "${hostinfo.primaryUsername}".extraGroups = [ "wireshark" ];
+        };
       };
     }
     ."${moduleContext}";

@@ -93,7 +93,13 @@
       nixosConfigurations = {
         "rpi.sc.gjuvekar.com" = inputs.nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
-          modules = [
+          specialArgs = {
+            inherit inputs;
+            moduleContext = "nixos-system";
+          };
+          modules = commonModuleImports ++ [
+            inputs.agenix.nixosModules.default
+            inputs.agenix-rekey.nixosModules.default
             inputs.disko.nixosModules.default
             ./hosts/rpi.sc.gjuvekar.com/configuration.nix
           ];

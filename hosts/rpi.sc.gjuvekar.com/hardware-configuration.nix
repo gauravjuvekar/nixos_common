@@ -16,9 +16,11 @@
     configurationLimit = 10;
   };
   boot.loader.efi = {
-    canTouchEfiVariables = false;
+    canTouchEfiVariables = lib.mkForce false;
     efiSysMountPoint = "/boot/esp";
   };
+  # Keep MD RAID disabled for the existing nested LVM layout.
+  boot.swraid.enable = lib.mkForce false;
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.initrd.availableKernelModules = [
@@ -47,14 +49,10 @@
     "dm-raid"
   ];
   boot.initrd.systemd.enable = true;
+  # The existing LUKS key derivation takes about 24 seconds on this Pi.
+  boot.initrd.systemd.settings.Manager.DefaultDeviceTimeoutSec = lib.mkForce "90s";
   boot.initrd.services.lvm.enable = true;
-  boot.initrd.systemd.contents."/etc/lvm/lvm.conf".source = ./files/lvm.conf;
-  # Scan LVs as well as partitions: base/crypt -> LUKS -> nix_vg.
-  environment.etc."lvm/lvm.conf".text = lib.mkAfter ''
-    devices {
-      scan_lvs = 1
-    }
-  '';
+  # The shared LVM module preserves scan_lvs = 1 in both boot stages.
   boot.supportedFilesystems = [ "btrfs" ];
 
   # The LV exists, but swap is disabled in the running configuration.

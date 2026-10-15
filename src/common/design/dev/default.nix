@@ -7,6 +7,12 @@
   ...
 }:
 let
+  hostinfo =
+    {
+      home-manager = osConfig.hostinfo;
+      nixos-system = config.hostinfo;
+    }
+    ."${moduleContext}";
   usageinfo =
     {
       home-manager = osConfig.usageinfo;
@@ -21,7 +27,7 @@ in
 
   config =
     {
-      "home-manager" = {
+      "home-manager" = lib.mkIf hostinfo.isLocalInteractive {
         home.packages = [
           (pkgs.writeShellApplication {
             name = "mv_versioned";

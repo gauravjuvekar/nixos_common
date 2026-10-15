@@ -53,10 +53,12 @@ in
           ];
         };
 
-        users.users."${hostinfo.primaryUsername}".extraGroups = [
-          "lp"
-          "scanner"
-        ];
+        users.users = lib.mkIf (hostinfo.primaryUsername != null) {
+          "${hostinfo.primaryUsername}".extraGroups = [
+            "lp"
+            "scanner"
+          ];
+        };
       };
     }
     ."${moduleContext}";
