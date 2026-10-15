@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   moduleContext,
   osConfig ? null,
@@ -14,6 +15,23 @@ let
     }
     ."${moduleContext}";
   isClient = hostinfo.isLocalGraphical && lib.strings.hasSuffix ".gjuvekar.com" hostinfo.fqdn;
+  tunnelServers = lib.filter (
+    server: server.hostinfo.isRemotelyAccessible && server.hostinfo.fqdn != hostinfo.fqdn
+  ) (map (host: host.config) (lib.attrValues inputs.self.nixosConfigurations));
+  tunnelSshSettings = lib.listToAttrs (
+    map (
+      server:
+      let
+        remote = server.hostinfo;
+        tunnelHostname = "ssh-cftun-${remote.hostname}-${remote.domainname}";
+      in
+      lib.nameValuePair "cftun.${remote.fqdn} ssh.cftun.${remote.fqdn} ${tunnelHostname}" {
+        HostName = tunnelHostname;
+        User = if remote.primaryUsername == null then "root" else remote.primaryUsername;
+        ProxyCommand = "${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h";
+      }
+    ) tunnelServers
+  );
 in
 {
   config =
@@ -23,10 +41,7 @@ in
         programs.ssh = {
           enable = true;
           enableDefaultConfig = false;
-          settings."cftun.dt.sc.gjuvekar.com ssh.cftun.dt.sc.gjuvekar.com ssh-cftun-dt-sc.gjuvekar.com" = {
-            HostName = "ssh-cftun-dt-sc.gjuvekar.com";
-            ProxyCommand = "${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h";
-          };
+          settings = tunnelSshSettings;
         };
       };
       "nixos-system" = lib.mkMerge [
