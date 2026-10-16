@@ -26,10 +26,13 @@ in
 {
   config =
     {
-      "home-manager" = {
-        home.packages = lib.mkIf (domain_is_personal && hostinfo.isLocalGraphical) [
-          pkgs.codex
+      "home-manager" = lib.mkIf hostinfo.isLocalGraphical {
+        home.packages = [
+          pkgs.skills
           pkgs.t3code
+        ]
+        ++ lib.optionals domain_is_personal [
+          pkgs.codex
         ];
       };
 
