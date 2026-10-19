@@ -1,0 +1,114 @@
+--- a/vey-proxy/src/serve/mod.rs
++++ b/vey-proxy/src/serve/mod.rs
+@@ -9,7 +9,7 @@
+ use async_trait::async_trait;
+ #[cfg(feature = "quic")]
+ use quinn::Connection;
+-use tokio::net::TcpStream;
++use tokio::net::{TcpStream, UnixStream};
+ use tokio_rustls::server::TlsStream;
+
+ use vey_daemon::listen::{
+@@ -93,6 +93,8 @@
+
+     fn alive_count(&self) -> i32;
+     fn quit_policy(&self) -> &Arc<ServerQuitPolicy>;
++
++    async fn run_unix_task(&self, _stream: UnixStream, _cc_info: ClientConnectionInfo) {}
+
+     async fn run_rustls_task(&self, stream: TlsStream<TcpStream>, cc_info: ClientConnectionInfo);
+
+--- a/vey-proxy/src/serve/http_proxy/server.rs
++++ b/vey-proxy/src/serve/http_proxy/server.rs
+@@ -16,7 +16,7 @@
+ use quinn::Connection;
+ use slog::Logger;
+ use tokio::io::{AsyncRead, AsyncWrite};
+-use tokio::net::TcpStream;
++use tokio::net::{TcpStream, UnixListener, UnixStream};
+ use tokio::sync::{broadcast, mpsc};
+ use tokio_rustls::{TlsAcceptor, server::TlsStream};
+
+@@ -197,6 +197,57 @@
+         }
+     }
+
++    // Adopt the named Unix listener created by the systemd socket unit.
++    fn start_activated_unix(&self, mut server: ArcServer) -> anyhow::Result<()> {
++        use std::os::fd::FromRawFd;
++
++        let name = self.name().to_string();
++        let mut descriptors = sd_notify::listen_fds_with_names()?
++            .filter(|(_, fd_name)| fd_name == &name);
++        let Some((fd, _)) = descriptors.next() else {
++            return Ok(());
++        };
++        anyhow::ensure!(descriptors.next().is_none(), "multiple Unix listeners for {name}");
++        // SAFETY: sd-notify validated these inherited descriptors for this PID;
++        // this HTTP server is the sole owner of the descriptor named for it.
++        let listener = unsafe { std::os::unix::net::UnixListener::from_raw_fd(fd) };
++        listener.local_addr().context("activation socket is not AF_UNIX")?;
++        listener.set_nonblocking(true)?;
++        let listener = UnixListener::from_std(listener)?;
++        let mut reload = self.reload_sender.subscribe();
++        self.server_stats.set_online();
++        tokio::spawn(async move {
++            loop {
++                tokio::select! {
++                    command = reload.recv() => match command {
++                        Ok(ServerReloadCommand::ReloadVersion(_)) => {
++                            server = crate::serve::get_or_insert_default(server.name());
++                        }
++                        Ok(ServerReloadCommand::UpdateInPlace(_)) => {},
++                        Err(broadcast::error::RecvError::Lagged(_)) => {},
++                        _ => break,
++                    },
++                    result = listener.accept() => {
++                        let (stream, _) = match result {
++                            Ok(accepted) => accepted,
++                            Err(error) => {
++                                log::error!("Unix proxy accept failed: {error}");
++                                break;
++                            }
++                        };
++                        let server = Arc::clone(&server);
++                        tokio::spawn(async move {
++                            // Unix peers have no IP address; use loopback for accounting.
++                            let address = SocketAddr::from(([127, 0, 0, 1], 0));
++                            server.run_unix_task(stream, ClientConnectionInfo::new(address, address)).await;
++                        });
++                    }
++                }
++            }
++        });
++        Ok(())
++    }
++
+     fn get_common_task_context(&self, cc_info: ClientConnectionInfo) -> Arc<CommonTaskContext> {
+         Arc::new(CommonTaskContext {
+             server_config: self.config.clone(),
+@@ -339,7 +390,7 @@
+
+     fn _start_runtime(&self, server: ArcServer) -> anyhow::Result<()> {
+         let Some(listen_config) = &self.config.listen else {
+-            return Ok(());
++            return self.start_activated_unix(server);
+         };
+         let listen_stats = server.get_listen_stats();
+         let mut runtime = ListenTcpRuntime::new(WrapArcServer(server), listen_stats);
+@@ -460,6 +511,15 @@
+
+ #[async_trait]
+ impl Server for HttpProxyServer {
++    async fn run_unix_task(&self, stream: UnixStream, cc_info: ClientConnectionInfo) {
++        self.server_stats.add_conn(cc_info.client_addr());
++        if self.drop_early(cc_info.client_addr()) {
++            return;
++        }
++        let (reader, writer) = stream.into_split();
++        self.spawn_stream_task(tokio::io::join(reader, writer), cc_info).await;
++    }
++
+     fn escaper(&self) -> &NodeName {
+         self.config.escaper()
+     }

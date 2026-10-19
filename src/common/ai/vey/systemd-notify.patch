@@ -1,0 +1,51 @@
+--- a/vey-proxy/src/main.rs
++++ b/vey-proxy/src/main.rs
+@@ -143,7 +143,11 @@
+         }
+
+         match load_and_spawn().await {
+-            Ok(_) => vey_daemon::control::upgrade::finish(),
++            Ok(_) => {
++                sd_notify::notify(&[sd_notify::NotifyState::Ready])
++                    .context("failed to notify systemd of readiness")?;
++                vey_daemon::control::upgrade::finish();
++            }
+             Err(e) => {
+                 vey_daemon::control::upgrade::cancel_old_shutdown();
+                 return Err(e);
+--- a/vey-proxy/Cargo.toml
++++ b/vey-proxy/Cargo.toml
+@@ -9,6 +9,7 @@
+ # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+ [dependencies]
++sd-notify = "0.5.0"
+ anyhow.workspace = true
+ thiserror.workspace = true
+ async-trait.workspace = true
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -2203,6 +2203,15 @@
+ version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
++
++[[package]]
++name = "sd-notify"
++version = "0.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3e4ef7359e694bfaf1dd27a30f9d760b54c00dfae9f19bd0c05a39bc9128fe76"
++dependencies = [
++ "libc",
++]
+
+ [[package]]
+ name = "security-framework"
+@@ -3527,6 +3536,7 @@
+  "rmpv",
+  "rustc-hash",
+  "rustls",
++ "sd-notify",
+  "serde_json",
+  "slog",
+  "snmalloc-rs",
