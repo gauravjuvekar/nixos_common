@@ -46,6 +46,7 @@ in
             };
             # Home Manager writes Git's global config here, rather than ~/.gitconfig.
             extraReadonlyDirs = [ "${config.xdg.configHome}/git" ];
+            extraReadwriteDirs = [ "${config.home.homeDirectory}/.agents/skills" ];
             extraPkgs = lib.optionals config.programs.delta.enableGitIntegration [ pkgs.delta ];
           })
         ];
