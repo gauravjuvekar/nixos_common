@@ -108,6 +108,10 @@ in
             programs.hyprlock = {
               enable = true;
               settings = {
+                auth = {
+                  pam.enabled = true;
+                  fingerprint.enabled = hostinfo.isLaptop;
+                };
                 general = {
                   no_fade_in = true;
                   no_fade_out = true;
@@ -124,7 +128,7 @@ in
                     monitor = "";
                     fade_on_empty = false;
                     fail_text = "($ATTEMPTS) | $FAIL";
-                    placeholder_text = "$PAMPROMPT ";
+                    placeholder_text = "$PAMPROMPT ${lib.optionalString hostinfo.isLaptop "$FPRINTPROMPT"}";
                     size = "500, 50";
                   }
                 ];
@@ -223,7 +227,11 @@ in
 
         "nixos-system" = {
           security.pam.services = {
-            hyprlock = { };
+            # Hyprlock talks to fprintd directly, in parallel with PAM password auth.
+            hyprlock = {
+              fprintAuth = false;
+              unixAuth = true;
+            };
           };
         };
       }
