@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   moduleContext,
   osConfig ? null,
@@ -33,6 +34,17 @@ in
         ]
         ++ lib.optionals domain_is_personal [
           pkgs.codex
+          (inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system}.makeJailedCodex {
+            pkg = pkgs.codex;
+            enableNix = true;
+            enableGitWorktrees = {
+              enable = true;
+              mountGitConfig = true;
+            };
+            # Home Manager writes Git's global config here, rather than ~/.gitconfig.
+            extraReadonlyDirs = [ "${config.xdg.configHome}/git" ];
+            extraPkgs = [ pkgs.delta ];
+          })
         ];
       };
 
