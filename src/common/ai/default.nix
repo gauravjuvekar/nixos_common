@@ -23,6 +23,7 @@ let
     ."${moduleContext}";
 
   domain_is_personal = lib.strings.hasSuffix ".gjuvekar.com" hostinfo.domainname;
+  jailedAgents = inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system};
 in
 {
   config =
@@ -34,12 +35,15 @@ in
         ]
         ++ lib.optionals domain_is_personal [
           pkgs.codex
-          (inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system}.makeJailedCodex {
+          (jailedAgents.makeJailedCodex {
             pkg = pkgs.writeShellScriptBin "codex" ''
               exec ${lib.getExe pkgs.codex} -s danger-full-access "$@"
             '';
             enableNix = true;
             nixConfigDir = "/etc/nixos";
+            baseJailOptions = [
+              (jailedAgents.internals.jail.combinators.set-hostname hostinfo.fqdn)
+            ] ++ jailedAgents.commonJailOptions;
             enableGitWorktrees = {
               enable = true;
               mountGitConfig = true;
