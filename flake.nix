@@ -151,7 +151,7 @@
             }
           ];
         };
-        lt2 = inputs.nixpkgs-patcher.lib.nixosSystem {
+        "lt2.roam.gjuvekar.com" = inputs.nixpkgs-patcher.lib.nixosSystem {
           nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
