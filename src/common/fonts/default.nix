@@ -23,7 +23,7 @@ in
           fonts.fontconfig.enable = true;
 
           home.packages = lib.lists.flatten [
-            (builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts))
+            pkgs.nerd-fonts.symbols-only
             (inputs.droid-sans-mono-dotted.outputs.packages.${pkgs.stdenv.hostPlatform.system}.droid-sans-mono-dotted-nerdfont
             )
             (inputs.droid-sans-mono-dotted.outputs.packages.${pkgs.stdenv.hostPlatform.system}.droid-sans-mono-slashed-nerdfont
@@ -32,13 +32,18 @@ in
             pkgs.cantarell-fonts
             # pkgs.corefonts
             pkgs.dejavu_fonts
+            pkgs.fira-code
             pkgs.gyre-fonts
+            pkgs.inconsolata
             pkgs.liberation_ttf
             pkgs.libertine
-            pkgs.monaspace
+            pkgs.monaspace.frozen
+            pkgs.monaspace.static
+            pkgs.monaspace.variable
             pkgs.noto-fonts
             pkgs.open-fonts
             pkgs.proggyfonts
+            pkgs.ubuntu-classic
           ];
         };
 
