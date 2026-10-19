@@ -3,6 +3,7 @@
   lib,
   moduleContext,
   osConfig ? null,
+  pkgs,
   ...
 }:
 let
@@ -31,7 +32,14 @@ in
         };
 
         boot = {
-          swraid.enable = true;
+          swraid = {
+            enable = true;
+            mdadmConf = lib.mkDefault ''
+              PROGRAM ${pkgs.writeShellScript "mdadm-notify" ''
+                exec ${pkgs.util-linux}/bin/logger -p daemon.warning -t mdadm -- "$@"
+              ''}
+            '';
+          };
 
           loader = {
             efi.canTouchEfiVariables = true;
