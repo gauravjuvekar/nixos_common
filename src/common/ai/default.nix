@@ -37,13 +37,14 @@ in
           (inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system}.makeJailedCodex {
             pkg = pkgs.codex;
             enableNix = true;
+            nixConfigDir = "/etc/nixos";
             enableGitWorktrees = {
               enable = true;
               mountGitConfig = true;
             };
             # Home Manager writes Git's global config here, rather than ~/.gitconfig.
             extraReadonlyDirs = [ "${config.xdg.configHome}/git" ];
-            extraPkgs = [ pkgs.delta ];
+            extraPkgs = lib.optionals config.programs.delta.enableGitIntegration [ pkgs.delta ];
           })
         ];
       };
