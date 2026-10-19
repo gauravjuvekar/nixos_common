@@ -35,7 +35,9 @@ in
         ++ lib.optionals domain_is_personal [
           pkgs.codex
           (inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system}.makeJailedCodex {
-            pkg = pkgs.codex;
+            pkg = pkgs.writeShellScriptBin "codex" ''
+              exec ${lib.getExe pkgs.codex} -s danger-full-access "$@"
+            '';
             enableNix = true;
             nixConfigDir = "/etc/nixos";
             enableGitWorktrees = {
