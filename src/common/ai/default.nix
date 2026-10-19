@@ -69,6 +69,10 @@ let
       jailedCodexOptions
       // {
         name = "jailed-codex-restricted";
+        # Hosted web search and apps run beyond the jail's network restrictions.
+        pkg = pkgs.writeShellScriptBin "codex" ''
+          exec ${lib.getExe jailedCodexOptions.pkg} -c 'web_search="disabled"' -c 'features.apps=false' "$@"
+        '';
         # The host daemon can fetch over the network even from an isolated jail.
         enableNix = false;
         baseJailOptions = import ./restricted-network.nix restrictedNetworkOptions;
