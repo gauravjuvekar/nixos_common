@@ -23,6 +23,23 @@ let
     ."${moduleContext}";
 
   domain_is_personal = lib.strings.hasSuffix ".gjuvekar.com" hostinfo.domainname;
+  # jail.nix binds each store output; bubblewrap cannot mount onto a symlink
+  # when the regular Codex jail already has /nix mounted.
+  agentChromium = pkgs.chromium.overrideAttrs (old: {
+    buildCommand = old.buildCommand + ''
+      mv "$sandbox" "$TMPDIR/chromium-sandbox-link"
+      cp -rL "$TMPDIR/chromium-sandbox-link" "$sandbox"
+    '';
+  });
+  agentBrowser = pkgs.symlinkJoin {
+    name = "agent-browser-with-chromium";
+    paths = [ pkgs.agent-browser ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram "$out/bin/agent-browser" \
+        --set-default AGENT_BROWSER_EXECUTABLE_PATH ${lib.getExe agentChromium}
+    '';
+  };
   jailedAgents = inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system};
   jailedCodexOptions = {
     pkg = pkgs.writeShellScriptBin "codex" ''
@@ -97,8 +114,14 @@ in
           pkgs.t3code
         ]
         ++ lib.optionals domain_is_personal [
+          agentBrowser
           pkgs.codex
-          (jailedAgents.makeJailedCodex jailedCodexOptions)
+          (jailedAgents.makeJailedCodex (
+            jailedCodexOptions
+            // {
+              extraPkgs = jailedCodexOptions.extraPkgs ++ [ agentBrowser ];
+            }
+          ))
           jailedCodexRestricted
         ];
       };
