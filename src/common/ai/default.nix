@@ -106,6 +106,9 @@ in
   config =
     {
       "home-manager" = lib.mkIf hostinfo.isLocalGraphical {
+        programs.mr.settings.".agents/skills" = {
+          checkout = "git clone git@github.com:gauravjuvekar/agent-skills.git skills";
+        };
         systemd.user = lib.mkIf domain_is_personal {
           inherit (sharedProxy) sockets services;
         };
