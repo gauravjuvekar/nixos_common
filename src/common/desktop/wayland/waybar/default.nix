@@ -24,6 +24,15 @@ in
           in
           {
             home.packages = [ pkgs.font-awesome ]; # Required for all the icons
+
+            # Waybar provides Bluetooth controls, so disable Blueman's tray autostart.
+            xdg.configFile."autostart/blueman.desktop".text = ''
+              [Desktop Entry]
+              Type=Application
+              Name=Blueman Applet
+              Hidden=true
+            '';
+
             xdg.configFile."waybar/style.css".text =
               let
                 notice-bg-color = "#ecf0f1";
