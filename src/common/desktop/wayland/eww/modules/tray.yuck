@@ -1,0 +1,2 @@
+(defwidget bar-tray []
+  (box :class "tray" :space-evenly false (systray :icon-size 16 :spacing 10)))

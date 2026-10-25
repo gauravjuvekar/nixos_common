@@ -1,0 +1,24 @@
+(deflisten status :initial '{"workspaces":[],"windows":[],"titles":[],"battery":{"text":"?%","icon":"battery-empty","state":"unknown","tooltip":""},"keyboard":[],"bluetooth":{"text":"?","state":"unknown","tooltip":""},"volume":{"icon":"volume","percentage":"  ?%","state":"unknown","tooltip":""},"clock":{"text":"","timezones":[],"calendar":""},"inhibited":false,"failed":{"text":"?/?","state":"degraded","visible":false,"tooltip":""}}'
+  "@backend@ watch")
+
+(defwidget panel [output]
+  (centerbox :class "panel"
+    (desktop :output output)
+    (desktop-title :output output)
+    (box :class "modules-right" :space-evenly false :halign "end" :spacing 0
+      (bar-tray)
+      (bar-battery)
+      (bar-keyboard)
+      (bar-bluetooth)
+      (bar-volume)
+      (world-clock :output output)
+      (bar-inhibitor)
+      (bar-failed-units))))
+
+(defwindow bar [output]
+  :monitor output
+  :geometry (geometry :x "0%" :y "0px" :width "100%" :height "32px" :anchor "top center")
+  :stacking "fg"
+  :exclusive true
+  :focusable "none"
+  (panel :output output))

@@ -1,0 +1,3 @@
+(defwidget bar-failed-units []
+  (label :visible {status.failed.visible} :class "failed ${status.failed.state}"
+    :text {status.failed.text} :tooltip {status.failed.tooltip}))

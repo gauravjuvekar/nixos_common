@@ -1,0 +1,6 @@
+(defwidget bar-bluetooth []
+  (button :class "bluetooth ${status.bluetooth.state}" :onclick "@blueman@ &"
+    :onmiddleclick "@backend@ bluetooth" :tooltip {status.bluetooth.tooltip}
+    (box :space-evenly false :spacing 4
+      (image :path "@icons@/bluetooth.svg" :image-width 16 :image-height 16 :valign "center")
+      (label :text {status.bluetooth.text}))))

@@ -1,0 +1,8 @@
+(defwidget bar-volume []
+  (eventbox :onscroll "@backend@ volume {}"
+    (button :class "volume ${status.volume.state}" :onclick "@sound@ &"
+      :onmiddleclick "@backend@ mute" :tooltip {status.volume.tooltip}
+      (box :space-evenly false :spacing 3
+        (image :class "volume-icon" :path "@icons@/${status.volume.icon}.svg"
+          :image-width 16 :image-height 16 :valign "center")
+        (label :text {status.volume.percentage} :unindent false)))))

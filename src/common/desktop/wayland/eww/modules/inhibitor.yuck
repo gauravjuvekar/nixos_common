@@ -1,0 +1,5 @@
+(defwidget bar-inhibitor []
+  (button :class "idle" :style {status.inhibited ? "background: #ecf0f1;" : ""}
+    :onclick "@backend@ inhibit" :tooltip "Toggle idle inhibition"
+    (image :path {status.inhibited ? "@icons@/idle-inhibited.svg" : "@icons@/idle-enabled.svg"}
+      :image-width 16 :image-height 16 :halign "center" :valign "center")))

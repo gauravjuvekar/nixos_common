@@ -1,0 +1,21 @@
+(defwidget world-calendar []
+  (box :class "calendar-popup" :orientation "vertical" :space-evenly false :spacing 10
+    (box :class "zone-table" :orientation "vertical" :space-evenly false
+      (for zone in {status.clock.timezones}
+        (button :class {zone.selected ? "zone selected" : "zone"}
+          :onclick "@backend@ select-timezone '${zone.name}'"
+          (box :space-evenly false :spacing 16
+            (label :class "zone-name" :text {zone.name} :xalign 0 :unindent false)
+            (label :class "zone-time" :text {zone.time} :xalign 0 :unindent false)))))
+    (eventbox :onscroll "@backend@ calendar {}" :onrightclick "@backend@ calendar-mode"
+      (label :class "year-calendar" :text {status.clock.calendar}
+        :xalign 0 :justify "left" :unindent false :wrap false))))
+
+(defwindow calendar-popup [output]
+  :monitor output
+  :geometry (geometry :x "0px" :y "0px" :width "0px" :height "0px" :anchor "top right")
+  :resizable false
+  :stacking "fg"
+  :exclusive false
+  :focusable "ondemand"
+  (world-calendar))

@@ -1,0 +1,7 @@
+(defwidget bar-keyboard []
+  (box :class "keyboard" :space-evenly false
+    (for key in {status.keyboard}
+      (box :class "key ${key.state}" :space-evenly false :spacing 3
+        (label :text {key.label})
+        (image :path {key.state == "unexpected" && key.icon == "locked" ? "@icons@/locked-dark.svg" : "@icons@/" + key.icon + ".svg"}
+          :image-width 16 :image-height 16 :valign "center")))))

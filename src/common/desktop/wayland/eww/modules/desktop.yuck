@@ -1,0 +1,22 @@
+(defwidget desktop [output]
+  (box :class "modules-left" :space-evenly false :spacing 0
+    (box :class "workspaces" :space-evenly false
+      (for workspace in {status.workspaces}
+        (button :visible {workspace.output == output}
+          :class {workspace.state}
+          :onclick "@backend@ workspace ${workspace.id}"
+          {workspace.label})))
+    (box :class "taskbar" :space-evenly false
+      (for window in {status.windows}
+        (button :visible {window.output == output}
+          :class {window.state} :tooltip {window.title}
+          :onclick "@backend@ focus ${window.id}"
+          :onmiddleclick "@backend@ close ${window.id}"
+          (box :space-evenly false
+            (for icon in {window.icon_names} (image :icon {icon} :icon-size "menu"))
+            (for path in {window.icon_files} (image :path {path} :image-width 16 :image-height 16))))))))
+
+(defwidget desktop-title [output]
+  (box :class "window-title" :space-evenly false :halign "center"
+    (for title in {status.titles}
+      (label :visible {title.output == output} :text {title.text} :limit-width 80))))
