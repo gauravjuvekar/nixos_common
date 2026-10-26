@@ -108,12 +108,8 @@
             inputs.home-manager.nixosModules.home-manager
           ];
         };
-      };
-      nixosConfigurations = {
-        "rpi.sc.gjuvekar.com" = inputs.nixpkgs-patcher.lib.nixosSystem {
+        "rpi.sc.gjuvekar.com" = {
           nixpkgsPatcher.inputs = inputs;
-          # Prepare patched sources on the build host; the Pi target stays aarch64.
-          nixpkgsPatcher.system = "x86_64-linux";
           system = "aarch64-linux";
           specialArgs = {
             inherit inputs;
@@ -126,10 +122,7 @@
             ./hosts/rpi.sc.gjuvekar.com/configuration.nix
           ];
         };
-        "gjuvekar-lt.client.nvidia.com" =
-          inputs.nixpkgs-patcher.lib.nixosSystem
-            self.nixosConfigurationArgs."gjuvekar-lt.client.nvidia.com";
-        "lt1.roam.gjuvekar.com" = inputs.nixpkgs-patcher.lib.nixosSystem {
+        "lt1.roam.gjuvekar.com" = {
           nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
@@ -142,7 +135,7 @@
             ./hosts/lt1.roam.gjuvekar.com/configuration.nix
           ];
         };
-        "dt.sc.gjuvekar.com" = inputs.nixpkgs-patcher.lib.nixosSystem {
+        "dt.sc.gjuvekar.com" = {
           nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
@@ -168,7 +161,7 @@
             }
           ];
         };
-        "lt2.roam.gjuvekar.com" = inputs.nixpkgs-patcher.lib.nixosSystem {
+        "lt2.roam.gjuvekar.com" = {
           nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
@@ -195,7 +188,7 @@
             }
           ];
         };
-        live = inputs.nixpkgs-patcher.lib.nixosSystem {
+        live = {
           nixpkgsPatcher.inputs = inputs;
           system = inputs.flake-utils.lib.system.x86_64-linux;
           specialArgs = {
@@ -210,6 +203,9 @@
           ];
         };
       };
+      nixosConfigurations = builtins.mapAttrs (
+        _: args: inputs.nixpkgs-patcher.lib.nixosSystem args
+      ) self.nixosConfigurationArgs;
     }
     // inputs.flake-utils.lib.eachDefaultSystem (
       system:

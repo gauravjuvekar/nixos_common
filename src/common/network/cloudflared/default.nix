@@ -15,14 +15,18 @@ let
     }
     ."${moduleContext}";
   isClient = hostinfo.isLocalGraphical && lib.strings.hasSuffix ".gjuvekar.com" hostinfo.fqdn;
+  # Reading remote host metadata must not build patches for another architecture.
+  hosts = map (
+    args:
+    (inputs.nixpkgs.lib.nixosSystem (builtins.removeAttrs args [ "nixpkgsPatcher" ])).config.hostinfo
+  ) (lib.attrValues inputs.self.nixosConfigurationArgs);
   tunnelServers = lib.filter (
-    server: server.hostinfo.isRemotelyAccessible && server.hostinfo.fqdn != hostinfo.fqdn
-  ) (map (host: host.config) (lib.attrValues inputs.self.nixosConfigurations));
+    remote: remote.isRemotelyAccessible && remote.fqdn != hostinfo.fqdn
+  ) hosts;
   tunnelSshSettings = lib.listToAttrs (
     map (
-      server:
+      remote:
       let
-        remote = server.hostinfo;
         tunnelHostname = "ssh-cftun-${remote.hostname}-${remote.domainname}";
       in
       lib.nameValuePair "cftun.${remote.fqdn} ssh.cftun.${remote.fqdn} ${tunnelHostname}" {
