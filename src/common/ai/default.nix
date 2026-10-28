@@ -109,7 +109,10 @@ in
         programs.codex = lib.mkIf domain_is_personal {
           enable = true;
           mutableSettings = true;
-          settings.tui.copy_on_select = "never";
+          settings.tui = {
+            copy_on_select = "never";
+            terminal_title = [ "project" ];
+          };
         };
         programs.mr.settings.".agents/skills" = {
           checkout = "git clone git@github.com:gauravjuvekar/agent-skills.git skills";
