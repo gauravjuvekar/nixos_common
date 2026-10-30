@@ -44,23 +44,6 @@
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
-    nixpkgs-bugfix-freecad = {
-      url = "github:NixOS/nixpkgs/c59305bab2065cfecc4944690d9eedbb56f3a9fa";
-    };
-    # Prerequisite for PR #576762 on the pinned nixpkgs (cloudflared 2026.10.0).
-    nixpkgs-patch-cloudflared-2026-10-1 = {
-      url = "https://github.com/NixOS/nixpkgs/commit/f6f1bdbad943ce7cdabf7f05d518a6ddcfbe15a3.diff";
-      flake = false;
-    };
-    nixpkgs-patch-cloudflared-2026-10-3 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/576762.diff";
-      flake = false;
-    };
-    # cloudflared 2026.10.3 requires Go 1.27.3.
-    nixpkgs-patch-go-1-27-3 = {
-      url = "https://github.com/NixOS/nixpkgs/commit/e666c2b24f9fbf7274b4d5caadc1f54cfb0c3dbb.diff";
-      flake = false;
-    };
     nixpkgs-patcher = {
       url = "github:gepbird/nixpkgs-patcher";
     };

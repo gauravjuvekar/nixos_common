@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   moduleContext,
   osConfig ? null,
@@ -77,12 +76,6 @@ in
         };
 
       "nixos-system" = {
-        nixpkgs.overlays = [
-          (final: prev: {
-            freecad = inputs.nixpkgs-bugfix-freecad.legacyPackages.${prev.stdenv.hostPlatform.system}.freecad;
-          })
-        ];
-
         environment.systemPackages = [
           pkgs.curl
           pkgs.dig

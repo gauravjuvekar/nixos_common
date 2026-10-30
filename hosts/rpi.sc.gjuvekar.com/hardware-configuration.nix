@@ -48,7 +48,6 @@
     "dm-integrity"
     "dm-raid"
   ];
-  boot.initrd.systemd.enable = true;
   # The existing LUKS key derivation takes about 24 seconds on this Pi.
   boot.initrd.systemd.settings.Manager.DefaultDeviceTimeoutSec = lib.mkForce "90s";
   boot.initrd.services.lvm.enable = true;

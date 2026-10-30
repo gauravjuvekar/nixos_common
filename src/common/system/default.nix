@@ -68,7 +68,6 @@ in
             services.lvm.enable = true;
 
             systemd = {
-              enable = true;
               emergencyAccess = true;
               settings.Manager = {
                 DefaultDeviceTimeoutSec = 20;
