@@ -122,7 +122,6 @@ in
         };
         home.packages = [
           pkgs.skills
-          pkgs.t3code
         ]
         ++ lib.optionals domain_is_personal [
           agentBrowser
@@ -133,6 +132,7 @@ in
             }
           ))
           jailedCodexRestricted
+          pkgs.t3code
         ];
       };
 
