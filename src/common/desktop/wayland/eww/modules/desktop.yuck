@@ -13,7 +13,7 @@
           :onclick "@backend@ focus ${window.id}"
           :onmiddleclick "@backend@ close ${window.id}"
           (box :space-evenly false
-            (for icon in {window.icon_names} (image :icon {icon} :icon-size "menu"))
+            (for icon in {window.icon_names} (image :icon {icon} :pixel-size 16))
             (for path in {window.icon_files} (image :path {path} :image-width 16 :image-height 16))))))))
 
 (defwidget desktop-title [output]

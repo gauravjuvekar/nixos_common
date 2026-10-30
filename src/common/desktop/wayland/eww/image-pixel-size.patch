@@ -1,0 +1,13 @@
+--- a/crates/eww/src/widgets/widget_definitions.rs
++++ b/crates/eww/src/widgets/widget_definitions.rs
+@@ -625,7 +625,9 @@
+         },
+         // @prop icon - name of a theme icon
+         // @prop icon-size - size of the theme icon
+-        prop(icon: as_string, icon_size: as_string = "button") {
++        // @prop pixel-size - fixed size of the theme icon in pixels, overriding icon-size. Default: -1 (use icon-size)
++        prop(icon: as_string, icon_size: as_string = "button", pixel_size: as_i32 = -1) {
++            gtk_widget.set_pixel_size(pixel_size);
+             gtk_widget.set_from_icon_name(Some(&icon), parse_icon_size(&icon_size)?);
+         },
+     });

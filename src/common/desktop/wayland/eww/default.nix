@@ -20,6 +20,13 @@ in
       {
         home-manager =
           let
+            # GtkImage's symbolic icon sizes can select oversized theme assets.
+            # Expose its pixel-size override so taskbar icons have a fixed size.
+            eww = pkgs.eww.overrideAttrs (old: {
+              # Compiling simplexpr with the pinned Rust compiler exhausts its default stack.
+              RUST_MIN_STACK = "33554432";
+              patches = (old.patches or [ ]) ++ [ ./image-pixel-size.patch ];
+            });
             # Order controls the calendar rows and scroll cycle; the first zone is the default.
             timezones = [
               "America/Los_Angeles"
@@ -44,7 +51,7 @@ in
                       pkgs.brightnessctl
                       pkgs.bluez
                       pkgs.systemd
-                      pkgs.eww
+                      eww
                     ]
                   }
               '';
@@ -66,6 +73,7 @@ in
           {
             programs.eww = {
               enable = true;
+              package = eww;
               systemd.enable = true;
               yuckConfig =
                 builtins.replaceStrings
