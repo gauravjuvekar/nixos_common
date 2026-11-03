@@ -31,6 +31,11 @@ button:hover { background: rgba(0, 0, 0, 0.2); box-shadow: inset 0 3px #ffffff; 
 .volume.muted, .volume.muted:hover, .volume.muted:active, .volume.muted:focus { background: #90b1b1; }
 .volume { padding: 0 4px; }
 .volume-icon { min-width: 20px; }
+menu { background: #222222; color: #ffffff; border: 1px solid #646464; padding: 4px; }
+menuitem { padding: 5px 10px; }
+menuitem:hover { background: #444444; }
+menuitem:disabled { color: #888888; }
+menu separator { background: #646464; min-height: 1px; margin: 4px 0; }
 tooltip { background: #222222; color: #ffffff; padding: 8px; }
 .calendar-popup { background: #222222; color: #ffffff; padding: 8px; border: 1px solid #646464; }
 .calendar-popup, .calendar-popup label { font-family: "DroidSansMDotted Nerd Font", "Droid Sans Mono Dotted", monospace; }
