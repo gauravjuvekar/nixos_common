@@ -1,32 +1,123 @@
 --- a/crates/notifier_host/src/item.rs
 +++ b/crates/notifier_host/src/item.rs
-@@ -98,6 +98,28 @@
+@@ -98,5 +98,21 @@
      pub async fn popup_menu(&self, event: &gtk::gdk::EventButton, x: i32, y: i32) -> zbus::Result<()> {
          if let Some(menu) = &self.gtk_menu {
 -            menu.popup_at_pointer(event.downcast_ref::<gtk::gdk::Event>());
 +            if let Some(widget) = menu.attach_widget() {
-+                if let Some(toplevel) = widget.toplevel() {
-+                    if let Some(window) = toplevel.window() {
-+                        let (icon_x, _) = widget.translate_coordinates(&toplevel, 0, 0).unwrap_or((0, 0));
-+                        let anchor = gtk::gdk::Rectangle::new(
-+                            icon_x,
-+                            toplevel.allocated_height(),
-+                            widget.allocated_width(),
-+                            0,
-+                        );
-+                        menu.set_anchor_hints(
-+                            gtk::gdk::AnchorHints::FLIP_X | gtk::gdk::AnchorHints::SLIDE_X | gtk::gdk::AnchorHints::RESIZE_Y,
-+                        );
-+                        menu.popup_at_rect(
-+                            &window,
-+                            &anchor,
-+                            gtk::gdk::Gravity::SouthWest,
-+                            gtk::gdk::Gravity::NorthWest,
-+                            event.downcast_ref::<gtk::gdk::Event>(),
-+                        );
-+                    }
++                if let Some(window) = widget.window() {
++                    // The tray EventBox owns its GdkWindow. Its allocation includes the
++                    // parent offset, so use window-local coordinates to avoid adding it twice.
++                    let anchor = gtk::gdk::Rectangle::new(0, 0, widget.allocated_width(), widget.allocated_height());
++                    menu.set_anchor_hints(
++                        gtk::gdk::AnchorHints::FLIP_X | gtk::gdk::AnchorHints::SLIDE_X | gtk::gdk::AnchorHints::RESIZE_Y,
++                    );
++                    menu.popup_at_rect(
++                        &window,
++                        &anchor,
++                        gtk::gdk::Gravity::SouthWest,
++                        gtk::gdk::Gravity::NorthWest,
++                        event.downcast_ref::<gtk::gdk::Event>(),
++                    );
 +                }
 +            }
              Ok(())
          } else {
-             self.sni.context_menu(x, y).await
+@@ -169,2 +185,97 @@
+     format!("{path}/{name}", path = if path == "/" { "" } else { path })
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn popup_aligns_with_the_styled_tray_edge() {
++        gtk::init().unwrap();
++        let css = gtk::CssProvider::new();
++        css.load_from_path(&std::env::var("EWW_TEST_CSS").expect("set EWW_TEST_CSS to the bar stylesheet")).unwrap();
++        gtk::StyleContext::add_provider_for_screen(
++            &gtk::gdk::Screen::default().unwrap(),
++            &css,
++            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
++        );
++        let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
++        let con = rt.block_on(zbus::Connection::session()).unwrap();
++        let sni = rt.block_on(async {
++            proxy::StatusNotifierItemProxy::builder(&con)
++                .destination("org.example.TrayPositionTest")
++                .unwrap()
++                .path("/org/example/TrayPositionTest")
++                .unwrap()
++                .cache_properties(zbus::CacheProperties::No)
++                .build()
++                .await
++                .unwrap()
++        });
++        let window = gtk::Window::new(gtk::WindowType::Toplevel);
++        window.set_default_size(1280, 32);
++        window.move_(0, 0);
++        let layout = gtk::Fixed::new();
++        window.add(&layout);
++        let tray = gtk::Box::new(gtk::Orientation::Horizontal, 0);
++        tray.style_context().add_class("tray");
++        layout.put(&tray, 300, 0);
++        let systray = gtk::Box::new(gtk::Orientation::Horizontal, 0);
++        systray.set_homogeneous(true);
++        tray.add(&systray);
++        let icon = gtk::EventBox::new();
++        icon.set_size_request(16, 32);
++        systray.pack_start(&icon, true, true, 0);
++        let pixbuf = gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, true, 8, 16, 16).unwrap();
++        pixbuf.fill(0xffffffff);
++        icon.add(&gtk::Image::from_pixbuf(Some(&pixbuf)));
++        window.show_all();
++        while gtk::events_pending() {
++            gtk::main_iteration();
++        }
++
++        let menu = dbusmenu_gtk3::Menu::new("org.example.TrayPositionTest", "/org/example/TrayPositionTest");
++        menu.set_attach_widget(Some(&icon));
++        let entry = gtk::MenuItem::with_label("Network settings");
++        menu.append(&entry);
++        entry.show();
++        let item = Item { sni, gtk_menu: Some(menu.clone()) };
++        let display = gtk::gdk::Display::default().unwrap();
++        let pointer = display.default_seat().unwrap().pointer().unwrap();
++        let mut event = gtk::gdk::Event::new(gtk::gdk::EventType::ButtonPress);
++        event.set_device(Some(&pointer));
++
++        for tray_x in [300, 700] {
++            layout.move_(&tray, tray_x, 0);
++            // Process the layout before reading window coordinates.
++            window.check_resize();
++            while gtk::events_pending() {
++                gtk::main_iteration();
++            }
++            let (_, panel_x, panel_y) = window.window().unwrap().origin();
++            let expected_x = panel_x + tray_x;
++            let expected_y = panel_y + tray.allocated_height();
++            for pointer_x in [expected_x + 2, expected_x + 12] {
++                pointer.warp(&display.default_screen(), pointer_x, 10);
++                display.sync();
++                rt.block_on(item.popup_menu(event.downcast_ref().unwrap(), pointer_x, 10)).unwrap();
++                display.sync();
++                while gtk::events_pending() {
++                    gtk::main_iteration();
++                }
++                let (_, actual_x, actual_y) = menu.window().unwrap().origin();
++                assert_eq!(
++                    (actual_x, actual_y),
++                    (expected_x, expected_y),
++                    "the visible menu border must align with the styled tray at x={tray_x}, independently of pointer x={pointer_x}"
++                );
++                assert_eq!(icon.window().unwrap().origin().1, expected_x, "the clickable item must include the tray padding");
++                menu.popdown();
++                while gtk::events_pending() {
++                    gtk::main_iteration();
++                }
++            }
++        }
++        window.close();
++    }
++}

@@ -29,6 +29,22 @@ in
                 ./image-pixel-size.patch
                 ./tray-menu-position.patch
               ];
+              # Exercise the tray menu's actual GTK positioning on a virtual display.
+              cargoTestFlags = [
+                "--package=eww"
+                "--package=notifier_host"
+              ];
+              preCheck = (old.preCheck or "") + ''
+                export EWW_TEST_CSS=${./eww.scss}
+                export CARGO_TARGET_${
+                  lib.toUpper (builtins.replaceStrings [ "-" ] [ "_" ] pkgs.stdenv.hostPlatform.rust.rustcTarget)
+                }_RUNNER=${pkgs.writeShellScript "eww-test-runner" ''
+                  export GDK_BACKEND=x11
+                  export XDG_CACHE_HOME="$TMPDIR/eww-test-cache"
+                  exec ${pkgs.dbus}/bin/dbus-run-session --config-file=${pkgs.dbus}/share/dbus-1/session.conf -- \
+                    ${pkgs.xvfb-run}/bin/xvfb-run -s "-screen 0 1280x720x24" "$@"
+                ''}
+              '';
             });
             # Order controls the calendar rows and scroll cycle; the first zone is the default.
             timezones = [
