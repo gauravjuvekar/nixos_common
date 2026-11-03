@@ -1,0 +1,32 @@
+--- a/crates/notifier_host/src/item.rs
++++ b/crates/notifier_host/src/item.rs
+@@ -98,6 +98,28 @@
+     pub async fn popup_menu(&self, event: &gtk::gdk::EventButton, x: i32, y: i32) -> zbus::Result<()> {
+         if let Some(menu) = &self.gtk_menu {
+-            menu.popup_at_pointer(event.downcast_ref::<gtk::gdk::Event>());
++            if let Some(widget) = menu.attach_widget() {
++                if let Some(toplevel) = widget.toplevel() {
++                    if let Some(window) = toplevel.window() {
++                        let (icon_x, _) = widget.translate_coordinates(&toplevel, 0, 0).unwrap_or((0, 0));
++                        let anchor = gtk::gdk::Rectangle::new(
++                            icon_x,
++                            toplevel.allocated_height(),
++                            widget.allocated_width(),
++                            0,
++                        );
++                        menu.set_anchor_hints(
++                            gtk::gdk::AnchorHints::FLIP_X | gtk::gdk::AnchorHints::SLIDE_X | gtk::gdk::AnchorHints::RESIZE_Y,
++                        );
++                        menu.popup_at_rect(
++                            &window,
++                            &anchor,
++                            gtk::gdk::Gravity::SouthWest,
++                            gtk::gdk::Gravity::NorthWest,
++                            event.downcast_ref::<gtk::gdk::Event>(),
++                        );
++                    }
++                }
++            }
+             Ok(())
+         } else {
+             self.sni.context_menu(x, y).await

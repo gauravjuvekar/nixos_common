@@ -25,7 +25,10 @@ in
             eww = pkgs.eww.overrideAttrs (old: {
               # Compiling simplexpr with the pinned Rust compiler exhausts its default stack.
               RUST_MIN_STACK = "33554432";
-              patches = (old.patches or [ ]) ++ [ ./image-pixel-size.patch ];
+              patches = (old.patches or [ ]) ++ [
+                ./image-pixel-size.patch
+                ./tray-menu-position.patch
+              ];
             });
             # Order controls the calendar rows and scroll cycle; the first zone is the default.
             timezones = [
