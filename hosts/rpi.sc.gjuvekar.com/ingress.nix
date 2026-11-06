@@ -9,7 +9,7 @@ let
   hosts = {
     "idm.gjuvekar.com" = "kanidm";
     "sc.idm.gjuvekar.com" = "kanidm";
-    "sc.hass.gjuvekar.com" = "hello";
+    "sc.hass.gjuvekar.com" = "homeassistant";
   };
   caddy = pkgs.caddy.withPlugins {
     plugins = [ "github.com/caddy-dns/googleclouddns@v1.1.0" ];
@@ -36,20 +36,6 @@ in
       host: application:
       let
         challengeDomain = "${lib.removeSuffix ".gjuvekar.com" host}.ingress-acme.rpi.sc.gjuvekar.com";
-        site = pkgs.writeTextDir "index.html" ''
-          <!doctype html>
-          <html lang="en">
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>Hello, world! — ${host}</title>
-            </head>
-            <body>
-              <h1>Hello, world!</h1>
-              <p>${host}</p>
-            </body>
-          </html>
-        '';
       in
       {
         logFormat = "output stdout";
@@ -80,8 +66,7 @@ in
             ''
           else
             ''
-              root * ${site}
-              file_server
+              reverse_proxy 127.0.0.1:8123
             ''
         );
       }

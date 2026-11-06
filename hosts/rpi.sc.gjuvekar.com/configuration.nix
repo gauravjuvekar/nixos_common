@@ -7,6 +7,8 @@
     ./kanidm.nix
     ./ddns.nix
     ./gcloud-service-account-keys.nix
+    ./home-assistant.nix
+    ./iot-network.nix
   ];
 
   hostinfo = {
@@ -27,6 +29,8 @@
     nftables.enable = true;
   };
   systemd.network.enable = true;
+
+  rpi.iot.internetAllowedMacs = [ "94:45:60:6c:8b:36" ];
 
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";

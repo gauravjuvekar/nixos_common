@@ -53,6 +53,25 @@ let
       passkey|attested_passkey|attested_residentkey) ;;
       *) ${kanidm}/bin/kanidm group account-policy credential-type-minimum idm_all_persons passkey --name idm_admin ;;
     esac
+    for group in homeassistant_users homeassistant_admins; do
+      if ! ${kanidm}/bin/kanidm group get "$group" --name idm_admin --output json \
+        | ${lib.getExe pkgs.jq} -e --arg group "$group" 'objects | .attrs.name[0] == $group' >/dev/null; then
+        ${kanidm}/bin/kanidm group create "$group" --name idm_admin
+      fi
+      ensure_member "$group" gaurav idm_admin
+    done
+
+    if ! ${kanidm}/bin/kanidm system oauth2 get homeassistant --name idm_admin --output json \
+      | ${lib.getExe pkgs.jq} -e 'objects | .attrs.name[0] == "homeassistant"' >/dev/null; then
+      ${kanidm}/bin/kanidm system oauth2 create-public homeassistant "Home Assistant" \
+        https://sc.hass.gjuvekar.com/auth/oidc/welcome --name idm_admin
+    fi
+    ${kanidm}/bin/kanidm system oauth2 add-redirect-url homeassistant \
+      https://sc.hass.gjuvekar.com/auth/oidc/callback --name idm_admin
+    ${kanidm}/bin/kanidm system oauth2 enable-strict-redirect-url homeassistant --name idm_admin
+    ${kanidm}/bin/kanidm system oauth2 update-scope-map homeassistant homeassistant_users \
+      openid profile email groups --name idm_admin
+
     ${kanidm}/bin/kanidm logout --name idm_admin
     login_admin admin
     ensure_member system_admins gaurav admin
@@ -62,7 +81,10 @@ let
   '';
 in
 {
-  networking.hosts."127.0.0.1" = [ backendDomain ];
+  networking.hosts."127.0.0.1" = [
+    backendDomain
+    "idm.gjuvekar.com"
+  ];
 
   services.kanidm = {
     package = pkgs.kanidm_1_11;
