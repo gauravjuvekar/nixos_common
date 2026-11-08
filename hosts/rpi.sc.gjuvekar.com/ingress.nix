@@ -23,7 +23,7 @@ in
     # DNS-01 needs no inbound HTTP challenge listener. Serve HTTPS only.
     httpPort = null;
     openFirewall = true;
-    acmeCA = "https://acme-staging-v02.api.letsencrypt.org/directory";
+    acmeCA = "https://acme-v02.api.letsencrypt.org/directory";
     logFormat = "level INFO";
     globalConfig = ''
       auto_https disable_redirects
