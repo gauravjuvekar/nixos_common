@@ -78,6 +78,7 @@ in
       "nixos-system" = {
         environment.systemPackages = [
           pkgs.curl
+          pkgs.delve
           pkgs.dig
           pkgs.fd
           pkgs.tree
