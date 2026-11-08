@@ -3,6 +3,7 @@
     ./hardware-configuration.nix
     ./disk-layout.nix
     ./remote-access.nix
+    ./ddns.nix
     ./gcloud-service-account-keys.nix
   ];
 
