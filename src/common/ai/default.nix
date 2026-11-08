@@ -23,6 +23,19 @@ let
     ."${moduleContext}";
 
   domain_is_personal = lib.strings.hasSuffix ".gjuvekar.com" hostinfo.domainname;
+  masterPkgs = import inputs.nixpkgs-master {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    inherit (pkgs) config;
+  };
+  codex = masterPkgs.codex.overrideAttrs (old: {
+    # The package still relies on bundled native libraries, while the new
+    # cargo setup hook forces system libraries it does not declare.
+    dontCargoUseSystemLibs = true;
+    # LLVM optimization of Codex's large crates needs more compiler stack.
+    env = old.env // {
+      RUST_MIN_STACK = "67108864";
+    };
+  });
   # jail.nix binds each store output; bubblewrap cannot mount onto a symlink
   # when the regular Codex jail already has /nix mounted.
   agentChromium = pkgs.chromium.overrideAttrs (old: {
@@ -43,7 +56,7 @@ let
   jailedAgents = inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system};
   jailedCodexOptions = {
     pkg = pkgs.writeShellScriptBin "codex" ''
-      exec ${lib.getExe pkgs.codex} -s danger-full-access "$@"
+      exec ${lib.getExe codex} -s danger-full-access "$@"
     '';
     enableNix = true;
     nixConfigDir = "/etc/nixos";
@@ -108,6 +121,7 @@ in
       "home-manager" = lib.mkIf hostinfo.isLocalGraphical {
         programs.codex = lib.mkIf domain_is_personal {
           enable = true;
+          package = codex;
           mutableSettings = true;
           settings.tui = {
             copy_on_select = "never";
@@ -132,7 +146,7 @@ in
             }
           ))
           jailedCodexRestricted
-          pkgs.t3code
+          (pkgs.t3code.override { inherit codex; })
         ];
       };
 

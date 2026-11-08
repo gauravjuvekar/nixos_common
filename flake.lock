@@ -407,6 +407,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1794100637,
+        "narHash": "sha256-brMS0/9zS9Ka4h3TN9cFmD/2xEe85kmSAbQF0Pd4bsE=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "0c12c116322f8189c36d4768cd68c88f686794f5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-patcher": {
       "locked": {
         "lastModified": 1789143781,
@@ -473,6 +489,7 @@
         "home-manager": "home-manager",
         "jailed-agents": "jailed-agents",
         "nixpkgs": "nixpkgs_2",
+        "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-patcher": "nixpkgs-patcher",
         "systems": "systems_2"
       }

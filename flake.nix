@@ -44,6 +44,9 @@
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
+    nixpkgs-master = {
+      url = "github:NixOS/nixpkgs/master";
+    };
     nixpkgs-patcher = {
       url = "github:gepbird/nixpkgs-patcher";
     };
