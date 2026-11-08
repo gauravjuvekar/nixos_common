@@ -52,6 +52,7 @@ in
         logFormat = "output stdout";
         extraConfig = ''
           tls {
+            protocols tls1.3 tls1.3
             issuer acme {
               disable_http_challenge
               disable_tlsalpn_challenge
