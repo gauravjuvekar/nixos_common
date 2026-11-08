@@ -4,6 +4,7 @@
     ./disk-layout.nix
     ./remote-access.nix
     ./ingress.nix
+    ./kanidm.nix
     ./ddns.nix
     ./gcloud-service-account-keys.nix
   ];

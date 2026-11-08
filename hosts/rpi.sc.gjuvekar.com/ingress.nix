@@ -6,11 +6,11 @@
 }:
 let
   keyService = config.systemd.services."gcloud-service-account-keys@rpi-sc-ingress-acme";
-  hosts = [
-    "idm.gjuvekar.com"
-    "sc.idm.gjuvekar.com"
-    "sc.hass.gjuvekar.com"
-  ];
+  hosts = {
+    "idm.gjuvekar.com" = "kanidm";
+    "sc.idm.gjuvekar.com" = "kanidm";
+    "sc.hass.gjuvekar.com" = "hello";
+  };
   caddy = pkgs.caddy.withPlugins {
     plugins = [ "github.com/caddy-dns/googleclouddns@v1.1.0" ];
     hash = "sha256-umFtfmCKlkDHOBcvd3TULodegnLkwg3wiD01q92qqLM=";
@@ -32,8 +32,8 @@ in
       auto_https disable_redirects
       cert_issuer acme
     '';
-    virtualHosts = lib.genAttrs hosts (
-      host:
+    virtualHosts = lib.mapAttrs (
+      host: application:
       let
         challengeDomain = "${lib.removeSuffix ".gjuvekar.com" host}.ingress-acme.rpi.sc.gjuvekar.com";
         site = pkgs.writeTextDir "index.html" ''
@@ -67,11 +67,25 @@ in
               resolvers 1.1.1.1:53 [2606:4700:4700::1111]:53
             }
           }
-          root * ${site}
-          file_server
-        '';
+        ''
+        + (
+          if application == "kanidm" then
+            ''
+              reverse_proxy https://${config.services.kanidm.server.settings.bindaddress} {
+                header_up Host {http.request.host}
+                transport http {
+                  tls_server_name backend.sc.idm.gjuvekar.com
+                }
+              }
+            ''
+          else
+            ''
+              root * ${site}
+              file_server
+            ''
+        );
       }
-    );
+    ) hosts;
   };
 
   systemd.services.caddy = {
