@@ -9,6 +9,12 @@ let
   certificate = config.security.acme.certs.${backendDomain};
   keyService = config.systemd.services."gcloud-service-account-keys@rpi-sc-idm-acme";
   kanidm = config.services.kanidm.package;
+  customCss = pkgs.writeText "kanidm-override.css" ''
+    .kanidm_logo,
+    .navbar-brand > img {
+      display: none;
+    }
+  '';
   bootstrap = pkgs.writeShellScript "kanidm-bootstrap" ''
     set -euo pipefail
     umask 077
@@ -50,6 +56,8 @@ let
     ${kanidm}/bin/kanidm logout --name idm_admin
     login_admin admin
     ensure_member system_admins gaurav admin
+    ${kanidm}/bin/kanidm system domain set-displayname idm.gjuvekar.com --name admin
+    ${kanidm}/bin/kanidm system domain remove-image --name admin
     ${kanidm}/bin/kanidm logout --name admin
   '';
 in
@@ -136,11 +144,15 @@ in
     # Start after ACME has issued a trusted certificate.
     requires = [ "acme-order-renew-${backendDomain}.service" ];
     after = [ "acme-order-renew-${backendDomain}.service" ];
-    serviceConfig.ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+    serviceConfig = {
+      ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+      # Removing the domain image restores the default logo; hide that too.
+      BindReadOnlyPaths = [ "${customCss}:${kanidm}/ui/hpkg/override.css" ];
+    };
   };
 
   systemd.services.kanidm-bootstrap = {
-    description = "Bootstrap Kanidm administrator roles and person passkey policy";
+    description = "Bootstrap Kanidm administrator roles, person passkey policy, and site branding";
     wantedBy = [ "multi-user.target" ];
     requires = [ "kanidm.service" ];
     after = [ "kanidm.service" ];
