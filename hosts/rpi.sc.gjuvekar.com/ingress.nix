@@ -17,6 +17,8 @@ let
   };
 in
 {
+  security.acme.defaults.email = "gauravjuvekar@gmail.com";
+
   services.caddy = {
     enable = true;
     package = caddy;
@@ -24,6 +26,7 @@ in
     httpPort = null;
     openFirewall = true;
     acmeCA = "https://acme-v02.api.letsencrypt.org/directory";
+    email = config.security.acme.defaults.email;
     logFormat = "level INFO";
     globalConfig = ''
       auto_https disable_redirects
