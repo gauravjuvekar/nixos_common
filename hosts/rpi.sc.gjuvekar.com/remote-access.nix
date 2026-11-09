@@ -6,6 +6,7 @@ in
 {
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICW38PaCVme5Kic109sI0ir5U2ZvzXAbI0Qpt5Y67k92 gaurav@dt.sc.gjuvekar.com"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBZad6CYLOoixY4TrxNgU/kqLrpzBvxf+6ARF7d6G63y gaurav@lt2.roam.gjuvekar.com"
   ];
   services.openssh = {
     enable = true;

@@ -41,7 +41,11 @@ in
     enable = true;
     listenAddress = "127.0.0.1";
     openFirewall = false;
-    extraArgs = [ "--primary-interface=wlan0" ];
+    extraArgs = [
+      "--primary-interface=wlan0"
+      # lt2 connects its Bluetooth adapter through an SSH tunnel to /ble.
+      "--ble-proxy"
+    ];
   };
 
   systemd.services.matterjs-server = {

@@ -30,7 +30,10 @@
   };
   systemd.network.enable = true;
 
-  rpi.iot.internetAllowedMacs = [ "94:45:60:6c:8b:36" ];
+  rpi.iot.internetAllowedMacs = [
+    "94:45:60:6c:8b:36"
+    "68:c6:ac:09:e0:c0" # lt2
+  ];
 
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
