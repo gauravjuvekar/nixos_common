@@ -29,17 +29,18 @@ let
     }
 
     ensure_member() {
-      local group=$1 identity=$2 state
+      local group=$1 member=$2 identity=$3 state
       state=$(${kanidm}/bin/kanidm group get "$group" --name "$identity" --output json)
-      if ! ${lib.getExe pkgs.jq} -e --arg person 'gaurav@idm.gjuvekar.com' \
-        '(.attrs.member // []) | index($person) != null' <<< "$state" >/dev/null; then
-        ${kanidm}/bin/kanidm group add-members "$group" gaurav --name "$identity"
+      if ! ${lib.getExe pkgs.jq} -e --arg member "$member@idm.gjuvekar.com" \
+        '(.attrs.member // []) | index($member) != null' <<< "$state" >/dev/null; then
+        ${kanidm}/bin/kanidm group add-members "$group" "$member" --name "$identity"
       fi
     }
 
     # Migrations cannot change built-in groups, so use the CLI.
     login_admin idm_admin
-    ensure_member idm_admins idm_admin
+    ensure_member idm_admins gaurav idm_admin
+    ensure_member idm_ui_enable_experimental_features idm_admins idm_admin
     policy=$(${kanidm}/bin/kanidm group get idm_all_persons --name idm_admin --output json)
     minimum=$(${lib.getExe pkgs.jq} -r '.attrs.credential_type_minimum[0] // "any"' <<< "$policy")
     case "$minimum" in
@@ -48,7 +49,7 @@ let
     esac
     ${kanidm}/bin/kanidm logout --name idm_admin
     login_admin admin
-    ensure_member system_admins admin
+    ensure_member system_admins gaurav admin
     ${kanidm}/bin/kanidm logout --name admin
   '';
 in
