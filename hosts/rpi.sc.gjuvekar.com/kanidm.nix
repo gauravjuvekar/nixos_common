@@ -9,6 +9,10 @@ let
   certificate = config.security.acme.certs.${backendDomain};
   keyService = config.systemd.services."gcloud-service-account-keys@rpi-sc-idm-acme";
   kanidm = config.services.kanidm.package;
+  homeAssistantIcon = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/OpenHomeFoundation/brand-assets/main/home-assistant/logo/screen/logomark/HA-logomark-color.svg";
+    hash = "sha256-ocW8wbTLqSOBaef849ORz+T9mBPGVqzP9QXMkgoUVJs=";
+  };
   customCss = pkgs.writeText "kanidm-override.css" ''
     .kanidm_logo,
     .navbar-brand > img {
@@ -71,6 +75,7 @@ let
     ${kanidm}/bin/kanidm system oauth2 enable-strict-redirect-url homeassistant --name idm_admin
     ${kanidm}/bin/kanidm system oauth2 update-scope-map homeassistant homeassistant_users \
       openid profile email groups --name idm_admin
+    ${kanidm}/bin/kanidm system oauth2 set-image homeassistant ${homeAssistantIcon} svg --name idm_admin
 
     ${kanidm}/bin/kanidm logout --name idm_admin
     login_admin admin
