@@ -2,4 +2,4 @@
   (eventbox :onscroll "@backend@ timezone '${output}' {}" :onmiddleclick "@backend@ timezone '${output}' up"
     :onclick "${EWW_CMD} open calendar-popup --toggle --id 'calendar-${output}' --arg 'output=${output}'"
     :onrightclick "@backend@ calendar-mode '${output}'"
-    (label :class "clock" :text {(status.clocks[output] ?: status.clock).text} :unindent false)))
+    (label :class "clock" :text {timezone_times[clock_selections[output] ?: clock_selections[""]] ?: ""} :unindent false)))

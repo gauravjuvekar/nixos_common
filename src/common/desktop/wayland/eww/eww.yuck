@@ -1,5 +1,16 @@
-(deflisten status :initial '{"workspaces":[],"windows":[],"titles":[],"battery":{"text":"?%","icon":"battery-empty","state":"unknown","tooltip":""},"keyboard":[],"bluetooth":{"text":"?","state":"unknown","tooltip":""},"volume":{"icon":"volume","percentage":"  ?%","state":"unknown","tooltip":""},"clocks":{},"clock":{"text":"","timezones":[],"calendar":""},"inhibited":false,"failed":{"text":"?/?","state":"degraded","visible":false,"tooltip":""}}'
-  "@backend@ watch")
+(defvar workspaces '[]')
+(defvar windows '[]')
+(defvar titles '[]')
+(defvar battery '{"text":"?%","icon":"battery-empty","state":"unknown","tooltip":""}')
+(defvar keyboard '[]')
+(defvar bluetooth '{"text":"?","state":"unknown","tooltip":""}')
+(defvar volume '{"icon":"volume","percentage":"  ?%","state":"unknown","tooltip":""}')
+(defvar inhibited 'false')
+(defvar failed '{"text":"?/?","state":"degraded","visible":false,"tooltip":""}')
+(defvar calendar_texts '{}')
+(defvar clock_selections '{}')
+(defvar timezone_names '[]')
+(deflisten timezone_times :initial '{}' "@backend@ watch --eww-config .")
 
 (defwidget panel [output]
   (centerbox :class "panel"

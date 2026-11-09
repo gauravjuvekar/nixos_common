@@ -76,7 +76,10 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    Watch,
+    Watch {
+        #[arg(long)]
+        eww_config: Option<PathBuf>,
+    },
     Snapshot,
     Panels,
     Workspace {
@@ -123,8 +126,10 @@ fn main_command() -> Result<(), Box<dyn std::error::Error>> {
         "action"
     };
     match args.command {
-        Command::Watch => return watch(false, &config.timezones).map_err(Into::into),
-        Command::Snapshot => return watch(true, &config.timezones).map_err(Into::into),
+        Command::Watch { eww_config } => {
+            return watch(false, &config.timezones, eww_config).map_err(Into::into);
+        }
+        Command::Snapshot => return watch(true, &config.timezones, None).map_err(Into::into),
         Command::Panels => panels(),
         Command::Workspace { id } => desktop::action(Action::FocusWorkspace {
             reference: WorkspaceReferenceArg::Id(id),

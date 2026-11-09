@@ -1,13 +1,13 @@
 (defwidget desktop [output]
   (box :class "modules-left" :space-evenly false :spacing 0
     (box :class "workspaces" :space-evenly false
-      (for workspace in {status.workspaces}
+      (for workspace in {workspaces}
         (button :visible {workspace.output == output}
           :class {workspace.state}
           :onclick "@backend@ workspace ${workspace.id}"
           {workspace.label})))
     (box :class "taskbar" :space-evenly false
-      (for window in {status.windows}
+      (for window in {windows}
         (button :visible {window.output == output}
           :class {window.state} :tooltip {window.title}
           :onclick "@backend@ focus ${window.id}"
@@ -18,5 +18,5 @@
 
 (defwidget desktop-title [output]
   (box :class "window-title" :space-evenly false :halign "center"
-    (for title in {status.titles}
+    (for title in {titles}
       (label :visible {title.output == output} :text {title.text} :limit-width 80))))

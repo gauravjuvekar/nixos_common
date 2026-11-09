@@ -1,7 +1,7 @@
 (defwidget bar-battery []
   (eventbox :visible @laptop@ :onscroll "@backend@ brightness {}"
-    (box :class "battery ${status.battery.state}"
-      :space-evenly false :spacing 4 :tooltip {status.battery.tooltip}
-      (label :text {status.battery.text})
-      (image :path "@icons@/${status.battery.icon}.svg"
+    (box :class "battery ${battery.state}"
+      :space-evenly false :spacing 4 :tooltip {battery.tooltip}
+      (label :text {battery.text})
+      (image :path "@icons@/${battery.icon}.svg"
         :image-width 16 :image-height 16 :valign "center"))))
