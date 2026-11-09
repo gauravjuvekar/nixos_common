@@ -1,5 +1,5 @@
 (defwidget world-clock [output]
-  (eventbox :onscroll "@backend@ timezone {}" :onmiddleclick "@backend@ timezone up"
+  (eventbox :onscroll "@backend@ timezone '${output}' {}" :onmiddleclick "@backend@ timezone '${output}' up"
     :onclick "${EWW_CMD} open calendar-popup --toggle --id 'calendar-${output}' --arg 'output=${output}'"
-    :onrightclick "@backend@ calendar-mode"
-    (label :class "clock" :text {status.clock.text} :unindent false)))
+    :onrightclick "@backend@ calendar-mode '${output}'"
+    (label :class "clock" :text {(status.clocks[output] ?: status.clock).text} :unindent false)))

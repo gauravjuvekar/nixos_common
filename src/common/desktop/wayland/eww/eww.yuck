@@ -1,4 +1,4 @@
-(deflisten status :initial '{"workspaces":[],"windows":[],"titles":[],"battery":{"text":"?%","icon":"battery-empty","state":"unknown","tooltip":""},"keyboard":[],"bluetooth":{"text":"?","state":"unknown","tooltip":""},"volume":{"icon":"volume","percentage":"  ?%","state":"unknown","tooltip":""},"clock":{"text":"","timezones":[],"calendar":""},"inhibited":false,"failed":{"text":"?/?","state":"degraded","visible":false,"tooltip":""}}'
+(deflisten status :initial '{"workspaces":[],"windows":[],"titles":[],"battery":{"text":"?%","icon":"battery-empty","state":"unknown","tooltip":""},"keyboard":[],"bluetooth":{"text":"?","state":"unknown","tooltip":""},"volume":{"icon":"volume","percentage":"  ?%","state":"unknown","tooltip":""},"clocks":{},"clock":{"text":"","timezones":[],"calendar":""},"inhibited":false,"failed":{"text":"?/?","state":"degraded","visible":false,"tooltip":""}}'
   "@backend@ watch")
 
 (defwidget panel [output]

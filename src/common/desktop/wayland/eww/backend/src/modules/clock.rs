@@ -15,11 +15,18 @@ impl<'a> Clock<'a> {
 
 impl Refreshable for Clock<'_> {
     fn refresh(&mut self, data: &mut Value) -> io::Result<()> {
-        data["clock"] = serde_json::to_value(calendar::clock(
-            chrono::Utc::now(),
-            &State::load(),
-            self.zones,
-        ))?;
+        let now = chrono::Utc::now();
+        data["clock"] = serde_json::to_value(calendar::clock(now, &State::default(), self.zones))?;
+        data["clocks"] = State::load_all()
+            .into_iter()
+            .map(|(output, state)| {
+                Ok((
+                    output,
+                    serde_json::to_value(calendar::clock(now, &state, self.zones))?,
+                ))
+            })
+            .collect::<Result<serde_json::Map<_, _>, serde_json::Error>>()?
+            .into();
         Ok(())
     }
 }

@@ -1,14 +1,14 @@
-(defwidget world-calendar []
+(defwidget world-calendar [output clock]
   (box :class "calendar-popup" :orientation "vertical" :space-evenly false :spacing 10
     (box :class "zone-table" :orientation "vertical" :space-evenly false
-      (for zone in {status.clock.timezones}
+      (for zone in {clock.timezones}
         (button :class {zone.selected ? "zone selected" : "zone"}
-          :onclick "@backend@ select-timezone '${zone.name}'"
+          :onclick "@backend@ select-timezone '${output}' '${zone.name}'"
           (box :space-evenly false :spacing 16
             (label :class "zone-name" :text {zone.name} :xalign 0 :unindent false)
             (label :class "zone-time" :text {zone.time} :xalign 0 :unindent false)))))
-    (eventbox :onscroll "@backend@ calendar {}" :onrightclick "@backend@ calendar-mode"
-      (label :class "year-calendar" :text {status.clock.calendar}
+    (eventbox :onscroll "@backend@ calendar '${output}' {}" :onrightclick "@backend@ calendar-mode '${output}'"
+      (label :class "year-calendar" :text {clock.calendar}
         :xalign 0 :justify "left" :unindent false :wrap false))))
 
 (defwindow calendar-popup [output]
@@ -18,4 +18,4 @@
   :stacking "fg"
   :exclusive false
   :focusable "ondemand"
-  (world-calendar))
+  (world-calendar :output output :clock {status.clocks[output] ?: status.clock}))

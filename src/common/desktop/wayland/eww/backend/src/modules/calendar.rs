@@ -1,9 +1,10 @@
 use chrono::{DateTime, Datelike, Duration, NaiveDate, Utc};
 use chrono_tz::Tz;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::fs::{self, File, OpenOptions};
 use std::io;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Deserialize)]
 #[serde(try_from = "Vec<String>")]
@@ -50,30 +51,40 @@ pub struct State {
 }
 
 fn state_path() -> io::Result<PathBuf> {
-    xdg::BaseDirectories::new().get_runtime_file("eww-clock.json")
+    xdg::BaseDirectories::new().get_runtime_file("eww-clocks.json")
 }
 
 impl State {
-    pub fn load() -> Self {
+    pub fn load_all() -> BTreeMap<String, Self> {
         state_path()
             .ok()
-            .and_then(|path| fs::read(path).ok())
+            .map(|path| Self::read_all(&path))
+            .unwrap_or_default()
+    }
+
+    fn read_all(path: &Path) -> BTreeMap<String, Self> {
+        fs::read(path)
+            .ok()
             .and_then(|bytes| serde_json::from_slice(&bytes).ok())
             .unwrap_or_default()
     }
 
-    pub fn update(update: impl FnOnce(&mut Self)) -> io::Result<()> {
+    pub fn update(output: &str, update: impl FnOnce(&mut Self)) -> io::Result<()> {
         let path = state_path()?;
+        Self::update_at(&path, output, update)
+    }
+
+    fn update_at(path: &Path, output: &str, update: impl FnOnce(&mut Self)) -> io::Result<()> {
         let lock = OpenOptions::new()
             .create(true)
             .truncate(false)
             .write(true)
             .open(path.with_extension("lock"))?;
         File::lock(&lock)?;
-        let mut state = Self::load();
-        update(&mut state);
+        let mut states = Self::read_all(path);
+        update(states.entry(output.to_string()).or_default());
         let temporary = path.with_extension("tmp");
-        fs::write(&temporary, serde_json::to_vec(&state)?)?;
+        fs::write(&temporary, serde_json::to_vec(&states)?)?;
         fs::rename(temporary, path)
     }
 
@@ -174,6 +185,36 @@ pub fn year_calendar(year: i32) -> String {
 mod tests {
     use super::*;
     use chrono::TimeZone;
+
+    #[test]
+    fn output_controls_preserve_other_bars_and_survive_reload() {
+        let path =
+            std::env::temp_dir().join(format!("eww-clocks-test-{}.json", std::process::id()));
+        let zones = Timezones::parse(r#"["Etc/UTC", "America/Los_Angeles"]"#).unwrap();
+        State::update_at(&path, "DP-1", |state| state.shift_timezone(-1, &zones)).unwrap();
+        State::update_at(&path, "DP-2", |state| {
+            state.month_view = true;
+            state.calendar_offset = 2;
+        })
+        .unwrap();
+        let states = State::read_all(&path);
+        assert_eq!(states["DP-1"].timezone, 1);
+        assert!(!states["DP-1"].month_view);
+        assert_eq!(states["DP-1"].calendar_offset, 0);
+        assert_eq!(states["DP-2"].timezone, 0);
+        assert!(states["DP-2"].month_view);
+        assert_eq!(states["DP-2"].calendar_offset, 2);
+
+        State::update_at(&path, "DP-1", |state| {
+            state.timezone = zones.index("Etc/UTC").unwrap()
+        })
+        .unwrap();
+        let states = State::read_all(&path);
+        assert_eq!(states["DP-1"].timezone, 0);
+        assert_eq!(states["DP-2"].calendar_offset, 2);
+        fs::remove_file(&path).unwrap();
+        fs::remove_file(path.with_extension("lock")).unwrap();
+    }
 
     #[test]
     fn timezone_rows_share_a_timestamp_and_handle_day_rollover() {

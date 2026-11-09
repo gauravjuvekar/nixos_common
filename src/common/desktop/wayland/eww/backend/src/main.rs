@@ -79,15 +79,36 @@ enum Command {
     Watch,
     Snapshot,
     Panels,
-    Workspace { id: u64 },
-    Focus { id: u64 },
-    Close { id: u64 },
-    Timezone { direction: Direction },
-    SelectTimezone { name: String },
-    CalendarMode,
-    Calendar { direction: Direction },
-    Volume { direction: Direction },
-    Brightness { direction: Direction },
+    Workspace {
+        id: u64,
+    },
+    Focus {
+        id: u64,
+    },
+    Close {
+        id: u64,
+    },
+    Timezone {
+        output: String,
+        direction: Direction,
+    },
+    SelectTimezone {
+        output: String,
+        name: String,
+    },
+    CalendarMode {
+        output: String,
+    },
+    Calendar {
+        output: String,
+        direction: Direction,
+    },
+    Volume {
+        direction: Direction,
+    },
+    Brightness {
+        direction: Direction,
+    },
     Mute,
     Inhibit,
     Bluetooth,
@@ -110,19 +131,21 @@ fn main_command() -> Result<(), Box<dyn std::error::Error>> {
         })?,
         Command::Focus { id } => desktop::action(Action::FocusWindow { id })?,
         Command::Close { id } => desktop::action(Action::CloseWindow { id: Some(id) })?,
-        Command::Timezone { direction } => {
-            State::update(|state| state.shift_timezone(direction.step(), &config.timezones))?;
+        Command::Timezone { output, direction } => {
+            State::update(&output, |state| {
+                state.shift_timezone(direction.step(), &config.timezones)
+            })?;
         }
-        Command::SelectTimezone { name } => {
+        Command::SelectTimezone { output, name } => {
             let timezone = config.timezones.index(&name)?;
-            State::update(|state| state.timezone = timezone)?;
+            State::update(&output, |state| state.timezone = timezone)?;
         }
-        Command::CalendarMode => State::update(|state| {
+        Command::CalendarMode { output } => State::update(&output, |state| {
             state.month_view = !state.month_view;
             state.calendar_offset = 0;
         })?,
-        Command::Calendar { direction } => {
-            State::update(|state| {
+        Command::Calendar { output, direction } => {
+            State::update(&output, |state| {
                 state.calendar_offset =
                     (state.calendar_offset + direction.step()).clamp(-1000, 1000)
             })?;
