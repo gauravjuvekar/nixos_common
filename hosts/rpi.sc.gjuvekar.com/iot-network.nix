@@ -117,6 +117,31 @@ in
     # Keep learning the Ethernet IPv6 address and default route while routing.
     systemd.network.networks."10-rpi-lan".networkConfig.IPv6AcceptRA = true;
 
+    # BCM43455 firmware 7.45.286 can double-free expired WPA3 PMKID cache
+    # entries (~10h), crashing the radio. Suspected cause of the 2026-11-09
+    # outage; hostapd stayed stopped after the firmware reset. Use Infineon's
+    # trial fix until a production release includes the cache-corruption fix:
+    # https://github.com/raspberrypi/linux/issues/7528
+    hardware.firmware =
+      let
+        firmware = pkgs.fetchurl {
+          name = "cyfmac43455-sdio-pmkid-expire-fix.bin";
+          url = "https://drive.usercontent.google.com/download?id=1_2TNb7-E78Bhm49iiwk-6hWpbIUkhb7Q&export=download&confirm=t";
+          hash = "sha256-kvkdWfRj8ll9iJHhx66HDWDkGIzpzjyMoQFroH2jnuU=";
+        };
+      in
+      lib.mkBefore [
+        (lib.hiPrio (
+          pkgs.runCommand "bcm43455-pmkid-expire-fix" { } ''
+            mkdir -p "$out/lib/firmware/cypress" "$out/lib/firmware/brcm"
+            cp ${firmware} "$out/lib/firmware/cypress/cyfmac43455-sdio.bin"
+            ln -s ../cypress/cyfmac43455-sdio.bin "$out/lib/firmware/brcm/brcmfmac43455-sdio.bin"
+            # Nix resolves board aliases inside each package, bypassing the generic override.
+            ln -s ../cypress/cyfmac43455-sdio.bin "$out/lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.bin"
+          ''
+        ))
+      ];
+
     services.hostapd = {
       enable = true;
       radios.${wifiInterface} = {
