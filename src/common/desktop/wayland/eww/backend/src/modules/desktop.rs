@@ -1,14 +1,54 @@
 use super::Refreshable;
+use crate::refresh::Hover;
 use freedesktop_desktop_entry::{DesktopEntry, Iter, default_paths};
 use niri_ipc::state::{EventStreamState, EventStreamStatePart};
 use niri_ipc::{Action, Event, Reply, Request, Response, Window, Workspace};
 use serde_json::{Value, json};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::io::{self, BufRead, BufReader, Write};
 use std::os::unix::net::UnixStream;
 use std::path::Path;
 use std::thread;
 use std::time::Duration;
+
+#[derive(Default)]
+pub struct TitlePreview {
+    hovered: BTreeMap<String, u64>,
+}
+
+impl TitlePreview {
+    pub fn hover(&mut self, hover: Hover) {
+        if hover.entered {
+            self.hovered.insert(hover.output, hover.id);
+        } else if self.hovered.get(&hover.output) == Some(&hover.id) {
+            self.hovered.remove(&hover.output);
+        }
+    }
+
+    pub fn titles(&self, windows: Option<&Value>, titles: Option<&Value>) -> Value {
+        let windows = windows.and_then(Value::as_array);
+        let mut titles = titles
+            .and_then(Value::as_array)
+            .cloned()
+            .unwrap_or_default();
+        for title in &mut titles {
+            let hovered = title["output"]
+                .as_str()
+                .and_then(|output| self.hovered.get(output))
+                .and_then(|id| {
+                    windows?.iter().find(|window| {
+                        window["id"].as_u64() == Some(*id) && window["output"] == title["output"]
+                    })
+                });
+            title["temporary"] =
+                json!(hovered.is_some_and(|window| window["id"] != title["window_id"]));
+            if let Some(window) = hovered {
+                title["text"] = json!(window["title"].as_str().unwrap_or(""));
+            }
+        }
+        json!(titles)
+    }
+}
 
 pub struct Desktop {
     icons: Icons,
@@ -179,6 +219,7 @@ fn compositor_view(
         }).collect::<Vec<_>>(),
         "titles": workspaces.iter().filter(|w| w.is_active).map(|w| json!({
             "output": w.output,
+            "window_id": w.active_window_id,
             "text": windows.iter().find(|window| Some(window.id) == w.active_window_id)
                 .and_then(|window| window.title.as_deref()).unwrap_or(""),
         })).collect::<Vec<_>>(),

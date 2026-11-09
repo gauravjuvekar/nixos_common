@@ -8,15 +8,18 @@
           {workspace.label})))
     (box :class "taskbar" :space-evenly false
       (for window in {windows}
-        (button :visible {window.output == output}
-          :class {window.state} :tooltip {window.title}
-          :onclick "@backend@ focus ${window.id}"
-          :onmiddleclick "@backend@ close ${window.id}"
-          (box :space-evenly false
-            (for icon in {window.icon_names} (image :icon {icon} :pixel-size 16))
-            (for path in {window.icon_files} (image :path {path} :image-width 16 :image-height 16))))))))
+        (eventbox :visible {window.output == output}
+          :onhover "@backend@ hover '${output}' ${window.id}"
+          :onhoverlost "@backend@ hover '${output}' ${window.id} --leave"
+          (button :class {window.state} :tooltip {window.title}
+            :onclick "@backend@ focus ${window.id}"
+            :onmiddleclick "@backend@ close ${window.id}"
+            (box :space-evenly false
+              (for icon in {window.icon_names} (image :icon {icon} :pixel-size 16))
+              (for path in {window.icon_files} (image :path {path} :image-width 16 :image-height 16)))))))))
 
 (defwidget desktop-title [output]
   (box :class "window-title" :space-evenly false :halign "center"
     (for title in {titles}
-      (label :visible {title.output == output} :text {title.text} :limit-width 80))))
+      (label :visible {title.output == output} :text {title.text} :limit-width 80
+        :class {title.temporary ? "temporary" : ""}))))

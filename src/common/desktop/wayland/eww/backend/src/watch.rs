@@ -1,13 +1,19 @@
 use crate::command;
 use crate::modules::calendar::Timezones;
+use crate::modules::desktop::TitlePreview;
 use crate::modules::{self, Refreshable, Target};
-use crate::refresh::Refresh;
+use crate::refresh::{Hover, Message, Refresh};
 use serde_json::{Value, json};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
 use std::time::Instant;
+
+enum Event {
+    Patch(Value),
+    Hover(Hover),
+}
 
 struct Module {
     source: Box<dyn Refreshable>,
@@ -38,6 +44,8 @@ impl Module {
 
 struct Output<W, F> {
     data: Value,
+    preview: TitlePreview,
+    titles: Value,
     writer: W,
     update: F,
 }
@@ -46,6 +54,8 @@ impl<W: Write, F: FnMut(&Value) -> io::Result<()>> Output<W, F> {
     fn new(writer: W, update: F) -> Self {
         Self {
             data: json!({}),
+            preview: TitlePreview::default(),
+            titles: json!([]),
             writer,
             update,
         }
@@ -54,9 +64,23 @@ impl<W: Write, F: FnMut(&Value) -> io::Result<()>> Output<W, F> {
     fn publish(&mut self, patch: &Value) -> io::Result<()> {
         let mut changed = json!({});
         for (key, value) in patch.as_object().unwrap() {
-            if key != "timezone_times" && self.data.get(key) != Some(value) {
+            if key != "timezone_times" && key != "titles" && self.data.get(key) != Some(value) {
                 changed[key] = value.clone();
             }
+        }
+        let titles = (patch.as_object().unwrap().is_empty()
+            || patch.get("windows").is_some()
+            || patch.get("titles").is_some())
+        .then(|| {
+            self.preview.titles(
+                patch.get("windows").or_else(|| self.data.get("windows")),
+                patch.get("titles").or_else(|| self.data.get("titles")),
+            )
+        });
+        if let Some(titles) = &titles
+            && *titles != self.titles
+        {
+            changed["titles"] = titles.clone();
         }
         if !changed.as_object().unwrap().is_empty() {
             (self.update)(&changed)?;
@@ -70,7 +94,15 @@ impl<W: Write, F: FnMut(&Value) -> io::Result<()>> Output<W, F> {
         for (key, value) in patch.as_object().unwrap() {
             self.data[key] = value.clone();
         }
+        if let Some(titles) = titles {
+            self.titles = titles;
+        }
         Ok(())
+    }
+
+    fn hover(&mut self, hover: Hover) -> io::Result<()> {
+        self.preview.hover(hover);
+        self.publish(&json!({}))
     }
 }
 
@@ -92,13 +124,13 @@ fn update_eww(changed: &Value, config: Option<&Path>) -> io::Result<()> {
     Ok(())
 }
 
-fn run_module(source: Box<dyn Refreshable>, wake: Receiver<()>, patches: Sender<Value>) {
+fn run_module(source: Box<dyn Refreshable>, wake: Receiver<()>, patches: Sender<Event>) {
     let mut module = Module::new(source);
     let mut data = json!({});
     loop {
         let start = Instant::now();
         module.refresh(&mut data);
-        if patches.send(data.clone()).is_err() {
+        if patches.send(Event::Patch(data.clone())).is_err() {
             return;
         }
         match wake.recv_timeout(module.source.interval().saturating_sub(start.elapsed())) {
@@ -140,10 +172,16 @@ pub fn watch(once: bool, zones: &Timezones, eww_config: Option<PathBuf>) -> io::
         let send = send.clone();
         thread::spawn(move || run_module(source, wait, send));
     }
+    let hover_send = send.clone();
     thread::spawn(move || {
         loop {
             match refresh.receive() {
-                Ok(Some(target)) => route(target, &controls),
+                Ok(Some(Message::Refresh(target))) => route(target, &controls),
+                Ok(Some(Message::Hover(hover))) => {
+                    if hover_send.send(Event::Hover(hover)).is_err() {
+                        return;
+                    }
+                }
                 Ok(None) => (),
                 Err(error) => {
                     eprintln!("bar-status: refresh socket: {error}");
@@ -154,15 +192,18 @@ pub fn watch(once: bool, zones: &Timezones, eww_config: Option<PathBuf>) -> io::
     });
     thread::spawn(move || {
         let _ = modules::desktop::Desktop::watch(|patch| {
-            send.send(patch)
+            send.send(Event::Patch(patch))
                 .map_err(|_| io::Error::new(io::ErrorKind::BrokenPipe, "Publisher stopped"))
         });
     });
     let mut output = Output::new(io::stdout(), move |changed: &Value| {
         update_eww(changed, eww_config.as_deref())
     });
-    for patch in patches {
-        output.publish(&patch)?;
+    for event in patches {
+        match event {
+            Event::Patch(patch) => output.publish(&patch)?,
+            Event::Hover(hover) => output.hover(hover)?,
+        }
     }
     Ok(())
 }
@@ -171,6 +212,13 @@ pub fn watch(once: bool, zones: &Timezones, eww_config: Option<PathBuf>) -> io::
 mod tests {
     use super::*;
     use std::time::Duration;
+
+    fn receive_patch(patches: &Receiver<Event>) -> Value {
+        match patches.recv_timeout(Duration::from_secs(2)).unwrap() {
+            Event::Patch(patch) => patch,
+            Event::Hover(_) => panic!("Unexpected hover event"),
+        }
+    }
 
     #[test]
     fn clock_ticks_publish_only_time_fields_and_preserve_desktop_events() {
@@ -216,6 +264,104 @@ mod tests {
         assert!(output.data.get("volume").is_none());
         output.publish(&patch).unwrap();
         assert_eq!(output.data, patch);
+    }
+
+    #[test]
+    fn hover_changes_only_titles_and_restores_the_latest_focused_window() {
+        let mut updates = Vec::new();
+        let mut output = Output::new(Vec::new(), |changed: &Value| {
+            updates.push(changed.clone());
+            Ok(())
+        });
+        output
+            .publish(&json!({
+                "windows": [{"id":8,"output":"DP-1","title":"focused"},
+                            {"id":9,"output":"DP-1","title":"preview ' $()"},
+                            {"id":10,"output":"DP-2","title":"other monitor"}],
+                "titles": [{"output":"DP-1","window_id":8,"text":"focused"},
+                           {"output":"DP-2","window_id":10,"text":"other monitor"}]
+            }))
+            .unwrap();
+        output
+            .hover(Hover {
+                output: "DP-1".into(),
+                id: 9,
+                entered: true,
+            })
+            .unwrap();
+        assert_eq!(output.titles[0]["text"], "preview ' $()");
+        assert_eq!(output.titles[0]["temporary"], true);
+        assert_eq!(output.titles[1]["text"], "other monitor");
+        assert_eq!(output.titles[1]["temporary"], false);
+        output
+            .publish(&json!({"titles":[
+                {"output":"DP-1","window_id":9,"text":"preview ' $()"},
+                {"output":"DP-2","window_id":10,"text":"other monitor"}
+            ]}))
+            .unwrap();
+        assert_eq!(output.titles[0]["temporary"], false);
+        output
+            .hover(Hover {
+                output: "DP-1".into(),
+                id: 9,
+                entered: false,
+            })
+            .unwrap();
+        assert_eq!(output.titles[0]["text"], "preview ' $()");
+        assert_eq!(output.titles[0]["temporary"], false);
+        assert!(
+            updates[1..].iter().all(|patch| patch
+                .as_object()
+                .unwrap()
+                .keys()
+                .all(|key| key == "titles"))
+        );
+    }
+
+    #[test]
+    fn hover_ignores_old_leave_events_and_handles_closed_or_moved_windows() {
+        let mut output = Output::new(Vec::new(), |_: &Value| Ok(()));
+        output
+            .publish(&json!({
+                "windows": [{"id":8,"output":"DP-1","title":"focused"},
+                            {"id":9,"output":"DP-1","title":"first"},
+                            {"id":10,"output":"DP-1","title":"second"}],
+                "titles": [{"output":"DP-1","window_id":8,"text":"focused"}]
+            }))
+            .unwrap();
+        output
+            .hover(Hover {
+                output: "DP-1".into(),
+                id: 9,
+                entered: true,
+            })
+            .unwrap();
+        output
+            .hover(Hover {
+                output: "DP-1".into(),
+                id: 10,
+                entered: true,
+            })
+            .unwrap();
+        output
+            .hover(Hover {
+                output: "DP-1".into(),
+                id: 9,
+                entered: false,
+            })
+            .unwrap();
+        assert_eq!(output.titles[0]["text"], "second");
+        output
+            .publish(&json!({"windows":[{"id":10,"output":"DP-1","title":"renamed"}]}))
+            .unwrap();
+        assert_eq!(output.titles[0]["text"], "renamed");
+        output
+            .publish(&json!({"windows":[{"id":10,"output":"DP-2","title":"moved"}]}))
+            .unwrap();
+        assert_eq!(output.titles[0]["text"], "focused");
+        assert_eq!(output.titles[0]["temporary"], false);
+        output.publish(&json!({"windows":[]})).unwrap();
+        assert_eq!(output.titles[0]["text"], "focused");
     }
 
     struct Counter {
@@ -281,18 +427,12 @@ mod tests {
             }));
         }
         for _ in 0..2 {
-            patches.recv_timeout(Duration::from_secs(2)).unwrap();
+            receive_patch(&patches);
         }
         route(Target::Clock, &controls);
-        assert_eq!(
-            patches.recv_timeout(Duration::from_secs(2)).unwrap(),
-            json!({"clock": 2})
-        );
+        assert_eq!(receive_patch(&patches), json!({"clock": 2}));
         route(Target::Bluetooth, &controls);
-        assert_eq!(
-            patches.recv_timeout(Duration::from_secs(2)).unwrap(),
-            json!({"bluetooth": 2})
-        );
+        assert_eq!(receive_patch(&patches), json!({"bluetooth": 2}));
         drop(controls);
         for worker in workers {
             worker.join().unwrap();
@@ -333,20 +473,18 @@ mod tests {
             )
         });
         for count in 1..=2 {
-            assert_eq!(
-                patches.recv_timeout(Duration::from_secs(2)).unwrap(),
-                json!({"fast": count})
-            );
+            assert_eq!(receive_patch(&patches), json!({"fast": count}));
         }
         drop(fast_wake);
         fast.join().unwrap();
-        assert!(patches.try_iter().all(|patch| patch.get("fast").is_some()));
+        assert!(
+            patches
+                .try_iter()
+                .all(|event| matches!(event, Event::Patch(patch) if patch.get("fast").is_some()))
+        );
         drop(slow_wake);
         release.send(()).unwrap();
         slow.join().unwrap();
-        assert_eq!(
-            patches.recv_timeout(Duration::from_secs(2)).unwrap(),
-            json!({"slow": true})
-        );
+        assert_eq!(receive_patch(&patches), json!({"slow": true}));
     }
 }

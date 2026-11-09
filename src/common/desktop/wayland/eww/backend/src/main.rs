@@ -91,6 +91,12 @@ enum Command {
     Close {
         id: u64,
     },
+    Hover {
+        output: String,
+        id: u64,
+        #[arg(long)]
+        leave: bool,
+    },
     Timezone {
         output: String,
         direction: Direction,
@@ -141,6 +147,13 @@ fn main_command() -> Result<(), Box<dyn std::error::Error>> {
         })?,
         Command::Focus { id } => desktop::action(Action::FocusWindow { id })?,
         Command::Close { id } => desktop::action(Action::CloseWindow { id: Some(id) })?,
+        Command::Hover { output, id, leave } => {
+            refresh::notify(refresh::Message::Hover(refresh::Hover {
+                output,
+                id,
+                entered: !leave,
+            }))
+        }
         Command::Timezone { output, direction } => {
             State::update(&output, |state| {
                 state.shift_timezone(direction.step(), &config.timezones)
@@ -202,7 +215,7 @@ fn main_command() -> Result<(), Box<dyn std::error::Error>> {
         Command::Bluetooth => modules::bluetooth::toggle_bluetooth()?,
     }
     if let Some(target) = refresh_target {
-        refresh::notify(target);
+        refresh::notify(refresh::Message::Refresh(target));
     }
     Ok(())
 }
