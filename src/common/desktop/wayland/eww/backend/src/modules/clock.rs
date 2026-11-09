@@ -3,20 +3,22 @@ use super::calendar::{self, State, Timezones};
 use serde_json::{Value, json};
 use std::io;
 
-pub struct Clock<'a> {
-    zones: &'a Timezones,
+pub struct Clock {
+    zones: Timezones,
 }
 
-impl<'a> Clock<'a> {
-    pub fn new(zones: &'a Timezones) -> Self {
-        Self { zones }
+impl Clock {
+    pub fn new(zones: &Timezones) -> Self {
+        Self {
+            zones: zones.clone(),
+        }
     }
 }
 
-impl Refreshable for Clock<'_> {
+impl Refreshable for Clock {
     fn refresh(&mut self, data: &mut Value) -> io::Result<()> {
         let now = chrono::Utc::now();
-        for (key, value) in view(now, State::load_all(), self.zones)
+        for (key, value) in view(now, State::load_all(), &self.zones)
             .as_object()
             .unwrap()
         {

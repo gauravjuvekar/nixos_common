@@ -1,37 +1,28 @@
 use crate::command;
 use crate::modules::calendar::Timezones;
-use crate::modules::{self, Refreshable};
+use crate::modules::{self, Refreshable, Target};
 use crate::refresh::Refresh;
 use serde_json::{Value, json};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex};
+use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
-struct Module<'a> {
-    source: Box<dyn Refreshable + 'a>,
-    refreshed: Option<Instant>,
+struct Module {
+    source: Box<dyn Refreshable>,
     last_error: Option<String>,
 }
 
-impl<'a> Module<'a> {
-    fn new(source: Box<dyn Refreshable + 'a>) -> Self {
+impl Module {
+    fn new(source: Box<dyn Refreshable>) -> Self {
         Self {
             source,
-            refreshed: None,
             last_error: None,
         }
     }
 
-    fn refresh(&mut self, data: &mut Value, force: bool) {
-        if !force
-            && self
-                .refreshed
-                .is_some_and(|time| time.elapsed() < self.source.interval())
-        {
-            return;
-        }
+    fn refresh(&mut self, data: &mut Value) {
         match self.source.refresh(data) {
             Ok(()) => self.last_error = None,
             Err(error) => {
@@ -42,7 +33,6 @@ impl<'a> Module<'a> {
                 }
             }
         }
-        self.refreshed = Some(Instant::now());
     }
 }
 
@@ -71,11 +61,11 @@ impl<W: Write, F: FnMut(&Value) -> io::Result<()>> Output<W, F> {
         if !changed.as_object().unwrap().is_empty() {
             (self.update)(&changed)?;
         }
-        if let Some(texts) = patch.get("timezone_times") {
-            if self.data.get("timezone_times") != Some(texts) {
-                writeln!(self.writer, "{texts}")?;
-                self.writer.flush()?;
-            }
+        if let Some(texts) = patch.get("timezone_times")
+            && self.data.get("timezone_times") != Some(texts)
+        {
+            writeln!(self.writer, "{texts}")?;
+            self.writer.flush()?;
         }
         for (key, value) in patch.as_object().unwrap() {
             self.data[key] = value.clone();
@@ -102,52 +92,85 @@ fn update_eww(changed: &Value, config: Option<&Path>) -> io::Result<()> {
     Ok(())
 }
 
-pub fn watch(once: bool, zones: &Timezones, eww_config: Option<PathBuf>) -> io::Result<()> {
-    let refresh = if once { None } else { Some(Refresh::listen()?) };
-    let output = Arc::new(Mutex::new(Output::new(
-        io::stdout(),
-        move |changed: &Value| update_eww(changed, eww_config.as_deref()),
-    )));
-    if !once {
-        let output = output.clone();
-        thread::spawn(move || {
-            let _ =
-                modules::desktop::Desktop::watch(|patch| output.lock().unwrap().publish(&patch));
-        });
-    }
-    let mut modules: Vec<_> = modules::periodic(zones)
-        .into_iter()
-        .map(Module::new)
-        .collect();
+fn run_module(source: Box<dyn Refreshable>, wake: Receiver<()>, patches: Sender<Value>) {
+    let mut module = Module::new(source);
     let mut data = json!({});
-    if once {
-        Module::new(Box::new(modules::desktop::Desktop::new())).refresh(&mut data, false);
-    }
-    let mut force = false;
     loop {
         let start = Instant::now();
-        for module in &mut modules {
-            module.refresh(&mut data, force);
+        module.refresh(&mut data);
+        if patches.send(data.clone()).is_err() {
+            return;
         }
-        // No output lock is held while status commands run. The event thread can
-        // publish focus/workspace changes immediately, even during a slow refresh.
-        if once {
-            println!("{data}");
-            return Ok(());
+        match wake.recv_timeout(module.source.interval().saturating_sub(start.elapsed())) {
+            Ok(()) => {
+                // One refresh covers clicks queued while a status command was running.
+                while wake.try_recv().is_ok() {}
+            }
+            Err(mpsc::RecvTimeoutError::Timeout) => (),
+            Err(mpsc::RecvTimeoutError::Disconnected) => return,
         }
-        output.lock().unwrap().publish(&data)?;
-        force = refresh
-            .as_ref()
-            .unwrap()
-            .wait(Duration::from_secs(1).saturating_sub(start.elapsed()));
     }
+}
+
+fn route(target: Target, controls: &[(Target, Sender<()>)]) {
+    for (id, wake) in controls {
+        if *id == target {
+            let _ = wake.send(());
+        }
+    }
+}
+
+pub fn watch(once: bool, zones: &Timezones, eww_config: Option<PathBuf>) -> io::Result<()> {
+    if once {
+        let mut data = json!({});
+        Module::new(Box::new(modules::desktop::Desktop::new())).refresh(&mut data);
+        for (_, source) in modules::periodic(zones) {
+            Module::new(source).refresh(&mut data);
+        }
+        println!("{data}");
+        return Ok(());
+    }
+
+    let refresh = Refresh::listen()?;
+    let (send, patches) = mpsc::channel();
+    let mut controls = Vec::new();
+    for (target, source) in modules::periodic(zones) {
+        let (wake, wait) = mpsc::channel();
+        controls.push((target, wake));
+        let send = send.clone();
+        thread::spawn(move || run_module(source, wait, send));
+    }
+    thread::spawn(move || {
+        loop {
+            match refresh.receive() {
+                Ok(Some(target)) => route(target, &controls),
+                Ok(None) => (),
+                Err(error) => {
+                    eprintln!("bar-status: refresh socket: {error}");
+                    return;
+                }
+            }
+        }
+    });
+    thread::spawn(move || {
+        let _ = modules::desktop::Desktop::watch(|patch| {
+            send.send(patch)
+                .map_err(|_| io::Error::new(io::ErrorKind::BrokenPipe, "Publisher stopped"))
+        });
+    });
+    let mut output = Output::new(io::stdout(), move |changed: &Value| {
+        update_eww(changed, eww_config.as_deref())
+    });
+    for patch in patches {
+        output.publish(&patch)?;
+    }
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::cell::Cell;
-    use std::rc::Rc;
+    use std::time::Duration;
 
     #[test]
     fn clock_ticks_publish_only_time_fields_and_preserve_desktop_events() {
@@ -196,18 +219,19 @@ mod tests {
     }
 
     struct Counter {
-        calls: Rc<Cell<u32>>,
-        fail: Rc<Cell<bool>>,
+        key: &'static str,
+        calls: u32,
+        fail: bool,
         interval: Duration,
     }
 
     impl Refreshable for Counter {
         fn refresh(&mut self, data: &mut Value) -> io::Result<()> {
-            self.calls.set(self.calls.get() + 1);
-            if self.fail.get() {
+            self.calls += 1;
+            if self.fail {
                 return Err(io::Error::other("unavailable"));
             }
-            data["counter"] = json!(self.calls.get());
+            data[self.key] = json!(self.calls);
             Ok(())
         }
 
@@ -216,51 +240,113 @@ mod tests {
         }
     }
 
-    fn counter(interval: Duration) -> (Module<'static>, Rc<Cell<u32>>, Rc<Cell<bool>>) {
-        let calls = Rc::new(Cell::new(0));
-        let fail = Rc::new(Cell::new(false));
-        let module = Module::new(Box::new(Counter {
-            calls: calls.clone(),
-            fail: fail.clone(),
-            interval,
-        }));
-        (module, calls, fail)
+    fn counter(key: &'static str) -> Counter {
+        Counter {
+            key,
+            calls: 0,
+            fail: false,
+            interval: Duration::from_secs(60),
+        }
     }
 
     #[test]
-    fn slow_modules_refresh_initially_on_expiry_and_when_forced() {
-        let interval = Duration::from_secs(10);
-        let (mut module, calls, _) = counter(interval);
+    fn source_errors_preserve_the_last_sample_and_recover() {
+        let mut module = Module::new(Box::new(counter("counter")));
         let mut data = json!({});
-        module.refresh(&mut data, false);
-        assert_eq!(calls.get(), 1);
-        module.refresh(&mut data, false);
-        assert_eq!(calls.get(), 1);
+        module.refresh(&mut data);
         assert_eq!(data["counter"], 1);
-        module.refreshed = Some(Instant::now() - interval);
-        module.refresh(&mut data, false);
-        assert_eq!(calls.get(), 2);
-        module.refresh(&mut data, true);
-        assert_eq!(calls.get(), 3);
-        assert_eq!(data["counter"], 3);
+        module.source = Box::new(Counter {
+            fail: true,
+            ..counter("counter")
+        });
+        module.refresh(&mut data);
+        assert_eq!(data["counter"], 1);
+        assert_eq!(module.last_error.as_deref(), Some("unavailable"));
+        module.source = Box::new(counter("counter"));
+        module.refresh(&mut data);
+        assert!(module.last_error.is_none());
     }
 
     #[test]
-    fn fast_modules_refresh_every_cycle_and_recover_after_errors() {
-        let (mut module, calls, fail) = counter(Duration::ZERO);
-        let mut data = json!({});
-        module.refresh(&mut data, false);
-        module.refresh(&mut data, false);
-        assert_eq!(calls.get(), 2);
-        fail.set(true);
-        module.refresh(&mut data, false);
-        assert_eq!(data["counter"], 2);
-        assert_eq!(module.last_error.as_deref(), Some("unavailable"));
-        module.refresh(&mut data, false);
-        assert_eq!(data["counter"], 2);
-        fail.set(false);
-        module.refresh(&mut data, false);
-        assert_eq!(data["counter"], 5);
-        assert!(module.last_error.is_none());
+    fn actions_wake_only_the_target_worker() {
+        let (send, patches) = mpsc::channel();
+        let mut controls = Vec::new();
+        let mut workers = Vec::new();
+        for (target, key) in [(Target::Clock, "clock"), (Target::Bluetooth, "bluetooth")] {
+            let (wake, wait) = mpsc::channel();
+            controls.push((target, wake));
+            let send = send.clone();
+            workers.push(thread::spawn(move || {
+                run_module(Box::new(counter(key)), wait, send)
+            }));
+        }
+        for _ in 0..2 {
+            patches.recv_timeout(Duration::from_secs(2)).unwrap();
+        }
+        route(Target::Clock, &controls);
+        assert_eq!(
+            patches.recv_timeout(Duration::from_secs(2)).unwrap(),
+            json!({"clock": 2})
+        );
+        route(Target::Bluetooth, &controls);
+        assert_eq!(
+            patches.recv_timeout(Duration::from_secs(2)).unwrap(),
+            json!({"bluetooth": 2})
+        );
+        drop(controls);
+        for worker in workers {
+            worker.join().unwrap();
+        }
+        assert!(patches.try_recv().is_err());
+    }
+
+    struct Blocked(Receiver<()>);
+
+    impl Refreshable for Blocked {
+        fn refresh(&mut self, data: &mut Value) -> io::Result<()> {
+            self.0.recv().unwrap();
+            data["slow"] = json!(true);
+            Ok(())
+        }
+        fn interval(&self) -> Duration {
+            Duration::from_secs(60)
+        }
+    }
+
+    #[test]
+    fn a_blocked_probe_does_not_delay_other_sources_or_their_deadlines() {
+        let (send, patches) = mpsc::channel();
+        let (release, block) = mpsc::channel();
+        let (slow_wake, slow_wait) = mpsc::channel();
+        let slow_send = send.clone();
+        let slow =
+            thread::spawn(move || run_module(Box::new(Blocked(block)), slow_wait, slow_send));
+        let (fast_wake, fast_wait) = mpsc::channel();
+        let fast = thread::spawn(move || {
+            run_module(
+                Box::new(Counter {
+                    interval: Duration::from_millis(10),
+                    ..counter("fast")
+                }),
+                fast_wait,
+                send,
+            )
+        });
+        for count in 1..=2 {
+            assert_eq!(
+                patches.recv_timeout(Duration::from_secs(2)).unwrap(),
+                json!({"fast": count})
+            );
+        }
+        drop(fast_wake);
+        fast.join().unwrap();
+        assert!(patches.try_iter().all(|patch| patch.get("fast").is_some()));
+        drop(slow_wake);
+        release.send(()).unwrap();
+        slow.join().unwrap();
+        assert_eq!(
+            patches.recv_timeout(Duration::from_secs(2)).unwrap(),
+            json!({"slow": true})
+        );
     }
 }

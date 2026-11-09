@@ -2,6 +2,7 @@ use super::{Refreshable, sysfs::read};
 use serde_json::{Value, json};
 use std::io;
 use std::path::Path;
+use std::time::Duration;
 
 pub struct Battery;
 
@@ -9,6 +10,10 @@ impl Refreshable for Battery {
     fn refresh(&mut self, data: &mut Value) -> io::Result<()> {
         data["battery"] = battery();
         Ok(())
+    }
+
+    fn interval(&self) -> Duration {
+        Duration::from_secs(30)
     }
 }
 

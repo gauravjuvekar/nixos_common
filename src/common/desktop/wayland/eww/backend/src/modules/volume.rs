@@ -2,6 +2,7 @@ use super::Refreshable;
 use crate::command::run;
 use serde_json::{Value, json};
 use std::io;
+use std::time::Duration;
 
 pub struct Volume;
 
@@ -9,6 +10,10 @@ impl Refreshable for Volume {
     fn refresh(&mut self, data: &mut Value) -> io::Result<()> {
         data["volume"] = volume();
         Ok(())
+    }
+
+    fn interval(&self) -> Duration {
+        Duration::from_secs(2)
     }
 }
 

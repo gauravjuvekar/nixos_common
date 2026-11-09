@@ -6,7 +6,7 @@ use std::fs::{self, File, OpenOptions};
 use std::io;
 use std::path::{Path, PathBuf};
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 #[serde(try_from = "Vec<String>")]
 pub struct Timezones(Vec<Tz>);
 

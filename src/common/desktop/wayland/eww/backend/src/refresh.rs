@@ -1,8 +1,8 @@
+use crate::modules::Target;
 use std::fs;
 use std::io;
 use std::os::unix::net::UnixDatagram;
 use std::path::{Path, PathBuf};
-use std::time::Duration;
 
 fn socket_path() -> io::Result<PathBuf> {
     xdg::BaseDirectories::new().get_runtime_file("bar-status.sock")
@@ -30,18 +30,10 @@ impl Refresh {
         })
     }
 
-    // Clicks interrupt the periodic wait; only Bluetooth needs the slow cache refreshed.
-    pub fn wait(&self, duration: Duration) -> bool {
-        if duration.is_zero() {
-            return false;
-        }
+    pub fn receive(&self) -> io::Result<Option<Target>> {
         let mut message = [0; 64];
-        if self.socket.set_read_timeout(Some(duration)).is_err() {
-            return false;
-        }
-        self.socket
-            .recv(&mut message)
-            .is_ok_and(|size| &message[..size] == b"bluetooth")
+        let size = self.socket.recv(&mut message)?;
+        Ok(serde_json::from_slice(&message[..size]).ok())
     }
 }
 
@@ -51,16 +43,16 @@ impl Drop for Refresh {
     }
 }
 
-pub fn notify(action: &str) {
+pub fn notify(target: Target) {
     if let Ok(path) = socket_path() {
-        let _ = send(&path, action);
+        let _ = send(&path, target);
     }
 }
 
-fn send(path: &Path, action: &str) -> io::Result<()> {
+fn send(path: &Path, target: Target) -> io::Result<()> {
     let socket = UnixDatagram::unbound()?;
     socket.set_nonblocking(true)?;
-    socket.send_to(action.as_bytes(), path)?;
+    socket.send_to(&serde_json::to_vec(&target)?, path)?;
     Ok(())
 }
 
@@ -69,16 +61,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn actions_wake_the_watcher_and_bluetooth_invalidates_its_cache() {
+    fn actions_identify_only_the_source_that_needs_refreshing() {
         let path =
             std::env::temp_dir().join(format!("eww-refresh-test-{}.sock", std::process::id()));
         let watcher = Refresh::bind(path.clone()).unwrap();
-        send(&path, "timezone").unwrap();
+        send(&path, Target::Clock).unwrap();
         let start = std::time::Instant::now();
-        assert!(!watcher.wait(Duration::from_secs(1)));
-        assert!(start.elapsed() < Duration::from_millis(750));
-        send(&path, "bluetooth").unwrap();
-        assert!(watcher.wait(Duration::from_secs(1)));
+        assert_eq!(watcher.receive().unwrap(), Some(Target::Clock));
+        assert!(start.elapsed() < std::time::Duration::from_millis(750));
+        send(&path, Target::Bluetooth).unwrap();
+        assert_eq!(watcher.receive().unwrap(), Some(Target::Bluetooth));
+        let socket = UnixDatagram::unbound().unwrap();
+        socket.send_to(b"unknown", &path).unwrap();
+        assert_eq!(watcher.receive().unwrap(), None);
         drop(watcher);
         assert!(!path.exists());
     }

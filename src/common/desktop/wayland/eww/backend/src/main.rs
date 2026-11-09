@@ -6,7 +6,7 @@ mod watch;
 
 use clap::{Parser, Subcommand, ValueEnum};
 use config::Config;
-use modules::{calendar::State, desktop};
+use modules::{Target, calendar::State, desktop};
 use niri_ipc::{Action, WorkspaceReferenceArg};
 use std::collections::BTreeSet;
 use std::io;
@@ -120,10 +120,15 @@ enum Command {
 fn main_command() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
     let config = Config::load(&args.config)?;
-    let refresh_action = if matches!(args.command, Command::Bluetooth) {
-        "bluetooth"
-    } else {
-        "action"
+    let refresh_target = match &args.command {
+        Command::Timezone { .. }
+        | Command::SelectTimezone { .. }
+        | Command::CalendarMode { .. }
+        | Command::Calendar { .. } => Some(Target::Clock),
+        Command::Volume { .. } | Command::Mute => Some(Target::Volume),
+        Command::Inhibit => Some(Target::Inhibitor),
+        Command::Bluetooth => Some(Target::Bluetooth),
+        _ => None,
     };
     match args.command {
         Command::Watch { eww_config } => {
@@ -196,7 +201,9 @@ fn main_command() -> Result<(), Box<dyn std::error::Error>> {
         Command::Inhibit => modules::inhibitor::toggle_inhibitor()?,
         Command::Bluetooth => modules::bluetooth::toggle_bluetooth()?,
     }
-    refresh::notify(refresh_action);
+    if let Some(target) = refresh_target {
+        refresh::notify(target);
+    }
     Ok(())
 }
 

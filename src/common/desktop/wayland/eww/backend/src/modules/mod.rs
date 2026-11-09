@@ -10,30 +10,40 @@ mod sysfs;
 pub mod volume;
 
 use self::calendar::Timezones;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::io;
 use std::time::Duration;
 
-pub trait Refreshable {
-    /// Update this module's fields in the shared snapshot.
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
+pub enum Target {
+    Bluetooth,
+    FailedUnits,
+    Battery,
+    Keyboard,
+    Volume,
+    Clock,
+    Inhibitor,
+}
+
+pub trait Refreshable: Send {
+    /// Update this module's fields.
     /// Preserve the previous values when returning an error.
     fn refresh(&mut self, data: &mut Value) -> io::Result<()>;
 
-    /// Zero refreshes on every cycle, including cycles triggered by actions.
     fn interval(&self) -> Duration {
-        Duration::ZERO
+        Duration::from_secs(1)
     }
 }
 
-// Compositor state is streamed separately so slow status commands cannot delay it.
-pub fn periodic(zones: &Timezones) -> Vec<Box<dyn Refreshable + '_>> {
+pub fn periodic(zones: &Timezones) -> Vec<(Target, Box<dyn Refreshable>)> {
     vec![
-        Box::new(bluetooth::Bluetooth),
-        Box::new(failed_units::FailedUnits),
-        Box::new(battery::Battery),
-        Box::new(keyboard::Keyboard),
-        Box::new(volume::Volume),
-        Box::new(clock::Clock::new(zones)),
-        Box::new(inhibitor::Inhibitor),
+        (Target::Bluetooth, Box::new(bluetooth::Bluetooth)),
+        (Target::FailedUnits, Box::new(failed_units::FailedUnits)),
+        (Target::Battery, Box::new(battery::Battery)),
+        (Target::Keyboard, Box::new(keyboard::Keyboard)),
+        (Target::Volume, Box::new(volume::Volume)),
+        (Target::Clock, Box::new(clock::Clock::new(zones))),
+        (Target::Inhibitor, Box::new(inhibitor::Inhibitor)),
     ]
 }
