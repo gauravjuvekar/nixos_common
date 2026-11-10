@@ -10,6 +10,36 @@
 }:
 let
   inherit (pkgs) lib;
+  allowedHosts = lib.concatMap (
+    domain:
+    if lib.hasPrefix "*." domain then
+      map (prefix: prefix + lib.removePrefix "*." domain) [
+        "sub."
+        "nested.sub."
+      ]
+    else
+      [ domain ]
+  ) allowedDomains;
+  wildcardProxy = import ../vey/service.nix {
+    inherit pkgs;
+    allowedDomains = [
+      "*.wildcard.test"
+      "exact.test"
+      "*.private.test"
+    ];
+  };
+  wildcardAllowed = [
+    "sub.wildcard.test"
+    "nested.sub.wildcard.test"
+    "exact.test"
+  ];
+  wildcardBlocked = [
+    "wildcard.test"
+    "notwildcard.test"
+    "sub.wildcard.test.evil.test"
+    "sub.exact.test"
+    "child.private.test"
+  ];
   unitFormat = pkgs.formats.ini { listsAsDuplicateKeys = true; };
   unitFiles = pkgs.linkFarm "jailed-codex-proxy-units" (
     lib.mapAttrsToList (name: unit: {
@@ -87,7 +117,7 @@ let
     [[ $(readlink /proc/self/ns/net) != "$1" ]]
     [[ $(cat /etc/hostname) == ${lib.escapeShellArg hostname} ]]
     [[ $(cat /proc/sys/kernel/hostname) == ${lib.escapeShellArg hostname} ]]
-    for host in ${lib.escapeShellArgs allowedDomains}; do
+    for host in ${lib.escapeShellArgs allowedHosts}; do
       response=$(curl --silent --show-error --cacert "$PWD/ca.pem" --connect-timeout 2 --max-time 3 "https://$host/")
       [[ "$response" == ${lib.escapeShellArg fixtureMarker} ]]
     done
@@ -96,12 +126,12 @@ let
       [[ "$status" == 403 ]] || { echo "Unexpected policy response: $target ($status)" >&2; exit 1; }
     done
     status=$(curl --silent --proxytunnel --max-time 3 --output /dev/null \
-      --write-out '%{http_connect}' http://${lib.head allowedDomains}:80/ || true)
+      --write-out '%{http_connect}' http://${lib.head allowedHosts}:80/ || true)
     [[ "$status" == 403 ]]
     [[ "$HTTPS_PROXY" == http://127.0.0.1:3128 ]]
     # Anonymous access is allowed, but ordinary HTTP forwarding must stay forbidden.
     status=$(curl --silent --max-time 3 --output /dev/null \
-      --write-out '%{http_code}' http://${lib.head allowedDomains}:443/ || true)
+      --write-out '%{http_code}' http://${lib.head allowedHosts}:443/ || true)
     [[ "$status" == 405 ]]
     ${lib.getExe directProbe} blocked
     [[ ! -e /nix/var/nix/daemon-socket/socket ]]
@@ -114,9 +144,22 @@ let
     [[ "$status" == 403 ]]
     printf 'Allowed hostname resolving to a private IP: blocked.\n'
   '';
+  wildcardProbe = makeProbe "vey-wildcard-network-probe" ''
+    for host in ${lib.escapeShellArgs wildcardAllowed}; do
+      response=$(curl --silent --show-error --cacert "$PWD/ca.pem" --connect-timeout 2 --max-time 3 "https://$host/")
+      [[ "$response" == ${lib.escapeShellArg fixtureMarker} ]]
+    done
+    for host in ${lib.escapeShellArgs wildcardBlocked}; do
+      status=$(curl --silent --max-time 3 --output /dev/null --write-out '%{http_connect}' "https://$host/" || true)
+      [[ "$status" == 403 ]] || { echo "Unexpected wildcard policy response: $host ($status)" >&2; exit 1; }
+    done
+    printf 'Wildcard subdomains, nested names, apex exclusion, exact names, lookalikes and private IPs: passed.\n'
+  '';
   certificateNames = map (host: "DNS:${host}") (
     lib.unique (
-      allowedDomains
+      allowedHosts
+      ++ wildcardAllowed
+      ++ wildcardBlocked
       ++ lib.filter (host: !(lib.hasInfix ":" host) && builtins.match "[0-9.]+" host == null) blockedHosts
     )
   );
@@ -171,12 +214,16 @@ let
       mkdir /tmp/work
       cd /tmp/work
       cp /tmp/private/ca.pem ca.pem
-      for host in ${lib.escapeShellArgs (lib.unique (allowedDomains ++ blockedHosts))}; do
+      for host in ${
+        lib.escapeShellArgs (
+          lib.unique (allowedHosts ++ blockedHosts ++ wildcardAllowed ++ wildcardBlocked)
+        )
+      }; do
         response=$(curl --silent --show-error --noproxy '*' --cacert "$PWD/ca.pem" \
           --connect-timeout 2 --max-time 3 "https://$host/")
         [[ "$response" == ${lib.escapeShellArg fixtureMarker} ]]
       done
-      response=$(curl --silent --show-error --noproxy '*' --connect-timeout 2 --max-time 3 http://${lib.head allowedDomains}:80/)
+      response=$(curl --silent --show-error --noproxy '*' --connect-timeout 2 --max-time 3 http://${lib.head allowedHosts}:80/)
       [[ "$response" == ${lib.escapeShellArg fixtureMarker} ]]
       ${lib.getExe directProbe} allowed
       printf 'Outside-jail HTTPS, denied destinations, HTTP port 80, direct IPv4/IPv6 and DNS/UDP connectivity: passed.\n'
@@ -223,6 +270,12 @@ let
       start_proxy ${privateProxy.configFile}
       ${lib.getExe privateProbe} || { cat /tmp/private/proxy.log >&2; exit 1; }
       kill -0 "$proxy_pid"
+      kill "$proxy_pid"
+      wait "$proxy_pid"
+      proxy_pid=
+      rm "$XDG_RUNTIME_DIR/jailed-codex-vey/activated"
+      start_proxy ${wildcardProxy.configFile}
+      ${lib.getExe wildcardProbe} || { cat /tmp/private/proxy.log >&2; exit 1; }
       printf 'Unix permissions, socket activation, no TCP listener, concurrent sessions and package startup: passed.\n'
     '';
   };

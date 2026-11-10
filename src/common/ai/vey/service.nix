@@ -5,8 +5,12 @@
 }:
 let
   inherit (pkgs) lib;
+  domains = lib.partition (lib.hasPrefix "*.") allowedDomains;
   vey = pkgs.callPackage ./package.nix { };
   configFile = pkgs.writeText "jailed-codex-vey.json" (
+    assert lib.assertMsg (lib.all (
+      domain: domain != "*." && !(lib.hasInfix "*" (lib.removePrefix "*." domain))
+    ) allowedDomains) "allowedDomains supports wildcards only as a leading *. before a domain";
     builtins.toJSON {
       runtime.thread_number = 1;
       log = "stdout";
@@ -27,9 +31,18 @@ let
           user_group = "session";
           allow_custom_host = false;
           log_uri_max_chars = 0;
-          dst_host_filter_set.exact_match = {
-            default = "forbid";
-            permit = allowedDomains;
+          dst_host_filter_set = {
+            exact_match = {
+              default = "forbid";
+              permit = domains.wrong;
+            };
+            regex_match = {
+              default = "forbid";
+              # VEY's suffix matcher also permits the apex; *. must require a subdomain.
+              permit = map (
+                domain: "(?i)^([^.]+\\.)+${lib.escapeRegex (lib.removePrefix "*." domain)}$"
+              ) domains.right;
+            };
           };
           dst_port_filter = {
             default = "forbid";

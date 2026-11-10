@@ -62,7 +62,7 @@ class DNSHandler(socketserver.BaseRequestHandler):
         end += 1
         name = ".".join(labels).lower()
         kind, _ = struct.unpack("!HH", packet[end : end + 4])
-        private = name in {"private.test", "localhost"}
+        private = name in {"private.test", "localhost"} or name.endswith(".private.test")
         address = {1: "127.0.0.1" if private else IPV4, 28: "::1" if private else IPV6}.get(kind)
         answer = b""
         if address:

@@ -16,8 +16,10 @@ in
       type = lib.types.listOf lib.types.str;
       default = (codexPackages.makeRestrictedCodex { inherit pkgs; }).allowedDomains;
       description = ''
-        Exact hostnames permitted through codex-restricted's shared proxy on
-        HTTPS port 443. Other destinations, ports, and destinations resolving
+        Hostnames permitted through codex-restricted's shared proxy on HTTPS
+        port 443. Plain names match exactly; *.example.com matches subdomains
+        at any depth but not example.com itself, which must be listed separately.
+        Other wildcard forms are rejected. Other destinations, ports, and destinations resolving
         to private or local IP addresses are blocked. This list does not
         restrict codex-jailed's host network access.
       '';
