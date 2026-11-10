@@ -63,6 +63,11 @@
       );
     in
     {
+      lib = import ./src/common/ai/packages.nix { inherit inputs; };
+      homeManagerModules.codex-jail = import ./src/common/ai/home-module.nix {
+        codexPackages = self.lib;
+      };
+
       agenix-rekey = inputs.agenix-rekey.configure {
         userFlake = self;
         nixosConfigurations = self.nixosConfigurations;
@@ -204,6 +209,11 @@
         };
       in
       {
+        packages = pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          codex-jailed = self.lib.makeJailedCodex { inherit pkgs; };
+          codex-restricted = self.lib.makeRestrictedCodex { inherit pkgs; };
+        };
+
         devShells.deploy = import ./deploy/shell.nix { inherit pkgs; };
         devShells.yubikey-provision = import ./scripts/yubikey-provision/shell.nix { inherit pkgs; };
 

@@ -23,19 +23,8 @@ let
     ."${moduleContext}";
 
   domain_is_personal = lib.strings.hasSuffix ".gjuvekar.com" hostinfo.domainname;
-  masterPkgs = import inputs.nixpkgs-master {
-    inherit (pkgs.stdenv.hostPlatform) system;
-    inherit (pkgs) config;
-  };
-  codex = masterPkgs.codex.overrideAttrs (old: {
-    # The package still relies on bundled native libraries, while the new
-    # cargo setup hook forces system libraries it does not declare.
-    dontCargoUseSystemLibs = true;
-    # LLVM optimization of Codex's large crates needs more compiler stack.
-    env = old.env // {
-      RUST_MIN_STACK = "67108864";
-    };
-  });
+  codexPackages = inputs.self.lib;
+  codex = codexPackages.codex pkgs;
   # jail.nix binds each store output; bubblewrap cannot mount onto a symlink
   # when the regular Codex jail already has /nix mounted.
   agentChromium = pkgs.chromium.overrideAttrs (old: {
@@ -55,9 +44,7 @@ let
   };
   jailedAgents = inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system};
   jailedCodexOptions = {
-    pkg = pkgs.writeShellScriptBin "codex" ''
-      exec ${lib.getExe codex} -s danger-full-access "$@"
-    '';
+    inherit pkgs codex;
     enableNix = true;
     nixConfigDir = "/etc/nixos";
     baseJailOptions = [
@@ -73,49 +60,29 @@ let
     extraReadwriteDirs = [ "${config.home.homeDirectory}/.agents/skills" ];
     extraPkgs = lib.optionals config.programs.delta.enableGitIntegration [ pkgs.delta ];
   };
-  sharedProxy = import ./vey/service.nix {
-    inherit pkgs allowedDomains;
-  };
-  allowedDomains = [
-    "api.openai.com"
-    "chatgpt.com"
-    "auth.openai.com"
-  ];
-  restrictedNetworkOptions = {
-    inherit pkgs jailedAgents;
-    inherit (jailedCodexOptions) baseJailOptions;
-  };
+  restrictedCodex = codexPackages.makeRestrictedCodex jailedCodexOptions;
+  inherit (restrictedCodex) sharedProxy allowedDomains;
   restrictedNetworkTest = pkgs.callPackage ./tests/network.nix {
     inherit jailedAgents sharedProxy allowedDomains;
-    networkOptions = restrictedNetworkOptions;
+    networkOptions = restrictedCodex.networkOptions;
     hostname = hostinfo.fqdn;
     configDirs =
       jailedCodexOptions.extraReadonlyDirs
       ++ jailedCodexOptions.extraReadwriteDirs
       ++ [ jailedCodexOptions.nixConfigDir ];
   };
-  jailedCodexRestricted =
-    (jailedAgents.makeJailedCodex (
-      jailedCodexOptions
-      // {
-        name = "jailed-codex-restricted";
-        # Hosted web search and apps run beyond the jail's network restrictions.
-        pkg = pkgs.writeShellScriptBin "codex" ''
-          exec ${lib.getExe jailedCodexOptions.pkg} -c 'web_search="disabled"' -c 'features.apps=false' "$@"
-        '';
-        # The host daemon can fetch over the network even from an isolated jail.
-        enableNix = false;
-        baseJailOptions = import ./restricted-network.nix restrictedNetworkOptions;
-      }
-    )).overrideAttrs
-      (old: {
-        doCheck = true;
-        checkPhase = old.checkPhase + ''
-          ${lib.getExe restrictedNetworkTest} "$target"
-        '';
-      });
+  jailedCodexRestricted = restrictedCodex.overrideAttrs (old: {
+    doCheck = true;
+    checkPhase = old.checkPhase + ''
+      ${lib.getExe restrictedNetworkTest} "$target"
+    '';
+  });
 in
 {
+  imports = lib.optionals (moduleContext == "home-manager") [
+    inputs.self.homeManagerModules.codex-jail
+  ];
+
   config =
     {
       "home-manager" = lib.mkIf hostinfo.isLocalGraphical {
@@ -131,21 +98,21 @@ in
         programs.mr.settings.".agents/skills" = {
           checkout = "git clone git@github.com:gauravjuvekar/agent-skills.git skills";
         };
-        systemd.user = lib.mkIf domain_is_personal {
-          inherit (sharedProxy) sockets services;
+        programs.codex-jail = lib.mkIf domain_is_personal {
+          enable = true;
+          jailedPackage = codexPackages.makeJailedCodex (
+            jailedCodexOptions
+            // {
+              extraPkgs = jailedCodexOptions.extraPkgs ++ [ agentBrowser ];
+            }
+          );
+          restrictedPackage = jailedCodexRestricted;
         };
         home.packages = [
           pkgs.skills
         ]
         ++ lib.optionals domain_is_personal [
           agentBrowser
-          (jailedAgents.makeJailedCodex (
-            jailedCodexOptions
-            // {
-              extraPkgs = jailedCodexOptions.extraPkgs ++ [ agentBrowser ];
-            }
-          ))
-          jailedCodexRestricted
           (pkgs.t3code.override { inherit codex; })
         ];
       };
