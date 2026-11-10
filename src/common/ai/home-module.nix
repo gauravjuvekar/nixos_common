@@ -12,6 +12,12 @@ in
   options.programs.codex-jail = {
     enable = lib.mkEnableOption "Bubblewrap-isolated Codex wrappers: codex-jailed with host networking and codex-restricted with proxy-only networking";
 
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = codexPackages.codex pkgs;
+      description = "The Codex package wrapped by both codex-jailed and codex-restricted. Overriding either wrapper package bypasses this default.";
+    };
+
     allowedDomains = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = (codexPackages.makeRestrictedCodex { inherit pkgs; }).allowedDomains;
@@ -39,6 +45,7 @@ in
       type = lib.types.package;
       default = codexPackages.makeJailedCodex {
         inherit pkgs;
+        codex = cfg.package;
         inherit (cfg) extraPkgs;
       };
       description = ''
@@ -56,6 +63,7 @@ in
       type = lib.types.package;
       default = codexPackages.makeRestrictedCodex {
         inherit pkgs;
+        codex = cfg.package;
         inherit (cfg) allowedDomains extraPkgs;
       };
       description = ''

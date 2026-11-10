@@ -44,7 +44,8 @@ let
   };
   jailedAgents = inputs.jailed-agents.lib.${pkgs.stdenv.hostPlatform.system};
   jailedCodexOptions = {
-    inherit pkgs codex;
+    inherit pkgs;
+    codex = config.programs.codex-jail.package;
     enableNix = true;
     nixConfigDir = "/etc/nixos";
     baseJailOptions = [
@@ -100,6 +101,7 @@ in
         };
         programs.codex-jail = lib.mkIf domain_is_personal {
           enable = true;
+          package = codex;
           jailedPackage = codexPackages.makeJailedCodex (
             jailedCodexOptions
             // {
