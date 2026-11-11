@@ -27,6 +27,8 @@ in
       };
 
       "nixos-system" = {
+        services.fwupd.enable = true;
+
         boot.kernel.sysctl = lib.mkIf hostinfo.isLocalInteractive {
           "kernel.sysrq" = 1;
         };
