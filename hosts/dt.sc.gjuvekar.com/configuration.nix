@@ -31,6 +31,7 @@
     devTools = [
       "binary"
       "containers"
+      "crosscompile"
       "db"
       "memory"
       "network"

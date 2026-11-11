@@ -19,6 +19,7 @@
         lib.types.enum [
           "binary"
           "containers"
+          "crosscompile"
           "db"
           "memory"
           "network"

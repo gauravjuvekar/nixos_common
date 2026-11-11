@@ -42,7 +42,9 @@ in
         ];
       };
 
-      "nixos-system" = { };
+      "nixos-system" = lib.mkIf (builtins.elem "crosscompile" usageinfo.devTools) {
+        boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+      };
     }
     ."${moduleContext}";
 }
