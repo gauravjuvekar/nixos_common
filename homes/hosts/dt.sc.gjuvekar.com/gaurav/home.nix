@@ -1,5 +1,6 @@
 { ... }: {
   imports = [
+    ./audio-multimonitor.nix
     ./monitors.nix
   ];
 

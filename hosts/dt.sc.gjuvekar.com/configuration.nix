@@ -5,6 +5,7 @@
 }:
 {
   imports = [
+    ./audio.nix
     ./hardware-configuration.nix
     ./snapper.nix
   ];
