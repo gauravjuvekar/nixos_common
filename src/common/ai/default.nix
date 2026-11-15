@@ -52,6 +52,7 @@ let
       (jailedAgents.internals.jail.combinators.set-hostname hostinfo.fqdn)
     ]
     ++ jailedAgents.commonJailOptions;
+    extraJailOptions = [ jailedAgents.internals.jail.combinators.wayland ];
     enableGitWorktrees = {
       enable = true;
       mountGitConfig = true;

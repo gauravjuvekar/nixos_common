@@ -229,6 +229,9 @@ let
       printf 'Outside-jail HTTPS, denied destinations, HTTP port 80, direct IPv4/IPv6 and DNS/UDP connectivity: passed.\n'
       export XDG_RUNTIME_DIR=/tmp/runtime
       mkdir -m 700 "$XDG_RUNTIME_DIR"
+      # The package startup check needs a bind target without a compositor in this fixture.
+      export WAYLAND_DISPLAY=wayland-0 XDG_SESSION_TYPE=wayland
+      touch "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
       start_proxy() {
         python3 ${proxyFixture} "$1" ${lib.getExe sharedProxy.vey} \
           ${pkgs.runtimeShell} "$XDG_RUNTIME_DIR" >/tmp/private/proxy.log 2>&1 &
@@ -273,7 +276,7 @@ let
       kill "$proxy_pid"
       wait "$proxy_pid"
       proxy_pid=
-      rm "$XDG_RUNTIME_DIR/jailed-codex-vey/activated"
+      rm -f "$XDG_RUNTIME_DIR/jailed-codex-vey/activated"
       start_proxy ${wildcardProxy.configFile}
       ${lib.getExe wildcardProbe} || { cat /tmp/private/proxy.log >&2; exit 1; }
       printf 'Unix permissions, socket activation, no TCP listener, concurrent sessions and package startup: passed.\n'
