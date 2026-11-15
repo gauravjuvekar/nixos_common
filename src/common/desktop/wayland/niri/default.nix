@@ -259,8 +259,8 @@ in
 
                   Mod+P { spawn "wayland-screenshot"; }
                   Print { screenshot; }
-                  Ctrl+Print { screenshot-screen; }
-                  Alt+Print { screenshot-window; }
+                  Mod+Ctrl+P { screenshot-screen; }
+                  Mod+Alt+P { screenshot-window; }
 
                   // Applications such as remote-desktop clients and software KVM switches may
                   // request that niri stops processing the keyboard shortcuts defined here
