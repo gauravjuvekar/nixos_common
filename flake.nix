@@ -99,6 +99,32 @@
             inputs.home-manager.nixosModules.home-manager
           ];
         };
+        "gjuvekar-dt.client.nvidia.com" = {
+          nixpkgsPatcher.inputs = inputs;
+          system = inputs.flake-utils.lib.system.x86_64-linux;
+          specialArgs = {
+            inputs = inputs;
+            moduleContext = "nixos-system";
+          };
+          modules = commonModuleImports ++ [
+            inputs.agenix.nixosModules.default
+            inputs.agenix-rekey.nixosModules.default
+            ./hosts/gjuvekar-dt.client.nvidia.com/configuration.nix
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.extraSpecialArgs = {
+                moduleContext = "home-manager";
+                inputs = inputs;
+              };
+              home-manager.users."gjuvekar" = {
+                imports = commonModuleImports ++ [
+                  ./homes/hosts/gjuvekar-dt.client.nvidia.com/gjuvekar/home.nix
+                ];
+              };
+            }
+            inputs.home-manager.nixosModules.home-manager
+          ];
+        };
         "rpi.sc.gjuvekar.com" = {
           nixpkgsPatcher.inputs = inputs;
           system = "aarch64-linux";
