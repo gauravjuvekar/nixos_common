@@ -1,4 +1,9 @@
-{ pkgs, ... }: {
+{
+  lib,
+  pkgs,
+  ...
+}:
+{
   hostinfo = {
     isLaptop = false;
     isLocalGraphical = true;
@@ -8,6 +13,8 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+
+  services.xserver.desktopManager.cinnamon.enable = lib.mkForce false;
 
   systemd.services."xe-daemon".enable = false;
   networking.nameservers = [
@@ -22,6 +29,8 @@
     settings.Resolve.DNSOverTLS = true;
   };
 
+  # The installer includes ZFS, which may not support the latest kernel.
+  boot.kernelPackages = pkgs.linuxPackages;
   boot.kernelModules = [
     "btrfs"
     "dm-integrity"
