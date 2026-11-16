@@ -22,7 +22,7 @@ in
           (lib.lists.optional hostinfo.isLocalGraphical pkgs.neovide)
           (lib.hiPrio pkgs.gcc) # Still need a compiler for treesitter # HOLY SHIT, Clang is broken GH 277564, 153759, 147342
           pkgs.bash-language-server
-          pkgs.ltex-ls
+          pkgs.ltex-ls-plus
           pkgs.lua-language-server
           pkgs.nixd
           pkgs.perlnavigator
