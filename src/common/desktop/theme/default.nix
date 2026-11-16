@@ -23,13 +23,19 @@ in
             gtkTheme = "Mint-Y-Dark";
           in
           {
-            gtk.theme = gtkTheme;
+            gtk = {
+              enable = true;
+              colorScheme = "dark";
+              theme = {
+                name = gtkTheme;
+                package = pkgs.mint-themes;
+              };
+            };
             home.sessionVariables = {
               GTK_THEME = gtkTheme;
             };
             home.packages = [
               pkgs.mint-x-icons
-              pkgs.mint-themes
             ];
           };
 
