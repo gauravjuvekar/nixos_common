@@ -45,7 +45,7 @@ in
               pkgs.showmethekey
               pkgs.sioyek
               pkgs.smplayer
-              pkgs.thunderbird
+              (lib.lists.optional (!config.programs.thunderbird.enable) pkgs.thunderbird)
               pkgs.vlc
             ]
             ++ lib.lists.optionals hostinfo.isLocalInteractive [
