@@ -52,7 +52,18 @@ let
       (jailedAgents.internals.jail.combinators.set-hostname hostinfo.fqdn)
     ]
     ++ jailedAgents.commonJailOptions;
-    extraJailOptions = [ jailedAgents.internals.jail.combinators.wayland ];
+    extraJailOptions = [
+      (jailedAgents.internals.jail.combinators.add-runtime ''
+        if [[ -n "''${WAYLAND_DISPLAY:-}" ]]; then
+          RUNTIME_ARGS+=(
+            --setenv WAYLAND_DISPLAY "$WAYLAND_DISPLAY"
+            --setenv XDG_RUNTIME_DIR "$XDG_RUNTIME_DIR"
+            --setenv XDG_SESSION_TYPE "$XDG_SESSION_TYPE"
+            --ro-bind "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+          )
+        fi
+      '')
+    ];
     enableGitWorktrees = {
       enable = true;
       mountGitConfig = true;

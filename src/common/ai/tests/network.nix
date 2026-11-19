@@ -259,6 +259,8 @@ let
       kill -0 "$proxy_pid"
       # Exercise the actual package with the same shared socket.
       "$1" --version
+      env -u WAYLAND_DISPLAY -u XDG_SESSION_TYPE "$1" --version
+      env -u XDG_SESSION_TYPE WAYLAND_DISPLAY= "$1" --version
       kill "$proxy_pid"
       wait "$proxy_pid"
       proxy_pid=
