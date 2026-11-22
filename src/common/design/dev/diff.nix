@@ -47,6 +47,27 @@ in
 
         programs.delta = {
           enable = true;
+          options = {
+            navigate = true;
+            side-by-side = true;
+          };
+        };
+
+        programs.difftastic = {
+          enable = true;
+          # Home Manager passes these options through its own Git and Jujutsu integrations.
+          # Direct calls and our custom Git commands get the display default from the wrapper.
+          options = {
+            display = "side-by-side-show-both";
+          };
+          package = pkgs.symlinkJoin {
+            inherit (pkgs.difftastic) pname version meta;
+            paths = [ pkgs.difftastic ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram "$out/bin/difft" --set-default DFT_DISPLAY ${lib.escapeShellArg config.programs.difftastic.options.display}
+            '';
+          };
         };
       };
       "nixos-system" = { };

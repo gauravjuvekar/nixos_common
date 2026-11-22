@@ -13,6 +13,8 @@ let
       nixos-system = config.hostinfo;
     }
     ."${moduleContext}";
+  difftastic = config.programs.difftastic;
+  difft = lib.getExe difftastic.package;
 in
 {
   config =
@@ -103,6 +105,10 @@ in
           "push" = "git push";
           "rc" = "git rebase --continue";
           "s" = "git status";
+        }
+        // lib.optionalAttrs difftastic.enable {
+          "dlog" = "git dlog";
+          "dlogg" = "git dlog --oneline --graph --decorate=full";
         };
 
         programs.git = {
@@ -129,6 +135,17 @@ in
                   "gauravjuvekar@gmail.com"
                 else
                   null;
+            };
+          }
+          // lib.optionalAttrs difftastic.enable {
+            pager.difftool = true;
+            difftool.prompt = false;
+            diff.tool = "difftastic";
+            difftool.difftastic.cmd = ''${difft} "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
+            alias = {
+              dft = "-c diff.external=${difft} diff";
+              dlog = "-c diff.external=${difft} log -p --ext-diff";
+              dshow = "-c diff.external=${difft} show --ext-diff";
             };
           };
         };
