@@ -1,0 +1,204 @@
+diff --git a/src/display/side_by_side.rs b/src/display/side_by_side.rs
+index c5f03f2..413ff10 100644
+--- a/src/display/side_by_side.rs
++++ b/src/display/side_by_side.rs
+@@ -57,5 +57,5 @@ fn format_missing_line_num(
+     };
+
+-    let num_digits = prev_num.display().len();
++    let num_digits = prev_num.display().len().min(column_width - 1);
+     format!(
+         "{:>width$} ",
+@@ -172,5 +172,5 @@ struct SourceDimensions {
+ impl SourceDimensions {
+     fn new(
+-        terminal_width: usize,
++        display_options: &DisplayOptions,
+         lhs_max_line_visible: LineNumber,
+         rhs_max_line_visible: LineNumber,
+@@ -180,6 +180,23 @@ impl SourceDimensions {
+         rhs_content_max_width: usize,
+     ) -> Self {
+-        let lhs_line_nums_width = format_line_num(lhs_max_line_visible).len();
+-        let rhs_line_nums_width = format_line_num(rhs_max_line_visible).len();
++        let terminal_width = display_options.terminal_width;
++        let git_diff_layout = display_options.git_diff_layout;
++        let min_content_width = if git_diff_layout {
++            display_options.tab_width.saturating_add(1).max(2)
++        } else {
++            1
++        };
++        let half_width = terminal_width.saturating_sub(SPACER.len()) / 2;
++        let min_line_nums_width = if git_diff_layout {
++            half_width.saturating_sub(min_content_width).min(5)
++        } else {
++            0
++        };
++        let lhs_line_nums_width = format_line_num(lhs_max_line_visible)
++            .len()
++            .max(min_line_nums_width);
++        let rhs_line_nums_width = format_line_num(rhs_max_line_visible)
++            .len()
++            .max(min_line_nums_width);
+
+         let content_max_width = max(lhs_content_max_width, rhs_content_max_width);
+@@ -206,5 +223,9 @@ impl SourceDimensions {
+             + rhs_line_nums_width
+             + content_max_width;
+-        let display_width = min(terminal_width, width_without_truncation);
++        let display_width = if git_diff_layout {
++            terminal_width.max(SPACER.len() + 1)
++        } else {
++            min(terminal_width, width_without_truncation)
++        };
+
+         assert!(
+@@ -214,29 +235,22 @@ impl SourceDimensions {
+         let lhs_total_width = (display_width - SPACER.len()) / 2;
+
+-        let lhs_content_width = if lhs_line_nums_width < lhs_total_width {
+-            lhs_total_width - lhs_line_nums_width
++        let lhs_content_width = lhs_total_width
++            .saturating_sub(lhs_line_nums_width)
++            .max(min_content_width);
++        let rhs_content_width = (display_width - lhs_total_width - SPACER.len())
++            .saturating_sub(rhs_line_nums_width)
++            .max(min_content_width);
++
++        let (lhs_content_display_width, rhs_content_display_width) = if git_diff_layout {
++            (lhs_content_width, rhs_content_width)
+         } else {
+-            // The terminal is so narrow that even the column numbers
+-            // display doesn't fit. Ensure we show a non-zero number
+-            // of content columns anyway.
+-            1
++            // Equal widths keep the wrapping points aligned when the panes are sized to the content.
++            let content_width = min(lhs_content_width, rhs_content_width);
++            (content_width, content_width)
+         };
+
+-        let rhs_content_width = max(
+-            1,
+-            display_width as isize
+-                - lhs_total_width as isize
+-                - SPACER.len() as isize
+-                - rhs_line_nums_width as isize,
+-        ) as usize;
+-
+-        // We want the content width to be the same on both
+-        // sides. This ensures that line wrapping splits lines at the
+-        // same point on both sides.
+-        let content_width = min(lhs_content_width, rhs_content_width);
+-
+         Self {
+-            lhs_content_display_width: content_width,
+-            rhs_content_display_width: content_width,
++            lhs_content_display_width,
++            rhs_content_display_width,
+             lhs_line_nums_width,
+             rhs_line_nums_width,
+@@ -593,5 +607,5 @@ pub(crate) fn print(
+
+     let source_dims = SourceDimensions::new(
+-        display_options.terminal_width,
++        display_options,
+         lhs_max_visible_line,
+         rhs_max_visible_line,
+@@ -790,5 +804,4 @@ mod tests {
+
+     use super::*;
+-    use crate::options::DEFAULT_TERMINAL_WIDTH;
+     use crate::parse::guess_language::Language;
+     use crate::syntax::{AtomKind, MatchKind, TokenKind};
+@@ -797,5 +810,5 @@ mod tests {
+     fn test_width_calculations() {
+         let source_dims = SourceDimensions::new(
+-            DEFAULT_TERMINAL_WIDTH,
++            &DisplayOptions::default(),
+             1.into(),
+             10.into(),
+@@ -813,5 +826,5 @@ mod tests {
+     fn test_format_missing_line_num() {
+         let source_dims = SourceDimensions::new(
+-            DEFAULT_TERMINAL_WIDTH,
++            &DisplayOptions::default(),
+             1.into(),
+             1.into(),
+@@ -834,6 +847,13 @@ mod tests {
+     #[test]
+     fn test_format_missing_line_num_at_end() {
+-        let source_dims =
+-            SourceDimensions::new(80, 1.into(), 1.into(), 1.into(), 1.into(), 9999, 9999);
++        let source_dims = SourceDimensions::new(
++            &DisplayOptions::default(),
++            1.into(),
++            1.into(),
++            1.into(),
++            1.into(),
++            9999,
++            9999,
++        );
+
+         assert_eq!(
+diff --git a/src/display/style.rs b/src/display/style.rs
+index 56576e8..aa75b67 100644
+--- a/src/display/style.rs
++++ b/src/display/style.rs
+@@ -563,5 +563,5 @@ pub(crate) fn header(
+     }
+
+-    match extra_info {
++    let header = match extra_info {
+         Some(extra_info) if hunk_num == 1 => {
+             let mut extra_info = extra_info.clone();
+@@ -575,4 +575,15 @@ pub(crate) fn header(
+             format!("{}{}", display_path_pretty, trailer)
+         }
++    };
++
++    if display_options.git_diff_layout && hunk_num == 1 {
++        let rule = "─".repeat(display_options.terminal_width);
++        if display_options.use_color {
++            format!("{}\n{}", rule.dimmed(), header)
++        } else {
++            format!("{}\n{}", rule, header)
++        }
++    } else {
++        header
+     }
+ }
+diff --git a/src/options.rs b/src/options.rs
+index eb3aa7d..cd6cb87 100644
+--- a/src/options.rs
++++ b/src/options.rs
+@@ -41,4 +41,5 @@ pub(crate) struct DisplayOptions {
+     pub(crate) tab_width: usize,
+     pub(crate) terminal_width: usize,
++    pub(crate) git_diff_layout: bool,
+     pub(crate) num_context_lines: u32,
+     pub(crate) syntax_highlight: bool,
+@@ -57,4 +58,5 @@ impl Default for DisplayOptions {
+             tab_width: 8,
+             terminal_width: DEFAULT_TERMINAL_WIDTH,
++            git_diff_layout: false,
+             num_context_lines: 3,
+             syntax_highlight: true,
+@@ -802,4 +804,6 @@ pub(crate) fn parse_args() -> Mode {
+     };
+
++    let git_diff_layout = env::var_os("GIT_DIFF_PATH_TOTAL").is_some();
++
+     let display_mode = match matches
+         .get_one::<String>("display")
+@@ -965,4 +969,5 @@ pub(crate) fn parse_args() -> Mode {
+                 display_mode,
+                 terminal_width,
++                git_diff_layout,
+                 num_context_lines,
+                 syntax_highlight,
+@@ -1018,4 +1023,5 @@ pub(crate) fn parse_args() -> Mode {
+         display_mode,
+         terminal_width,
++        git_diff_layout,
+         num_context_lines,
+         syntax_highlight,

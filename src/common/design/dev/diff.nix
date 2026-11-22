@@ -19,6 +19,9 @@ let
     });
   };
   myPkgs = pkgs.extend myYdiffOverlay;
+  difftastic = pkgs.difftastic.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ./difftastic-git-layout.patch ];
+  });
   hostinfo =
     {
       home-manager = osConfig.hostinfo;
@@ -61,8 +64,8 @@ in
             display = "side-by-side-show-both";
           };
           package = pkgs.symlinkJoin {
-            inherit (pkgs.difftastic) pname version meta;
-            paths = [ pkgs.difftastic ];
+            inherit (difftastic) pname version meta;
+            paths = [ difftastic ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram "$out/bin/difft" --set-default DFT_DISPLAY ${lib.escapeShellArg config.programs.difftastic.options.display}
